@@ -1,15 +1,17 @@
 import json, numpy as np, cv2, base64, io, math
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]
 from PIL import Image
 from scipy import ndimage
 
 LAT0,LON0,MLAT,MLON=27.8050,86.7100,110816.0,98541.0
-M=np.load('data/merged.npy')
+M=np.load(ROOT/'data'/'merged.npy')
 def xz(c): return ((c[0]-LON0)*MLON, -(c[1]-LAT0)*MLAT)
 def elev(x,z,o=3):
     lat=LAT0-np.asarray(z,float)/MLAT; lon=LON0+np.asarray(x,float)/MLON
     return ndimage.map_coordinates(M,[np.atleast_1d((29-lat)*1200).ravel(),np.atleast_1d((lon-86)*1200).ravel()],order=o)
 
-gj=json.load(open('/mnt/user-data/uploads/export.geojson'))
+gj=json.load(open(ROOT/'data'/'raw'/'namche-osm.geojson',encoding='utf-8'))
 feats=gj['features']
 
 # ---------- town box, aligned to DEM grid ----------
@@ -224,5 +226,5 @@ data=dict(dem=dict(nx=int(nx),nz=int(nz),x0=X0,z0=Z0,dx=DX,dz=DZ,b64=dem_b64),
           buildings=out, paths=PP, walls=WW, streams=SS, poi=PO, peaks=P, lm=lm,
           geo=dict(lat0=LAT0,lon0=LON0,mlat=MLAT,mlon=MLON))
 js='window.NAMCHE='+json.dumps(data,separators=(',',':'))+';'
-open('data.js','w').write(js)
+open(ROOT/'data'/'data.js','w',encoding='utf-8').write(js)
 print('data.js',len(js),'spawn',lm['spawn'],'gompa',lm['gompa'])
