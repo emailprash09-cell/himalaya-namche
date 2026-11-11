@@ -30,7 +30,7 @@ OUT = pathlib.Path(A.out); OUT.mkdir(exist_ok=True)
 
 # Each view: JS returning a pose [x, y, z, pitch, yaw] (or null for the player's own spawn camera), plus night on/off.
 V = {
- 'spawn':  ("(()=>{const n=window.__namche,p=n.player;return [p.x,p.y,p.z,p.pitch,p.yaw]})()", False),
+ 'spawn':  ("(()=>{const n=window.__namche,s=n.SPAWN;return [s.x,n.groundAt(s.x,s.z)+1.65,s.z,0.05,Math.atan2(-(s.face[0]-s.x),-(s.face[1]-s.z))]})()", False),
  'center': ("(()=>{const n=window.__namche,x=20,z=-20;return [x,n.groundAt(x,z)+1.65,z,0.05,0.6]})()", False),
  # gompa: walk round the gompa at 28-48 m and take the spot whose eye is nearest the gompa's floor level and
  # whose sight line to it is clear of terrain and other buildings (the old fixed offset stood in a dip below it).
