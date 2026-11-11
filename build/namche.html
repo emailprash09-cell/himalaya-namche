@@ -1668,7 +1668,20 @@ function frame(){
 setStatus('Ready. You’re looking down on Namche from the trail to Syangboche.');
 goBtn.disabled = false;
 window.__namcheReady = true;
-window.__namche = { BLD, SPAWN, renderer, scene, farH, player, setNight, camera, PEAKS, start, groundAt, townGround, LMK, D, freeCam: (a) => { freeCam = a; }, rebuildGrass };
+// ?test only: put the player, HUD, grass and peak line-of-sight in step with freeCam before a screenshot,
+// so nothing depends on how many frames the (possibly very slow) renderer manages between calls.
+function syncView(){
+  if (freeCam){
+    camera.position.set(freeCam[0], freeCam[1], freeCam[2]); camera.rotation.set(freeCam[3], freeCam[4], 0);
+    player.x = freeCam[0]; player.z = freeCam[2]; player.y = freeCam[1]; player.yaw = freeCam[4]; player.pitch = freeCam[3];
+  }
+  camera.updateMatrixWorld(true);
+  for (const p of PEAKS) p.vis = lineOfSight(camera.position.x, camera.position.y, camera.position.z, p);
+  losT = 0.35; hudT = 0; rebuildGrass(camera.position.x, camera.position.z);
+  toastT = 0; toastEl.classList.remove('on');
+  return PEAKS.filter((p) => p.vis).map((p) => p.n);
+}
+window.__namche = { BLD, SPAWN, renderer, syncView, scene, farH, player, setNight, camera, PEAKS, start, groundAt, townGround, LMK, D, freeCam: (a) => { freeCam = a; }, rebuildGrass };
 requestAnimationFrame(frame);
 })().catch((e) => { const s = document.querySelector('#status'); if (s){ s.textContent = 'Something broke while building the town: ' + (e && e.message ? e.message : e); s.style.color = '#ffb4a8'; } console.error(e); });
 
