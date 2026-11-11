@@ -13,3 +13,15 @@ docs/HIMALAYA_The_Summit_Concept_Brief.docx
 __pycache__/
 .venv/
 shots/
+
+# namche-playable
+.tools/
+assets-src/
+docs/reference/
+dist/
+out/
+test-results/
+playwright-report/
+data/raw/dem/
+data/cache/
+*.log
