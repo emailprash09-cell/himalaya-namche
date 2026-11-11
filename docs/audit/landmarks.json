@@ -1,0 +1,2732 @@
+[
+ {
+  "key": "entrance",
+  "name": "Entrance: south face of the Kani gate, origin of all route lengths",
+  "osmId": "way/551441451",
+  "tags": {
+   "highway": "path",
+   "sac_scale": "hiking",
+   "trail_visibility": "good",
+   "tunnel": "yes"
+  },
+  "x": -24.3,
+  "z": 194.3,
+  "lat": 27.803247,
+  "lon": 86.709753,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Shared end vertex of way/551441451 (the 6.4 m passage through the gate, tunnel=yes) and way/551441452 (the trail from below). ele 3398/3390 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "entrance_spawn",
+  "name": "Opening spawn and hero camera, on the trail below the gate",
+  "osmId": null,
+  "tags": {},
+  "x": -27.9,
+  "z": 236.5,
+  "lat": 27.802866,
+  "lon": 86.709717,
+  "sizeM": null,
+  "inOsm": false,
+  "confidence": "medium",
+  "note": "Derived, not an OSM feature: the point 45 m down trail way/551441452 from the gate. From here the gate is 45 m away at bearing 4 deg and the stupa 81 m at bearing 350 deg, which matches the owner's entrance photo (stupa centre, gate right). Tune against the photo; 30 to 60 m down-trail all work. ele 3386/3385 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "trail_from_below",
+  "name": "Trail up from the valley (Jorsale, Larja bridge) to the gate",
+  "osmId": "way/551441452",
+  "tags": {
+   "highway": "path",
+   "sac_scale": "hiking",
+   "trail_visibility": "excellent"
+  },
+  "x": -0.3,
+  "z": 283.8,
+  "lat": 27.802439,
+  "lon": 86.709997,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "highway=path, 1,710.6 m inside the export, from (574.3, 1349.8) at 3,098 m up to the gate; no surface or width tag. x,z here is the point 100 m below the gate. First 100 m below the gate drops 12 to 17 m. It never crosses a mapped stream. ele 3382/3387 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "bridge_below_gate",
+  "name": "Bridge over the stream below the gate (as the brief words the opening)",
+  "osmId": null,
+  "tags": {},
+  "x": -16.4,
+  "z": 252.8,
+  "lat": 27.802718,
+  "lon": 86.709833,
+  "sizeM": null,
+  "inOsm": false,
+  "confidence": "low",
+  "note": "NOT IN OSM, and no data supports it: the export has no bridge=* tag at all and the trail below the gate never crosses a waterway (the stream runs away south-west, 16 m from the trail at the gate and 57 m at 60 m down). x,z is only a suggested spot for an INVENTED bridge, 65 m down-trail, just behind the spawn. The real stream crossing is footbridge_plaza, inside the gate. Ask the owner. ele 3385/3389 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "footbridge_plaza",
+  "name": "Footbridge over the stream channel inside the gate (the real crossing)",
+  "osmId": "way/1373254109",
+  "tags": {
+   "highway": "path",
+   "sac_scale": "hiking",
+   "trail_visibility": "good"
+  },
+  "x": -28.8,
+  "z": 178.4,
+  "lat": 27.80339,
+  "lon": 86.709708,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "The only place in the whole export where a path crosses a waterway: way/1373254109 over culvert way/1267933035 (tunnel=yes, layer=-1), 10 m north of the gate. OSM tags no bridge; the owner's photos show a curved footbridge with maroon railings and a white key pattern here, and a second one further up the channel (not locatable from OSM). ele 3401/3391 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "kani_gate",
+  "name": "Kani gate (entrance gate building)",
+  "osmId": "way/344630686",
+  "tags": {
+   "building": "yes"
+  },
+  "x": -24.7,
+  "z": 191.1,
+  "lat": 27.803275,
+  "lon": 86.709749,
+  "sizeM": [
+   6.4,
+   5.5
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "building=yes footprint 5.6 m east-west by 6.4 m north-south, axis-aligned, containing node/13793755901 (historic=city_gate). The passage runs north-south through its middle at x = -24.3 (way/551441451). The brief asks for 4.5 m square; photo measurement gives a 4.5 m front, so the OSM outline is probably the roof line. ele 3399/3391 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "gate_to_steps_path",
+  "name": "Paved link from the gate to the foot of the main steps",
+  "osmId": "way/1373254109",
+  "tags": {
+   "highway": "path",
+   "sac_scale": "hiking",
+   "trail_visibility": "good"
+  },
+  "x": -27.4,
+  "z": 182.0,
+  "lat": 27.803358,
+  "lon": 86.709722,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "highway=path, 13.5 m, from the gate north face (-24.3, 187.9) to the steps junction (-29.9, 175.7); crosses the culvert. ele 3401/3391 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "main_steps",
+  "name": "Main stone stairway from the plaza up to the main street",
+  "osmId": "way/551442828",
+  "tags": {
+   "highway": "steps",
+   "incline": "up",
+   "sac_scale": "hiking",
+   "surface": "sett",
+   "width": "2"
+  },
+  "x": 2.1,
+  "z": 122.8,
+  "lat": 27.803892,
+  "lon": 86.710021,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "highway=steps, surface=sett, width=2, incline=up, 124.9 m from (-29.9, 175.7) to (41.0, 74.4), rising 20 to 25 m. The only way in the export with a width or a paving tag. ele 3407/3405 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "stupa",
+  "name": "Namche stupa (the big white stupa)",
+  "osmId": "way/344630942",
+  "tags": {
+   "building": "yes",
+   "man_made": "stupa",
+   "religion": "buddhist"
+  },
+  "x": -42.4,
+  "z": 156.6,
+  "lat": 27.803587,
+  "lon": 86.70957,
+  "sizeM": [
+   11.8,
+   8.6
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "building=yes + man_made=stupa + religion=buddhist; rectangle 11.8 by 8.6 m, long side bearing about 56 deg. Photo measurement: base about 11 m. The prototype draws this footprint as a two-storey house and invents a stupa 119 m to the east; both must go. ele 3403/3393 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "stupa_kora_loop",
+  "name": "Path loop round the stupa (kora)",
+  "osmId": "way/56081261",
+  "tags": {
+   "highway": "path",
+   "sac_scale": "hiking"
+  },
+  "x": -44.5,
+  "z": 158.5,
+  "lat": 27.80357,
+  "lon": 86.709548,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Closed loop of mapped paths round the stupa and its side pavilion: way/56081261 (north), part of way/1373254110 (south-west) and the bottom of the steps way/551442828 (east). Perimeter 109.5 m, 1.8 to 18.5 m from the stupa wall. A tighter paved ring at the base is not mapped. ele 3402/3392 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "stupa_side_pavilion",
+  "name": "Pavilion beside the stupa",
+  "osmId": "way/1050011454",
+  "tags": {
+   "building": "yes"
+  },
+  "x": -31.2,
+  "z": 163.4,
+  "lat": 27.803526,
+  "lon": 86.709683,
+  "sizeM": [
+   5.8,
+   5.4
+  ],
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Untagged building=yes, 5.8 by 5.4 m, 8 m south-east of the stupa; node/11704172271 (historic=memorial, Pemba Doma Sherpa) sits inside it. The owner's photos show a red-roofed prayer-wheel pavilion here. Function is from the photos, footprint from OSM. ele 3403/3393 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "fountain",
+  "name": "Fountain and round pool",
+  "osmId": "way/1267933037",
+  "tags": {
+   "natural": "water",
+   "water": "lake"
+  },
+  "x": -23.5,
+  "z": 170.1,
+  "lat": 27.803465,
+  "lon": 86.709762,
+  "sizeM": [
+   5.5,
+   5.5
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "natural=water polygon, 24.3 m2, 5.5 m across, with node/11775705677 (amenity=fountain) at (-23.4, 169.8). The open stream runs through it. ele 3402/3394 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "water_spouts_gate",
+  "name": "Stone trough with brass water spouts by the gate",
+  "osmId": null,
+  "tags": {},
+  "x": -31.0,
+  "z": 190.5,
+  "lat": 27.803281,
+  "lon": 86.709685,
+  "sizeM": null,
+  "inOsm": false,
+  "confidence": "low",
+  "note": "NOT IN OSM. Owner's photos: a stone trough with 3 or 4 brass spouts and a blue bench on the left (west) side of the gate as you walk in. Position is a guess within about 5 m; register as invented. ele 3398/3389 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "drinking_water_trail",
+  "name": "Drinking water point on the trail below town",
+  "osmId": "node/11245012978",
+  "tags": {
+   "amenity": "drinking_water"
+  },
+  "x": 84.4,
+  "z": 287.7,
+  "lat": 27.802403,
+  "lon": 86.710856,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "amenity=drinking_water, 198 m down-trail from the gate, 10.7 m off the path. ele 3389/3379 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "stupa_cafe",
+  "name": "Cafe beside the stupa",
+  "osmId": "way/1050011453",
+  "tags": {
+   "building": "yes"
+  },
+  "x": -38.9,
+  "z": 178.3,
+  "lat": 27.803391,
+  "lon": 86.709605,
+  "sizeM": [
+   12.3,
+   12.1
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "L-shaped building=yes, 99.9 m2, holding node/12801708793 (amenity=cafe). Clear width only 6.1 m. Use an invented name. ele 3400/3390 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "market_ground",
+  "name": "Open ground for the Saturday market and camping",
+  "osmId": null,
+  "tags": {},
+  "x": -75.0,
+  "z": 188.0,
+  "lat": 27.803303,
+  "lon": 86.709239,
+  "sizeM": [
+   60,
+   30
+  ],
+  "inOsm": false,
+  "confidence": "medium",
+  "note": "NOT IN OSM (no landuse, marketplace or camp-site feature; the fetch query never asked for them). Evidence: the brief puts it on the open ground below the stupa; the owner's entrance photo shows bare flat ground with tents left of the stupa; OSM has a building-free patch of about 1.2 ha here (x -149..18, z 151..267) and both DEMs show the gentlest ground along z 165..195. Centre good to about 20 m, outline invented. ele 3393/3387 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "stream_head_pool",
+  "name": "Head pool where the mapped stream starts",
+  "osmId": "way/1267933038",
+  "tags": {
+   "natural": "water",
+   "water": "lake"
+  },
+  "x": 16.7,
+  "z": 108.5,
+  "lat": 27.804021,
+  "lon": 86.710169,
+  "sizeM": [
+   3.9,
+   3.5
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "natural=water, 13.4 m2. The stream is not mapped above this point. ele 3412/3410 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "stream_town",
+  "name": "Stream channel through the lower town (pool to gate)",
+  "osmId": "way/1267933034",
+  "tags": {
+   "waterway": "stream"
+  },
+  "x": -19.5,
+  "z": 169.0,
+  "lat": 27.803475,
+  "lon": 86.709802,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Chain of 12 ways, way/1267933025 to way/1267933036: 105.0 m from (15.6, 109.9) to the culvert outlet (-40.3, 190.7); 58.7 m open in 6 pieces and 46.2 m in 6 culverts (tunnel=yes, layer=-1). Five culverts lie exactly under the five pavilions. Runs 3.3 to 9.7 m east of the main steps and drops 15 to 22 m. ele 3403/3396 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "stream_below_gate",
+  "name": "Stream below the gate, down the ravine",
+  "osmId": "way/312775993",
+  "tags": {
+   "waterway": "stream"
+  },
+  "x": -58.6,
+  "z": 207.5,
+  "lat": 27.803128,
+  "lon": 86.709405,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "waterway=stream, 852.3 m from the culvert outlet (-40.3, 190.7) south-west to (-545.0, 812.7); falls about 43 m in its first 100 m. x,z is the point 25 m below the outlet. ele 3388/3380 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "prayer_wheel_pavilion_1",
+  "name": "Water-driven prayer-wheel pavilion 1 of 5 (lowest, counted up from the gate)",
+  "osmId": "way/344630709",
+  "tags": {
+   "building": "yes"
+  },
+  "x": -12.1,
+  "z": 158.9,
+  "lat": 27.803566,
+  "lon": 86.709877,
+  "sizeM": [
+   4.5,
+   4.4
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Untagged building=yes sitting exactly on a stream culvert of 3.9 to 4.6 m. Row of five, 8.3 to 11.2 m apart centre to centre, 39.2 m long, bearing 27 deg (up the channel). Photo measurement gives a 2.2 to 2.8 m square body, so the 4.5 m OSM outline is probably the roof. Position from OSM, function from the owner's photos. ele 3404/3399 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "prayer_wheel_pavilion_2",
+  "name": "Water-driven prayer-wheel pavilion 2 of 5 (second, counted up from the gate)",
+  "osmId": "way/344630875",
+  "tags": {
+   "building": "yes"
+  },
+  "x": -6.7,
+  "z": 149.0,
+  "lat": 27.803655,
+  "lon": 86.709932,
+  "sizeM": [
+   4.6,
+   4.5
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Untagged building=yes sitting exactly on a stream culvert of 3.9 to 4.6 m. Row of five, 8.3 to 11.2 m apart centre to centre, 39.2 m long, bearing 27 deg (up the channel). Photo measurement gives a 2.2 to 2.8 m square body, so the 4.5 m OSM outline is probably the roof. Position from OSM, function from the owner's photos. ele 3405/3402 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "prayer_wheel_pavilion_3",
+  "name": "Water-driven prayer-wheel pavilion 3 of 5 (middle, counted up from the gate)",
+  "osmId": "way/344630877",
+  "tags": {
+   "building": "yes"
+  },
+  "x": -2.1,
+  "z": 140.4,
+  "lat": 27.803733,
+  "lon": 86.709979,
+  "sizeM": [
+   4.6,
+   4.5
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Untagged building=yes sitting exactly on a stream culvert of 3.9 to 4.6 m. Row of five, 8.3 to 11.2 m apart centre to centre, 39.2 m long, bearing 27 deg (up the channel). Photo measurement gives a 2.2 to 2.8 m square body, so the 4.5 m OSM outline is probably the roof. Position from OSM, function from the owner's photos. ele 3406/3403 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "prayer_wheel_pavilion_4",
+  "name": "Water-driven prayer-wheel pavilion 4 of 5 (fourth, counted up from the gate)",
+  "osmId": "way/344630878",
+  "tags": {
+   "building": "yes"
+  },
+  "x": 1.8,
+  "z": 131.2,
+  "lat": 27.803816,
+  "lon": 86.710018,
+  "sizeM": [
+   4.7,
+   3.8
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Untagged building=yes sitting exactly on a stream culvert of 3.9 to 4.6 m. Row of five, 8.3 to 11.2 m apart centre to centre, 39.2 m long, bearing 27 deg (up the channel). Photo measurement gives a 2.2 to 2.8 m square body, so the 4.5 m OSM outline is probably the roof. Position from OSM, function from the owner's photos. ele 3407/3405 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "prayer_wheel_pavilion_5",
+  "name": "Water-driven prayer-wheel pavilion 5 of 5 (top, counted up from the gate)",
+  "osmId": "way/344630879",
+  "tags": {
+   "building": "yes"
+  },
+  "x": 5.5,
+  "z": 123.8,
+  "lat": 27.803882,
+  "lon": 86.710055,
+  "sizeM": [
+   4.4,
+   4.2
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Untagged building=yes sitting exactly on a stream culvert of 3.9 to 4.6 m. Row of five, 8.3 to 11.2 m apart centre to centre, 39.2 m long, bearing 27 deg (up the channel). Photo measurement gives a 2.2 to 2.8 m square body, so the 4.5 m OSM outline is probably the roof. Position from OSM, function from the owner's photos. ele 3408/3406 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "checkpoint",
+  "name": "Police and national park checkpoint",
+  "osmId": "way/344931638",
+  "tags": {
+   "amenity": "police",
+   "building": "yes",
+   "description": "Checkpost",
+   "name": "Sargamatha National Park Entry"
+  },
+  "x": 68.1,
+  "z": 586.7,
+  "lat": 27.799705,
+  "lon": 86.710691,
+  "sizeM": [
+   7.0,
+   6.3
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "amenity=police, description=Checkpost, name as spelt in OSM. 7.0 by 6.3 m. On the trail 549 m below the gate (5.7 m off it) and 63 to 73 m lower. Beside it: node/11704178324 (shop, tea house), toilets, recycling, bench and drinking water node/11245070713. ele 3325/3327 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "town_centre",
+  "name": "Town centre: the four-way lane junction",
+  "osmId": "way/56081262",
+  "tags": {
+   "highway": "path",
+   "sac_scale": "hiking"
+  },
+  "x": 48.8,
+  "z": 17.9,
+  "lat": 27.804839,
+  "lon": 86.710496,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Vertex shared by way/56081262 (main street from the steps), way/1373254110 (west lane), way/1373254117 (link north to the main trail) and way/59428772 (east lane). 213 m and 30 to 35 m of climb from the entrance. Banks, cash machines, cafes, bakeries and the clinic are within 60 m. ele 3428/3425 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "main_street",
+  "name": "Main street from the top of the steps to the centre",
+  "osmId": "way/56081262",
+  "tags": {
+   "highway": "path",
+   "sac_scale": "hiking"
+  },
+  "x": 40.7,
+  "z": 46.0,
+  "lat": 27.804585,
+  "lon": 86.710413,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "highway=path, 67.8 m, (41.0, 74.4) to (48.8, 17.9). Wall-to-wall gap median 5.3 m, narrowest 2.4 m. ele 3424/3419 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "lane_west_loop",
+  "name": "West lane: plaza, round the west side, to the centre",
+  "osmId": "way/1373254110",
+  "tags": {
+   "highway": "path",
+   "sac_scale": "hiking",
+   "trail_visibility": "good"
+  },
+  "x": -88.3,
+  "z": 61.0,
+  "lat": 27.80445,
+  "lon": 86.709104,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "highway=path, 429.2 m from the foot of the steps (-29.9, 175.7) west and north to the centre (48.8, 17.9). Wall-to-wall gap median 6.2 m, narrowest 2.5 m. ele 3432/3442 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "lane_east",
+  "name": "East lane from the centre up to Chhorkung",
+  "osmId": "way/59428772",
+  "tags": {
+   "highway": "path",
+   "sac_scale": "hiking"
+  },
+  "x": 127.5,
+  "z": 122.7,
+  "lat": 27.803893,
+  "lon": 86.711294,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "highway=path, 382.3 m, (48.8, 17.9) to (293.2, 36.4), climbing 78 to 79 m; passes the library, bank, hospital and school side. ele 3453/3460 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "lane_upper_cross",
+  "name": "Upper cross lane, gompa side to the main trail",
+  "osmId": "way/56081264",
+  "tags": {
+   "highway": "path",
+   "sac_scale": "hiking"
+  },
+  "x": -8.1,
+  "z": -41.6,
+  "lat": 27.805375,
+  "lon": 86.709918,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "highway=path, 168.6 m, (-85.7, -30.2) to (58.5, -7.5). ele 3445/3440 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "lane_upper",
+  "name": "Upper lane",
+  "osmId": "way/56081263",
+  "tags": {
+   "highway": "path",
+   "sac_scale": "hiking"
+  },
+  "x": 42.9,
+  "z": -48.0,
+  "lat": 27.805433,
+  "lon": 86.710435,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "highway=path, 116.8 m, (-4.0, -40.6) to (92.5, -41.9). ele 3445/3440 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "lane_lower_east",
+  "name": "Lower east lane to the trail",
+  "osmId": "way/56081266",
+  "tags": {
+   "highway": "path",
+   "sac_scale": "hiking"
+  },
+  "x": 29.5,
+  "z": 186.9,
+  "lat": 27.803314,
+  "lon": 86.710299,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "highway=path, 200.0 m, (48.1, 89.2) to (37.1, 274.8), joining the trail 150 m below the gate; a second way into town that bypasses the gate. ele 3413/3423 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "main_trail_out",
+  "name": "Main trail out of town to Chhorkung and on to Tengboche",
+  "osmId": "way/25143515",
+  "tags": {
+   "highway": "path",
+   "sac_scale": "hiking",
+   "trail_visibility": "good"
+  },
+  "x": 135.9,
+  "z": -89.6,
+  "lat": 27.805809,
+  "lon": 86.711379,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "highway=path, 4,452 m in the export, starting 27 m north of the centre at (58.5, -7.5). x,z is its junction at the head of the bowl. ele 3467/3471 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "gompa_steps",
+  "name": "Stairway on the west side up to the gompa",
+  "osmId": "way/451632822",
+  "tags": {
+   "highway": "steps",
+   "incline": "down",
+   "surface": "ground"
+  },
+  "x": -106.4,
+  "z": 36.8,
+  "lat": 27.804668,
+  "lon": 86.70892,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "highway=steps, surface=ground, 87.3 m, (-104.8, 74.1) up to (-96.5, -5.3), rising 24 to 27 m. ele 3448/3457 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "upper_west_steps",
+  "name": "Short stairway at the top of the west side",
+  "osmId": "way/344864178",
+  "tags": {
+   "highway": "steps",
+   "incline": "up"
+  },
+  "x": -58.8,
+  "z": -80.2,
+  "lat": 27.805724,
+  "lon": 86.709403,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "highway=steps, 43.6 m, (-53.0, -61.7) up to (-74.8, -86.2), rising 15 to 18 m. ele 3477/3490 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "ridge_stairway",
+  "name": "Long stairway from Chhorkung up to Syangboche",
+  "osmId": "way/1268084286",
+  "tags": {
+   "highway": "steps",
+   "incline": "down",
+   "sac_scale": "mountain_hiking"
+  },
+  "x": 347.6,
+  "z": -184.1,
+  "lat": 27.806661,
+  "lon": 86.713528,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "highway=steps, 442.1 m, (326.8, -40.0) up to (400.7, -343.6), rising 153 to 175 m. Outside the town proper. ele 3599/3618 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "top_of_bowl",
+  "name": "Top of the bowl: lane junction at the north-east head",
+  "osmId": "way/25143515",
+  "tags": {
+   "highway": "path",
+   "sac_scale": "hiking",
+   "trail_visibility": "good"
+  },
+  "x": 135.9,
+  "z": -89.6,
+  "lat": 27.805809,
+  "lon": 86.711379,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Derived target: junction of way/25143515 and way/300645714, the highest lane junction among the top lodges. 375 m and 69 to 80 m of climb from the entrance. Alternative on the west side: top of way/344864178 at (-74.8, -86.2), 447 m and 87 to 106 m. ele 3467/3471 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "gompa",
+  "name": "Namche Gompa",
+  "osmId": "way/312775915",
+  "tags": {
+   "amenity": "monastery",
+   "building": "yes",
+   "name": "Namche Gompa",
+   "religion": "buddhist"
+  },
+  "x": -129.5,
+  "z": 1.5,
+  "lat": 27.804987,
+  "lon": 86.708686,
+  "sizeM": [
+   13.4,
+   9.1
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "building=yes + amenity=monastery + religion=buddhist, 13.4 by 9.1 m. The only polygon tagged as the monastery; use it for the prayer hall. 36 m to the east, node/1492311484 (building=monastery, same name) marks the top of the gompa steps. ele 3471/3479 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "gompa_entrance",
+  "name": "Gompa entrance point at the top of the steps",
+  "osmId": "node/1492311484",
+  "tags": {
+   "amenity": "place_of_worship",
+   "building": "monastery",
+   "name": "Namche Gompa",
+   "religion": "buddhist"
+  },
+  "x": -93.8,
+  "z": -9.2,
+  "lat": 27.805083,
+  "lon": 86.709048,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "A node, not a footprint: amenity=place_of_worship + building=monastery, 1.3 m from the path and 5.9 m from untagged way/344631168. ele 3461/3468 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "gompa_courtyard_building",
+  "name": "C-shaped building between the gompa and its steps",
+  "osmId": "way/344631168",
+  "tags": {
+   "building": "yes"
+  },
+  "x": -106.7,
+  "z": -16.8,
+  "lat": 27.805151,
+  "lon": 86.708917,
+  "sizeM": [
+   18.5,
+   16.8
+  ],
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Untagged building=yes, 208.0 m2, courtyard plan open to the south-west, clear width 6.3 m. Probably part of the gompa compound (quarters or courtyard range); unconfirmed. A small 5.4 by 4.9 m building, way/344631222, stands 14 m north, and node/12818448601 (amenity=place_of_worship) 24 m north. ele 3470/3475 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "sherpa_culture_museum",
+  "name": "Sherpa Culture Museum",
+  "osmId": "node/736940464",
+  "tags": {
+   "ele": "3517",
+   "name": "शेर्पा संस्कृति संग्रहालय",
+   "name:en": "Sherpa Culture Museum",
+   "name:ne": "शेर्पा संस्कृति संग्रहालय",
+   "tourism": "museum"
+  },
+  "x": 428.4,
+  "z": -4.3,
+  "lat": 27.805039,
+  "lon": 86.714347,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "tourism=museum node, ele=3517. A point only: it is 7.6 m from round building way/344631835 (6.6 m across) and 20 m west of way/300645643 (736.7 m2, 39.8 by 24.0 m, which holds a lodge node). Which building is the museum is not determinable from the data. Lane way/59428773 ends 4.6 m away. 764 m and 119 to 124 m of climb from the entrance. ele 3519/3515 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "park_visitor_centre",
+  "name": "Sagarmatha National Park museum and visitor centre",
+  "osmId": "way/312775992",
+  "tags": {
+   "building": "yes",
+   "ele": "3563",
+   "name": "सगरमाथा राष्ट्रिय निकुञ्ज संग्रहालय",
+   "name:en": "Tenzing Norgay Sherpa Heritage Center",
+   "name:ne": "सगरमाथा राष्ट्रिय निकुञ्ज संग्रहालय",
+   "tourism": "museum"
+  },
+  "x": 468.2,
+  "z": 204.2,
+  "lat": 27.803157,
+  "lon": 86.714752,
+  "sizeM": [
+   37.9,
+   18.6
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "tourism=museum; OSM name in Nepali means Sagarmatha National Park Museum, name:en is Tenzing Norgay Sherpa Heritage Center; ele=3563. 37.9 by 18.6 m, nine-vertex outline, clear width 13.3 m. 903 m and 153 to 162 m of climb from the entrance. Untagged buildings south of it are presumably park and army offices. ele 3551/3554 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "tenzing_memorial",
+  "name": "Tenzing Norgay memorial",
+  "osmId": "node/6992316686",
+  "tags": {
+   "historic": "memorial",
+   "name:en": "Tenzing Norgay Sherpa (The Gentleman from Chomolungma)"
+  },
+  "x": 499.1,
+  "z": 205.0,
+  "lat": 27.80315,
+  "lon": 86.715065,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "historic=memorial, 15.8 m east of the museum building. The ridge viewpoint area of the brief. ele 3549/3551 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "everest_view_point",
+  "name": "Everest View Point (ridge viewpoint)",
+  "osmId": "node/703894933",
+  "tags": {
+   "name": "Everest View Point",
+   "tourism": "viewpoint"
+  },
+  "x": 523.2,
+  "z": 270.2,
+  "lat": 27.802562,
+  "lon": 86.715309,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "tourism=viewpoint at the end of way/56081267. 1,003 m and 145 to 156 m of climb from the entrance (791 m from the centre). The prototype's lm.view. ele 3543/3546 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "ridge_viewpoint_south",
+  "name": "Unnamed viewpoint at the south tip of the ridge",
+  "osmId": "node/12778065240",
+  "tags": {
+   "tourism": "viewpoint"
+  },
+  "x": 489.3,
+  "z": 289.5,
+  "lat": 27.802387,
+  "lon": 86.714965,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "tourism=viewpoint, 36 m from the nearest mapped path. ele 3551/3551 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "polish_memorial",
+  "name": "Polish Climbers Memorial",
+  "osmId": "node/12778109498",
+  "tags": {
+   "alt_name": "Pomnik polskich himalaistów",
+   "historic": "memorial",
+   "name": "Polish Climbers Memorial",
+   "name:pl": "Memoriał polskich himalaistów"
+  },
+  "x": 560.3,
+  "z": 307.4,
+  "lat": 27.802226,
+  "lon": 86.715686,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "historic=memorial, at the end of way/344649901 on the east side of the ridge. ele 3524/3529 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "helipad_ridge_north",
+  "name": "Helipad on the ridge (north)",
+  "osmId": "way/344633041",
+  "tags": {
+   "aeroway": "helipad",
+   "name": "Namche Sagarmatha Murrphy helipad"
+  },
+  "x": 438.4,
+  "z": 119.4,
+  "lat": 27.803922,
+  "lon": 86.714449,
+  "sizeM": [
+   11.3,
+   11.2
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "aeroway=helipad, circle 11.3 m across; lane way/344647316 ends 18 m away. ele 3539/3544 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "helipad_ridge_south",
+  "name": "Helipad on the ridge (south, by the park museum)",
+  "osmId": "way/378779804",
+  "tags": {
+   "aeroway": "helipad"
+  },
+  "x": 467.8,
+  "z": 264.3,
+  "lat": 27.802615,
+  "lon": 86.714747,
+  "sizeM": [
+   11.7,
+   11.7
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "aeroway=helipad, circle 11.7 m across, unnamed. ele 3553/3554 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "helipad_west",
+  "name": "Helipad on the west spur",
+  "osmId": "way/539956612",
+  "tags": {
+   "aeroway": "helipad",
+   "name": "Namche Bazar Helipad"
+  },
+  "x": -354.8,
+  "z": 156.7,
+  "lat": 27.803586,
+  "lon": 86.7064,
+  "sizeM": [
+   13.8,
+   13.7
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "aeroway=helipad, 13.8 m square, 329 m west of the gate in a straight line, 624 m by path. ele 3487/3502 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "viewpoint_west",
+  "name": "Viewpoint on the west spur looking across the whole bowl",
+  "osmId": "node/10726063805",
+  "tags": {
+   "name:en": "Best view point Namche",
+   "name:fr": "Viewpoint sur Namche",
+   "tourism": "viewpoint"
+  },
+  "x": -345.5,
+  "z": 148.7,
+  "lat": 27.803658,
+  "lon": 86.706494,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "tourism=viewpoint (named Best view point Namche in OSM), 10 m from the west helipad. The natural camera for the amphitheatre vista. ele 3491/3504 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "lookout_chhorkung",
+  "name": "Lookout above the east side",
+  "osmId": "node/10734779105",
+  "tags": {
+   "name:en": "Lookout",
+   "tourism": "viewpoint"
+  },
+  "x": 299.0,
+  "z": 33.7,
+  "lat": 27.804696,
+  "lon": 86.713035,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "tourism=viewpoint beside the east lane at the edge of Chhorkung. ele 3509/3506 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "lookout_north_east",
+  "name": "Lookout on the main trail",
+  "osmId": "node/10736726505",
+  "tags": {
+   "name:en": "Lookout Namche Bazaar",
+   "tourism": "viewpoint"
+  },
+  "x": 222.2,
+  "z": -61.5,
+  "lat": 27.805555,
+  "lon": 86.712255,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "tourism=viewpoint, 6.7 m off way/25143515. ele 3494/3485 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "mani_rock_chhorkung",
+  "name": "Carved mani rock at the Chhorkung junction",
+  "osmId": "node/5224347926",
+  "tags": {
+   "historic": "wayside_shrine",
+   "natural": "rock",
+   "religion": "buddhist",
+   "wayside_shrine": "mani"
+  },
+  "x": 327.7,
+  "z": -28.9,
+  "lat": 27.805261,
+  "lon": 86.713326,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "historic=wayside_shrine + wayside_shrine=mani + natural=rock, on the main trail. ele 3531/3525 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "syangboche_airstrip",
+  "name": "Syangboche airstrip",
+  "osmId": "way/312895324",
+  "tags": {
+   "aeroway": "aerodrome",
+   "ele": "3763",
+   "iata": "SYH",
+   "icao": "VNSB",
+   "name": "स्याङ्बोचे हवाइ-मैदान",
+   "name:en": "Syangboche Airfield",
+   "name:ja": "シャンボチェ空港",
+   "name:ne": "स्याङ्बोचे हवाइ-मैदान"
+  },
+  "x": 222.4,
+  "z": -699.0,
+  "lat": 27.811308,
+  "lon": 86.712257,
+  "sizeM": [
+   482.2,
+   61.6
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "aeroway=aerodrome, 482 by 62 m, 300 m above the town; runway line way/222642247 is 441 m as drawn. Outside the play area; a skyline feature only. ele 3756/3745 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "health_post",
+  "name": "Namche Health Post",
+  "osmId": "way/312775939",
+  "tags": {
+   "building": "hospital",
+   "name": "नाम्चे स्वास्थ्य चौकी",
+   "name:en": "Namche Health Post",
+   "name:ne": "नाम्चे स्वास्थ्य चौकी"
+  },
+  "x": 89.8,
+  "z": -215.2,
+  "lat": 27.806942,
+  "lon": 86.710911,
+  "sizeM": [
+   38.2,
+   9.6
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "building=hospital, 38.2 by 9.6 m, above the bowl on the rim path: 695 m and about 120 m of climb from the entrance. Real, but far for a wake-up point. ele 3525/3521 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "clinic_centre",
+  "name": "Clinic on the main street",
+  "osmId": "node/4529329989",
+  "tags": {
+   "amenity": "clinic",
+   "emergency": "yes",
+   "healthcare": "clinic",
+   "name:en": "Mountain Medical Institute"
+  },
+  "x": 51.1,
+  "z": 54.9,
+  "lat": 27.804504,
+  "lon": 86.710518,
+  "sizeM": [
+   44.6,
+   8.4
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "amenity=clinic + healthcare=clinic + emergency=yes, inside block way/300651644 (248.6 m2, 44.6 by 8.4 m, clear width 6.9 m) together with node/10206424517 (amenity=pharmacy) and three cafe nodes. sizeM is the whole block. ele 3425/3419 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "pharmacy_main_street",
+  "name": "Pharmacy on the main street",
+  "osmId": "node/4518666091",
+  "tags": {
+   "amenity": "pharmacy",
+   "name": "Lord Buddha Pharmacy",
+   "name:en": "Lord Buddha Pharmacy"
+  },
+  "x": 43.1,
+  "z": 50.6,
+  "lat": 27.804544,
+  "lon": 86.710437,
+  "sizeM": [
+   34.8,
+   12.1
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "amenity=pharmacy, 1.9 m outside the wall of way/344628778 (295.2 m2, 34.8 by 12.1 m), which also carries a bakery, a bank and a cash machine. sizeM is that block. ele 3424/3419 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "pharmacy_clinic",
+  "name": "Pharmacy run by the clinic",
+  "osmId": "node/10206424517",
+  "tags": {
+   "amenity": "pharmacy",
+   "name:en": "Pharmacy : Managed by the Mountain Medical Institute"
+  },
+  "x": 43.5,
+  "z": 41.8,
+  "lat": 27.804623,
+  "lon": 86.710441,
+  "sizeM": [
+   44.6,
+   8.4
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "amenity=pharmacy inside block way/300651644, 13 m from the clinic node. ele 3425/3420 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "hospital_east",
+  "name": "Community hospital on the east side",
+  "osmId": "node/12801774023",
+  "tags": {
+   "amenity": "hospital",
+   "name": "Um Hong Gil Namche Community Hospital"
+  },
+  "x": 162.5,
+  "z": 91.2,
+  "lat": 27.804177,
+  "lon": 86.711649,
+  "sizeM": [
+   17.0,
+   7.8
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "amenity=hospital inside way/1050011416 (131.5 m2, 17.0 by 7.8 m), 463 m from the entrance. ele 3474/3468 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "dentist",
+  "name": "Dental clinic",
+  "osmId": "node/4497769889",
+  "tags": {
+   "amenity": "dentist"
+  },
+  "x": 100.4,
+  "z": 145.4,
+  "lat": 27.803688,
+  "lon": 86.711019,
+  "sizeM": [
+   12.7,
+   7.6
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "amenity=dentist inside way/312775922 (97.1 m2). ele 3439/3452 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "bakery_main_street_west",
+  "name": "Bakery on the main street (west side)",
+  "osmId": "node/4417284096",
+  "tags": {
+   "name:en": "Everest Bakery",
+   "shop": "bakery"
+  },
+  "x": 30.4,
+  "z": 57.7,
+  "lat": 27.804479,
+  "lon": 86.710308,
+  "sizeM": [
+   22.9,
+   15.5
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "shop=bakery inside way/312775920 (278.4 m2, 22.9 by 15.5 m, clear width 11.5 m) with a coffee shop node. 169 m from the entrance. Best bakery interior candidate. Use an invented name. ele 3421/3416 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "bakery_main_street_east",
+  "name": "Bakery on the main street (east side)",
+  "osmId": "node/4417284097",
+  "tags": {
+   "name:en": "Namche Bakery",
+   "shop": "bakery"
+  },
+  "x": 45.5,
+  "z": 64.0,
+  "lat": 27.804422,
+  "lon": 86.710461,
+  "sizeM": [
+   34.8,
+   12.1
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "shop=bakery 0.4 m outside way/344628778 (295.2 m2). Use an invented name. ele 3424/3417 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "bakery_west_block",
+  "name": "Bakery in the big west block",
+  "osmId": "node/425189497",
+  "tags": {
+   "name": "Hermann Helmers Bäckerei und Konditorei",
+   "shop": "bakery"
+  },
+  "x": -37.5,
+  "z": 20.1,
+  "lat": 27.804818,
+  "lon": 86.709619,
+  "sizeM": [
+   64.8,
+   25.1
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "shop=bakery on the wall of block way/312775983 (844.1 m2, seven businesses). Use an invented name. ele 3433/3428 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "gear_shop",
+  "name": "Outdoor gear shop",
+  "osmId": "node/14356276101",
+  "tags": {
+   "name": "Himali",
+   "shop": "outdoor"
+  },
+  "x": 10.6,
+  "z": -6.4,
+  "lat": 27.805058,
+  "lon": 86.710107,
+  "sizeM": [
+   17.0,
+   10.7
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "The only shop=outdoor in the export, inside way/312775969 (158.6 m2, 17.0 by 10.7 m, clear width 10.7 m) with a bar and a massage shop. 266 m from the entrance, 40 m north-west of the centre. Use an invented name. ele 3430/3428 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "gear_shop_alt",
+  "name": "Trekking goods store",
+  "osmId": "node/4516437389",
+  "tags": {
+   "name:en": "Everest Trekking Shop",
+   "shop": "department_store"
+  },
+  "x": -43.8,
+  "z": 11.0,
+  "lat": 27.804901,
+  "lon": 86.709556,
+  "sizeM": [
+   64.8,
+   25.1
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "shop=department_store on the wall of block way/312775983. Use an invented name. ele 3437/3433 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "trekking_agency",
+  "name": "Trekking agency office",
+  "osmId": null,
+  "tags": {},
+  "x": 69.4,
+  "z": -16.9,
+  "lat": 27.805153,
+  "lon": 86.710704,
+  "sizeM": [
+   20.7,
+   9.5
+  ],
+  "inOsm": false,
+  "confidence": "low",
+  "note": "NOT IN OSM: the export has no office=* feature, and the fetch query never asked for one. x,z and sizeM are a suggested host, untagged footprint way/345803160 (163.9 m2, 20.7 by 9.5 m), 40 m north of the centre and 10.6 m off the main trail. The footprint is real; the use is invented and must be registered. ele 3436/3434 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "school",
+  "name": "Primary school",
+  "osmId": "node/1899516188",
+  "tags": {
+   "amenity": "school",
+   "designation": "Primary School",
+   "int_name": "Shree Madhyamik Vidhyalaya",
+   "name": "श्री हिमालय प्राथमिक विद्यालय",
+   "name:en": "Namche Primary School",
+   "name:ne": "श्री हिमालय प्राथमिक विद्यालय"
+  },
+  "x": 223.0,
+  "z": 145.4,
+  "lat": 27.803688,
+  "lon": 86.712263,
+  "sizeM": [
+   24.4,
+   8.6
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "amenity=school node, 1.0 m from way/620032227 (202.8 m2). Mid slope, 69 m from any mapped path. ele 3488/3493 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "post_office",
+  "name": "Post office",
+  "osmId": "node/6904613985",
+  "tags": {
+   "amenity": "post_office",
+   "name:en": "Namche Post Office"
+  },
+  "x": -68.1,
+  "z": -26.1,
+  "lat": 27.805235,
+  "lon": 86.709309,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "amenity=post_office, 1.5 m from way/341314576. ele 3458/3463 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "library_bank",
+  "name": "Community library and a bank",
+  "osmId": "way/300651645",
+  "tags": {
+   "building": "yes"
+  },
+  "x": 126.8,
+  "z": 109.9,
+  "lat": 27.804008,
+  "lon": 86.711287,
+  "sizeM": [
+   17.9,
+   10.2
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Untagged footprint 176.2 m2 holding node/6048574134 (amenity=library) and node/6048574135 (amenity=bank). ele 3454/3456 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "hydro_power_house",
+  "name": "Micro-hydro power house",
+  "osmId": "way/344631381",
+  "tags": {
+   "building": "yes",
+   "generator:method": "run-of-the-river",
+   "generator:source": "hydro",
+   "power": "generator"
+  },
+  "x": 167.3,
+  "z": -70.8,
+  "lat": 27.805638,
+  "lon": 86.711698,
+  "sizeM": [
+   9.0,
+   4.5
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "power=generator, generator:source=hydro, run-of-the-river; 9.0 by 4.5 m at the north-east head of the bowl. Hints at a watercourse there that OSM does not map. ele 3469/3470 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "lodge_way_300645628",
+  "name": "Ama-Dablam Lodge",
+  "osmId": "way/300645628",
+  "tags": {
+   "building": "yes",
+   "name": "Ama-Dablam Lodge",
+   "tourism": "guest_house"
+  },
+  "x": 100.7,
+  "z": 51.9,
+  "lat": 27.804532,
+  "lon": 86.711022,
+  "sizeM": [
+   21.9,
+   17.5
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 276.5 m2, clear width 10.6 m, bowl; 298 m by path from the entrance; ele 3439/3430 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_300645629",
+  "name": "Hotel Hill-ten",
+  "osmId": "way/300645629",
+  "tags": {
+   "building": "yes",
+   "name": "Hotel Hill-ten",
+   "tourism": "guest_house"
+  },
+  "x": 84.1,
+  "z": 145.5,
+  "lat": 27.803687,
+  "lon": 86.710853,
+  "sizeM": [
+   22.6,
+   17.8
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 333.3 m2, clear width 13.5 m, bowl; 352 m by path from the entrance; ele 3431/3444 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_300645632",
+  "name": "Hotel Camp de Base",
+  "osmId": "way/300645632",
+  "tags": {
+   "building": "yes",
+   "name": "Hotel Camp de Base",
+   "tourism": "guest_house"
+  },
+  "x": 140.1,
+  "z": 21.5,
+  "lat": 27.804806,
+  "lon": 86.711422,
+  "sizeM": [
+   19.0,
+   6.7
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 126.7 m2, clear width 6.7 m, bowl; 364 m by path from the entrance; ele 3449/3441 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_300645638",
+  "name": "Alpine Lodge Cafe and Grill",
+  "osmId": "way/300645638",
+  "tags": {
+   "amenity": "cafe",
+   "building": "yes",
+   "name": "Alpine Lodge Cafe and Grill",
+   "tourism": "guest_house"
+  },
+  "x": -64.2,
+  "z": -44.5,
+  "lat": 27.805402,
+  "lon": 86.709349,
+  "sizeM": [
+   21.0,
+   9.5
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 198.6 m2, clear width 9.5 m, bowl; 362 m by path from the entrance; ele 3465/3473 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_300645648",
+  "name": "Khumbu Resort",
+  "osmId": "way/300645648",
+  "tags": {
+   "building": "yes",
+   "building:levels": "4",
+   "name:en": "Khumbu Resort",
+   "tourism": "guest_house"
+  },
+  "x": 120.1,
+  "z": -116.1,
+  "lat": 27.806048,
+  "lon": 86.711219,
+  "sizeM": [
+   19.1,
+   14.4
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 209.1 m2, clear width 10.4 m, bowl; 408 m by path from the entrance; ele 3477/3476 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_300645654",
+  "name": "Yeti Mountain Home",
+  "osmId": "way/300645654",
+  "tags": {
+   "amenity": "restaurant",
+   "building": "yes",
+   "name": "Yeti Mountain Home",
+   "tourism": "guest_house"
+  },
+  "x": 271.5,
+  "z": 28.6,
+  "lat": 27.804742,
+  "lon": 86.712755,
+  "sizeM": [
+   49.1,
+   22.7
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 649.7 m2, clear width 15.5 m, mid; 587 m by path from the entrance; ele 3498/3498 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_300645655",
+  "name": "Comfort Inn",
+  "osmId": "way/300645655",
+  "tags": {
+   "building": "yes",
+   "name": "Comfort Inn",
+   "tourism": "guest_house"
+  },
+  "x": -0.3,
+  "z": 72.7,
+  "lat": 27.804344,
+  "lon": 86.709997,
+  "sizeM": [
+   25.2,
+   10.8
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 271.0 m2, clear width 10.8 m, bowl; 149 m by path from the entrance; ele 3412/3407 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_300645656",
+  "name": "Zamling Guesthouse",
+  "osmId": "way/300645656",
+  "tags": {
+   "amenity": "restaurant",
+   "building": "yes",
+   "name": "Zamling Guesthouse",
+   "tourism": "guest_house"
+  },
+  "x": -81.6,
+  "z": -45.0,
+  "lat": 27.805406,
+  "lon": 86.709172,
+  "sizeM": [
+   22.5,
+   13.0
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 265.1 m2, clear width 12.7 m, bowl; 347 m by path from the entrance; ele 3471/3477 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_300645715",
+  "name": "Hotel Tibet",
+  "osmId": "way/300645715",
+  "tags": {
+   "building": "yes",
+   "name": "Hotel Tibet",
+   "tourism": "guest_house"
+  },
+  "x": 108.5,
+  "z": -33.1,
+  "lat": 27.805298,
+  "lon": 86.711101,
+  "sizeM": [
+   30.2,
+   14.1
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 300.2 m2, clear width 9.5 m, bowl; 323 m by path from the entrance; ele 3447/3445 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775877",
+  "name": "Hotel Tibetane Restaurant",
+  "osmId": "way/312775877",
+  "tags": {
+   "amenity": "restaurant",
+   "building": "yes",
+   "name": "Hotel Tibetane Restaurant",
+   "tourism": "guest_house"
+  },
+  "x": 122.5,
+  "z": 356.4,
+  "lat": 27.801784,
+  "lon": 86.711243,
+  "sizeM": [
+   11.4,
+   5.3
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 59.8 m2, clear width 5.3 m, out; 298 m by path from the entrance; ele 3372/3362 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775879",
+  "name": "Unnamed lodge",
+  "osmId": "way/312775879",
+  "tags": {
+   "amenity": "restaurant",
+   "building": "yes",
+   "tourism": "guest_house"
+  },
+  "x": -49.8,
+  "z": 3.6,
+  "lat": 27.804968,
+  "lon": 86.709495,
+  "sizeM": [
+   17.6,
+   9.9
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 173.7 m2, clear width 9.9 m, bowl; 330 m by path from the entrance; ele 3441/3438 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775888",
+  "name": "home away from home",
+  "osmId": "way/312775888",
+  "tags": {
+   "amenity": "restaurant",
+   "building": "yes",
+   "name": "home away from home",
+   "tourism": "guest_house"
+  },
+  "x": 147.2,
+  "z": -78.9,
+  "lat": 27.805712,
+  "lon": 86.711494,
+  "sizeM": [
+   17.1,
+   9.0
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 153.3 m2, clear width 9.0 m, bowl; 413 m by path from the entrance; ele 3467/3469 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775908",
+  "name": "Hotel Snowland",
+  "osmId": "way/312775908",
+  "tags": {
+   "building": "yes",
+   "name": "Hotel Snowland",
+   "tourism": "guest_house"
+  },
+  "x": -75.4,
+  "z": 25.0,
+  "lat": 27.804774,
+  "lon": 86.709235,
+  "sizeM": [
+   16.3,
+   13.6
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 221.5 m2, clear width 13.6 m, bowl; 316 m by path from the entrance; ele 3441/3450 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775910",
+  "name": "Hotel Camp de Base",
+  "osmId": "way/312775910",
+  "tags": {
+   "building": "yes",
+   "name": "Hotel Camp de Base",
+   "tourism": "guest_house"
+  },
+  "x": 107.6,
+  "z": -11.6,
+  "lat": 27.805105,
+  "lon": 86.711092,
+  "sizeM": [
+   12.4,
+   10.4
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 122.1 m2, clear width 10.0 m, bowl; 318 m by path from the entrance; ele 3441/3440 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775918",
+  "name": "Pumori Guesthouse",
+  "osmId": "way/312775918",
+  "tags": {
+   "building": "yes",
+   "name:en": "Pumori Guesthouse",
+   "tourism": "guest_house"
+  },
+  "x": -102.2,
+  "z": 82.9,
+  "lat": 27.804252,
+  "lon": 86.708963,
+  "sizeM": [
+   12.8,
+   9.8
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 125.3 m2, clear width 9.8 m, bowl; 222 m by path from the entrance; ele 3429/3439 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775929",
+  "name": "Danfe Lodge & restaurant",
+  "osmId": "way/312775929",
+  "tags": {
+   "amenity": "tourism",
+   "building": "yes",
+   "name": "Danfe Lodge & restaurant",
+   "tourism": "guest_house"
+  },
+  "x": 314.4,
+  "z": -24.6,
+  "lat": 27.805222,
+  "lon": 86.71319,
+  "sizeM": [
+   11.3,
+   8.8
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 99.6 m2, clear width 8.8 m, ridge; 666 m by path from the entrance; ele 3524/3520 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775932",
+  "name": "Mustang Guest House and Restaurant",
+  "osmId": "way/312775932",
+  "tags": {
+   "amenity": "restaurant",
+   "building": "yes",
+   "name": "Mustang Guest House and Restaurant",
+   "tourism": "guest_house"
+  },
+  "x": 343.0,
+  "z": -34.5,
+  "lat": 27.805311,
+  "lon": 86.71348,
+  "sizeM": [
+   13.3,
+   8.7
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 114.8 m2, clear width 8.7 m, ridge; 722 m by path from the entrance; ele 3532/3530 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775933",
+  "name": "Mountain View Lodge",
+  "osmId": "way/312775933",
+  "tags": {
+   "amenity": "restaurant",
+   "building": "yes",
+   "name": "Mountain View Lodge",
+   "tourism": "guest_house"
+  },
+  "x": -49.0,
+  "z": -76.4,
+  "lat": 27.805689,
+  "lon": 86.709503,
+  "sizeM": [
+   19.9,
+   8.0
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 159.1 m2, clear width 8.0 m, bowl; 476 m by path from the entrance; ele 3472/3483 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775935",
+  "name": "Green Tara Hotel",
+  "osmId": "way/312775935",
+  "tags": {
+   "building": "yes",
+   "name": "Green Tara Hotel",
+   "tourism": "guest_house"
+  },
+  "x": 115.5,
+  "z": 33.0,
+  "lat": 27.804702,
+  "lon": 86.711172,
+  "sizeM": [
+   28.2,
+   7.2
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 202.0 m2, clear width 7.2 m, bowl; 348 m by path from the entrance; ele 3443/3434 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775943",
+  "name": "Thamersku View Lodge and Restaurant",
+  "osmId": "way/312775943",
+  "tags": {
+   "amenity": "restaurant",
+   "building": "yes",
+   "building:levels": "3",
+   "name": "Thamersku View Lodge and Restaurant",
+   "tourism": "guest_house"
+  },
+  "x": 79.4,
+  "z": 37.9,
+  "lat": 27.804658,
+  "lon": 86.710806,
+  "sizeM": [
+   16.7,
+   7.1
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 119.1 m2, clear width 7.1 m, bowl; 252 m by path from the entrance; ele 3431/3424 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775961",
+  "name": "Nirvana Home",
+  "osmId": "way/312775961",
+  "tags": {
+   "building": "yes",
+   "name": "Nirvana Home",
+   "tourism": "guest_house"
+  },
+  "x": -125.0,
+  "z": 59.2,
+  "lat": 27.804466,
+  "lon": 86.708731,
+  "sizeM": [
+   22.1,
+   9.8
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 215.3 m2, clear width 9.8 m, bowl; 240 m by path from the entrance; ele 3447/3454 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775968",
+  "name": "Sun Site Lodge",
+  "osmId": "way/312775968",
+  "tags": {
+   "building": "yes",
+   "name": "Sun Site Lodge",
+   "tourism": "guest_house"
+  },
+  "x": -71.0,
+  "z": 53.8,
+  "lat": 27.804514,
+  "lon": 86.709279,
+  "sizeM": [
+   12.9,
+   10.8
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 96.8 m2, clear width 6.5 m, bowl; 256 m by path from the entrance; ele 3430/3436 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775977",
+  "name": "Hotel Norling",
+  "osmId": "way/312775977",
+  "tags": {
+   "building": "yes",
+   "name": "Hotel Norling",
+   "tourism": "guest_house"
+  },
+  "x": -98.0,
+  "z": 40.6,
+  "lat": 27.804634,
+  "lon": 86.709006,
+  "sizeM": [
+   22.4,
+   11.3
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 252.1 m2, clear width 11.3 m, bowl; 269 m by path from the entrance; ele 3443/3454 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775979",
+  "name": "Moonlight Lodge and Restaurant",
+  "osmId": "way/312775979",
+  "tags": {
+   "amenity": "restaurant",
+   "building": "yes",
+   "building:levels": "4",
+   "name": "Moonlight Lodge and Restaurant",
+   "tourism": "guest_house"
+  },
+  "x": 162.6,
+  "z": -89.0,
+  "lat": 27.805803,
+  "lon": 86.711651,
+  "sizeM": [
+   17.8,
+   11.2
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 156.9 m2, clear width 8.4 m, bowl; 410 m by path from the entrance; ele 3472/3476 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775982",
+  "name": "Sherpa Barista Home",
+  "osmId": "way/312775982",
+  "tags": {
+   "building": "hotel",
+   "name": "Sherpa Barista Home"
+  },
+  "x": 39.2,
+  "z": 7.9,
+  "lat": 27.804929,
+  "lon": 86.710398,
+  "sizeM": [
+   11.9,
+   8.3
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 98.1 m2, clear width 8.3 m, bowl; 239 m by path from the entrance; ele 3428/3427 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775988",
+  "name": "Hill Top Lodge & Restaurant",
+  "osmId": "way/312775988",
+  "tags": {
+   "building": "yes",
+   "name:en": "Hill Top Lodge & Restaurant",
+   "tourism": "guest_house"
+  },
+  "x": 337.4,
+  "z": 27.1,
+  "lat": 27.804756,
+  "lon": 86.713424,
+  "sizeM": [
+   18.8,
+   7.7
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 145.5 m2, clear width 7.7 m, ridge; 737 m by path from the entrance; ele 3521/3517 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775990",
+  "name": "Home Away from Home",
+  "osmId": "way/312775990",
+  "tags": {
+   "building": "yes",
+   "name": "Home Away from Home",
+   "tourism": "guest_house"
+  },
+  "x": 300.4,
+  "z": -28.2,
+  "lat": 27.805255,
+  "lon": 86.713049,
+  "sizeM": [
+   15.4,
+   8.9
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 136.5 m2, clear width 8.9 m, ridge; 696 m by path from the entrance; ele 3519/3517 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_312775998",
+  "name": "Panorama Lodge",
+  "osmId": "way/312775998",
+  "tags": {
+   "building": "yes",
+   "building:levels": "3",
+   "name": "Panorama Lodge",
+   "tourism": "guest_house"
+  },
+  "x": 209.9,
+  "z": 88.2,
+  "lat": 27.804204,
+  "lon": 86.71213,
+  "sizeM": [
+   13.7,
+   12.1
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 165.4 m2, clear width 12.1 m, mid; 501 m by path from the entrance; ele 3484/3483 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_341314576",
+  "name": "Sagarmatha Lodge",
+  "osmId": "way/341314576",
+  "tags": {
+   "amenity": "restaurant",
+   "building": "yes",
+   "name": "Sagarmatha Lodge",
+   "tourism": "guest_house"
+  },
+  "x": -80.1,
+  "z": -22.7,
+  "lat": 27.805204,
+  "lon": 86.709187,
+  "sizeM": [
+   20.1,
+   7.8
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 149.6 m2, clear width 7.8 m, bowl; 338 m by path from the entrance; ele 3461/3467 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_539956608",
+  "name": "The Green Tara Hotel",
+  "osmId": "way/539956608",
+  "tags": {
+   "building": "yes",
+   "name": "The Green Tara Hotel",
+   "tourism": "guest_house"
+  },
+  "x": 127.1,
+  "z": 23.6,
+  "lat": 27.804787,
+  "lon": 86.711289,
+  "sizeM": [
+   16.8,
+   5.6
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 92.9 m2, clear width 5.6 m, bowl; 338 m by path from the entrance; ele 3446/3438 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_way_1050011479",
+  "name": "Himalayan culture home",
+  "osmId": "way/1050011479",
+  "tags": {
+   "building": "yes",
+   "name": "Himalayan culture home",
+   "tourism": "guest_house"
+  },
+  "x": 28.6,
+  "z": -107.9,
+  "lat": 27.805973,
+  "lon": 86.71029,
+  "sizeM": [
+   19.9,
+   14.3
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge footprint, 193.1 m2, clear width 9.0 m, bowl; 433 m by path from the entrance; ele 3468/3463 m. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_419103135",
+  "name": "Hotel Everest",
+  "osmId": "node/419103135",
+  "tags": {
+   "name": "Hotel Everest",
+   "tourism": "guest_house"
+  },
+  "x": -150.4,
+  "z": 114.9,
+  "lat": 27.803963,
+  "lon": 86.708474,
+  "sizeM": [
+   14.0,
+   7.0
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/1050011461 (97.0 m2, clear width 6.9 m); ele 3432/3446 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_703972430",
+  "name": "Namaste Lodge",
+  "osmId": "node/703972430",
+  "tags": {
+   "name": "Namaste Lodge",
+   "name:he": "נמסטה",
+   "tourism": "guest_house"
+  },
+  "x": 61.6,
+  "z": -2.6,
+  "lat": 27.805024,
+  "lon": 86.710625,
+  "sizeM": [
+   11.9,
+   7.5
+  ],
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Lodge node 1.5 m from footprint way/345803162 (88.9 m2, clear width 7.5 m); ele 3432/3430 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_1492311483",
+  "name": "Kongde View Lodge",
+  "osmId": "node/1492311483",
+  "tags": {
+   "name": "Kongde View Lodge",
+   "tourism": "guest_house"
+  },
+  "x": 60.9,
+  "z": 76.5,
+  "lat": 27.804309,
+  "lon": 86.710618,
+  "sizeM": [
+   44.6,
+   8.4
+  ],
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Lodge node 0.0 m from footprint way/300651644 (248.6 m2, clear width 6.9 m), shared with other businesses; ele 3426/3420 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_1679191781",
+  "name": "Khumbu Guest House",
+  "osmId": "node/1679191781",
+  "tags": {
+   "name": "Khumbu Guest House",
+   "tourism": "guest_house"
+  },
+  "x": 30.3,
+  "z": 2.0,
+  "lat": 27.804982,
+  "lon": 86.710307,
+  "sizeM": [
+   19.1,
+   17.9
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/312775989 (242.8 m2, clear width 10.0 m), shared with other businesses; ele 3429/3428 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_4312078689",
+  "name": "International Foot Rest Lodge",
+  "osmId": "node/4312078689",
+  "tags": {
+   "name": "International Foot Rest Lodge",
+   "tourism": "guest_house"
+  },
+  "x": 29.2,
+  "z": 32.0,
+  "lat": 27.804711,
+  "lon": 86.710297,
+  "sizeM": [
+   27.5,
+   18.5
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/344884456 (269.7 m2, clear width 10.3 m), shared with other businesses; ele 3424/3422 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_4436183790",
+  "name": "Mountain View Hotel",
+  "osmId": "node/4436183790",
+  "tags": {
+   "name:en": "Mountain View Hotel",
+   "tourism": "guest_house"
+  },
+  "x": 8.4,
+  "z": -84.2,
+  "lat": 27.80576,
+  "lon": 86.710085,
+  "sizeM": [
+   19.0,
+   6.7
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/312775960 (127.5 m2, clear width 6.7 m); ele 3457/3454 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_4501033189",
+  "name": "Yak Hotel",
+  "osmId": "node/4501033189",
+  "tags": {
+   "name:en": "Yak Hotel",
+   "tourism": "guest_house"
+  },
+  "x": -40.6,
+  "z": 6.9,
+  "lat": 27.804938,
+  "lon": 86.709588,
+  "sizeM": [
+   64.8,
+   25.1
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/312775983 (844.1 m2, clear width 18.8 m), shared with other businesses; ele 3437/3432 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_4516428296",
+  "name": "Holiday Namche",
+  "osmId": "node/4516428296",
+  "tags": {
+   "name:en": "Holiday Namche",
+   "tourism": "guest_house"
+  },
+  "x": -73.6,
+  "z": 47.5,
+  "lat": 27.804572,
+  "lon": 86.709253,
+  "sizeM": [
+   12.9,
+   10.8
+  ],
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Lodge node 0.9 m from footprint way/312775968 (96.8 m2, clear width 6.5 m); ele 3433/3440 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_4518666090",
+  "name": "Khumbu Lodge",
+  "osmId": "node/4518666090",
+  "tags": {
+   "name:en": "Khumbu Lodge",
+   "tourism": "guest_house"
+  },
+  "x": 29.7,
+  "z": 15.5,
+  "lat": 27.80486,
+  "lon": 86.710302,
+  "sizeM": [
+   57.2,
+   25.3
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/344884455 (728.4 m2, clear width 13.2 m), shared with other businesses; ele 3427/3425 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_4529300791",
+  "name": "Khumbu Lodge",
+  "osmId": "node/4529300791",
+  "tags": {
+   "name:en": "Khumbu Lodge",
+   "tourism": "guest_house"
+  },
+  "x": 20.4,
+  "z": 16.5,
+  "lat": 27.804851,
+  "lon": 86.710207,
+  "sizeM": [
+   57.2,
+   25.3
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/344884455 (728.4 m2, clear width 13.2 m), shared with other businesses; ele 3426/3424 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_4812530722",
+  "name": "Khangri Hotel",
+  "osmId": "node/4812530722",
+  "tags": {
+   "name:en": "Khangri Hotel",
+   "tourism": "guest_house"
+  },
+  "x": 21.9,
+  "z": 3.8,
+  "lat": 27.804965,
+  "lon": 86.710223,
+  "sizeM": [
+   19.1,
+   17.9
+  ],
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Lodge node 0.4 m from footprint way/312775989 (242.8 m2, clear width 10.0 m), shared with other businesses; ele 3428/3427 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_4850971922",
+  "name": "Sherpa Village Hotel",
+  "osmId": "node/4850971922",
+  "tags": {
+   "name:en": "Sherpa Village Hotel",
+   "tourism": "guest_house"
+  },
+  "x": 86.3,
+  "z": -3.6,
+  "lat": 27.805032,
+  "lon": 86.710876,
+  "sizeM": [
+   8.5,
+   7.8
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/345803161 (66.7 m2, clear width 7.8 m), shared with other businesses; ele 3434/3433 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_4853517721",
+  "name": "hotel sherwi",
+  "osmId": "node/4853517721",
+  "tags": {
+   "name:en": "hotel sherwi",
+   "tourism": "guest_house"
+  },
+  "x": 452.6,
+  "z": -4.4,
+  "lat": 27.805039,
+  "lon": 86.714593,
+  "sizeM": [
+   39.8,
+   24.0
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/300645643 (736.7 m2, clear width 24.0 m); ele 3518/3515 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_4854247821",
+  "name": "KalaPatthar Lodge",
+  "osmId": "node/4854247821",
+  "tags": {
+   "name:en": "KalaPatthar Lodge",
+   "tourism": "guest_house"
+  },
+  "x": 42.9,
+  "z": 106.6,
+  "lat": 27.804038,
+  "lon": 86.710436,
+  "sizeM": [
+   32.7,
+   17.9
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/312775985 (327.8 m2, clear width 9.6 m), shared with other businesses; ele 3420/3418 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_4866107279",
+  "name": "The Nest at Namche",
+  "osmId": "node/4866107279",
+  "tags": {
+   "name": "The Nest at Namche",
+   "tourism": "guest_house"
+  },
+  "x": -74.6,
+  "z": 118.0,
+  "lat": 27.803935,
+  "lon": 86.709243,
+  "sizeM": [
+   31.6,
+   13.6
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/300645649 (429.2 m2, clear width 13.6 m); ele 3411/3405 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_5227617621",
+  "name": "Valley View Lodge",
+  "osmId": "node/5227617621",
+  "tags": {
+   "name:en": "Valley View Lodge",
+   "tourism": "guest_house"
+  },
+  "x": -15.6,
+  "z": -19.4,
+  "lat": 27.805176,
+  "lon": 86.709842,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Lodge node 7.2 m from footprint way/345803280 (75.0 m2, clear width 6.8 m); ele 3439/3433 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_5549807723",
+  "name": "AD Friendship Lodge",
+  "osmId": "node/5549807723",
+  "tags": {
+   "name:en": "AD Friendship Lodge",
+   "tourism": "guest_house"
+  },
+  "x": 151.3,
+  "z": 0.9,
+  "lat": 27.804992,
+  "lon": 86.711535,
+  "sizeM": [
+   41.4,
+   9.9
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/312775955 (287.8 m2, clear width 9.9 m), shared with other businesses; ele 3448/3445 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_5641827927",
+  "name": "Himalayan Lodge",
+  "osmId": "node/5641827927",
+  "tags": {
+   "name:en": "Himalayan Lodge",
+   "tourism": "guest_house"
+  },
+  "x": 101.3,
+  "z": 89.0,
+  "lat": 27.804197,
+  "lon": 86.711028,
+  "sizeM": [
+   25.1,
+   10.1
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/312775954 (252.0 m2, clear width 10.1 m); ele 3441/3437 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_6078676687",
+  "name": "Hotel Namche",
+  "osmId": "node/6078676687",
+  "tags": {
+   "name:en": "Hotel Namche",
+   "tourism": "guest_house"
+  },
+  "x": -5.2,
+  "z": -2.8,
+  "lat": 27.805025,
+  "lon": 86.709948,
+  "sizeM": [
+   64.8,
+   25.1
+  ],
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Lodge node 0.8 m from footprint way/312775983 (844.1 m2, clear width 18.8 m), shared with other businesses; ele 3430/3427 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_6142588466",
+  "name": "Yak Hotel & Restaurant",
+  "osmId": "node/6142588466",
+  "tags": {
+   "name": "Yak Hotel & Restaurant",
+   "tourism": "guest_house"
+  },
+  "x": -90.7,
+  "z": 55.1,
+  "lat": 27.804502,
+  "lon": 86.709079,
+  "sizeM": [
+   14.3,
+   4.8
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/344864108 (69.0 m2, clear width 4.8 m); ele 3435/3445 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_6342602990",
+  "name": "Family Lodge",
+  "osmId": "node/6342602990",
+  "tags": {
+   "name:en": "Family Lodge",
+   "tourism": "guest_house"
+  },
+  "x": 86.2,
+  "z": 30.5,
+  "lat": 27.804724,
+  "lon": 86.710874,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Lodge node 5.4 m from footprint way/312775943 (119.1 m2, clear width 7.1 m); ele 3433/3426 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_6342603098",
+  "name": "Hotel Sherpaland",
+  "osmId": "node/6342603098",
+  "tags": {
+   "name:en": "Hotel Sherpaland",
+   "tourism": "guest_house"
+  },
+  "x": 64.0,
+  "z": 34.7,
+  "lat": 27.804686,
+  "lon": 86.710649,
+  "sizeM": [
+   35.6,
+   17.4
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/312775986 (391.5 m2, clear width 13.3 m); ele 3429/3423 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_6452255985",
+  "name": "Lhasa Guest House",
+  "osmId": "node/6452255985",
+  "tags": {
+   "name:en": "Lhasa Guest House",
+   "tourism": "guest_house"
+  },
+  "x": 88.1,
+  "z": -47.0,
+  "lat": 27.805424,
+  "lon": 86.710894,
+  "sizeM": [
+   9.1,
+   7.6
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/345803158 (68.8 m2, clear width 7.6 m); ele 3446/3446 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_6865968785",
+  "name": "Footrest Lodge",
+  "osmId": "node/6865968785",
+  "tags": {
+   "name:en": "Footrest Lodge",
+   "tourism": "guest_house"
+  },
+  "x": 47.0,
+  "z": -13.0,
+  "lat": 27.805117,
+  "lon": 86.710477,
+  "sizeM": [
+   13.7,
+   5.2
+  ],
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Lodge node 2.9 m from footprint way/1050011392 (70.3 m2, clear width 5.2 m), shared with other businesses; ele 3434/3431 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_6897688185",
+  "name": "Mountain Dreams",
+  "osmId": "node/6897688185",
+  "tags": {
+   "name:en": "Mountain Dreams",
+   "tourism": "guest_house"
+  },
+  "x": 53.1,
+  "z": 4.7,
+  "lat": 27.804958,
+  "lon": 86.710539,
+  "sizeM": [
+   11.7,
+   9.4
+  ],
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Lodge node 0.8 m from footprint way/312775917 (109.4 m2, clear width 9.4 m), shared with other businesses; ele 3430/3428 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_6924446487",
+  "name": "Tamang Hotel",
+  "osmId": "node/6924446487",
+  "tags": {
+   "name:en": "Tamang Hotel",
+   "tourism": "guest_house"
+  },
+  "x": 106.0,
+  "z": -44.6,
+  "lat": 27.805403,
+  "lon": 86.711076,
+  "sizeM": [
+   13.7,
+   6.7
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/341314479 (90.8 m2, clear width 6.7 m); ele 3450/3448 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_6924470986",
+  "name": "Namche Bazaar Guest House & Restaurant",
+  "osmId": "node/6924470986",
+  "tags": {
+   "name:en": "Namche Bazaar Guest House & Restaurant",
+   "tourism": "guest_house"
+  },
+  "x": 95.0,
+  "z": -60.5,
+  "lat": 27.805546,
+  "lon": 86.710964,
+  "sizeM": [
+   23.1,
+   13.3
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/312775991 (234.1 m2, clear width 9.9 m); ele 3452/3451 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_6924470987",
+  "name": "Mt. Kailash Lodge & Restaurant",
+  "osmId": "node/6924470987",
+  "tags": {
+   "name:en": "Mt. Kailash Lodge & Restaurant",
+   "tourism": "guest_house"
+  },
+  "x": 140.1,
+  "z": -14.3,
+  "lat": 27.805129,
+  "lon": 86.711421,
+  "sizeM": [
+   41.4,
+   9.9
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/312775955 (287.8 m2, clear width 9.9 m), shared with other businesses; ele 3449/3446 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_6924473585",
+  "name": "Sakura Guest House",
+  "osmId": "node/6924473585",
+  "tags": {
+   "name:en": "Sakura Guest House",
+   "tourism": "guest_house"
+  },
+  "x": 163.2,
+  "z": 7.9,
+  "lat": 27.804929,
+  "lon": 86.711656,
+  "sizeM": [
+   41.4,
+   9.9
+  ],
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Lodge node 2.6 m from footprint way/312775955 (287.8 m2, clear width 9.9 m), shared with other businesses; ele 3453/3447 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_6978805685",
+  "name": "Sona Lodge",
+  "osmId": "node/6978805685",
+  "tags": {
+   "name:en": "Sona Lodge",
+   "tourism": "guest_house"
+  },
+  "x": 158.0,
+  "z": 9.5,
+  "lat": 27.804915,
+  "lon": 86.711603,
+  "sizeM": [
+   41.4,
+   9.9
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/312775955 (287.8 m2, clear width 9.9 m), shared with other businesses; ele 3452/3446 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_10657608605",
+  "name": "Khumbtse Lodge",
+  "osmId": "node/10657608605",
+  "tags": {
+   "name:en": "Khumbtse Lodge",
+   "tourism": "hostel"
+  },
+  "x": 110.1,
+  "z": -192.8,
+  "lat": 27.80674,
+  "lon": 86.711117,
+  "sizeM": [
+   22.5,
+   6.7
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/1050011482 (151.1 m2, clear width 6.7 m); ele 3516/3512 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_10840977505",
+  "name": "Namaste lodge",
+  "osmId": "node/10840977505",
+  "tags": {
+   "name:en": "Namaste lodge",
+   "tourism": "guest_house"
+  },
+  "x": 58.0,
+  "z": 10.1,
+  "lat": 27.804908,
+  "lon": 86.710588,
+  "sizeM": [
+   14.6,
+   7.3
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/312775964 (105.7 m2, clear width 7.3 m), shared with other businesses; ele 3430/3427 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_10851785305",
+  "name": "Thawa lodge",
+  "osmId": "node/10851785305",
+  "tags": {
+   "name:en": "Thawa lodge",
+   "tourism": "guest_house"
+  },
+  "x": 44.0,
+  "z": 23.1,
+  "lat": 27.804792,
+  "lon": 86.710446,
+  "sizeM": [
+   57.2,
+   25.3
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/344884455 (728.4 m2, clear width 13.2 m), shared with other businesses; ele 3427/3424 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_11621247169",
+  "name": "SHERPA HOME",
+  "osmId": "node/11621247169",
+  "tags": {
+   "name": "SHERPA HOME",
+   "tourism": "guest_house"
+  },
+  "x": 51.6,
+  "z": -3.6,
+  "lat": 27.805032,
+  "lon": 86.710524,
+  "sizeM": [
+   11.7,
+   9.4
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/312775917 (109.4 m2, clear width 9.4 m), shared with other businesses; ele 3431/3430 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_12794072201",
+  "name": "Hotel Everest",
+  "osmId": "node/12794072201",
+  "tags": {
+   "name": "Hotel Everest",
+   "tourism": "guest_house"
+  },
+  "x": -130.1,
+  "z": 89.6,
+  "lat": 27.804192,
+  "lon": 86.70868,
+  "sizeM": [
+   19.1,
+   8.1
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/300645635 (154.9 m2, clear width 8.1 m), shared with other businesses; ele 3437/3447 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_12797546416",
+  "name": "Namche Terrace",
+  "osmId": "node/12797546416",
+  "tags": {
+   "name": "Namche Terrace",
+   "tourism": "guest_house"
+  },
+  "x": 232.4,
+  "z": -21.1,
+  "lat": 27.805191,
+  "lon": 86.712359,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "Lodge node 44.5 m from footprint way/300645654 (649.7 m2, clear width 15.5 m); ele 3486/3479 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_13266936001",
+  "name": "Magar Hotel & Khaja Ghar",
+  "osmId": "node/13266936001",
+  "tags": {
+   "name": "Magar Hotel & Khaja Ghar",
+   "tourism": "guest_house"
+  },
+  "x": 61.3,
+  "z": 135.3,
+  "lat": 27.80378,
+  "lon": 86.710622,
+  "sizeM": [
+   17.7,
+   8.5
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/312775981 (149.6 m2, clear width 8.5 m), shared with other businesses; ele 3424/3431 m. sizeM is that footprint. Real name: do not put it on a sign."
+ },
+ {
+  "key": "lodge_node_13267188301",
+  "name": "Hotel 8848",
+  "osmId": "node/13267188301",
+  "tags": {
+   "name": "Hotel 8848",
+   "tourism": "guest_house"
+  },
+  "x": 60.1,
+  "z": 139.3,
+  "lat": 27.803743,
+  "lon": 86.71061,
+  "sizeM": [
+   17.7,
+   8.5
+  ],
+  "inOsm": true,
+  "confidence": "high",
+  "note": "Lodge node inside footprint way/312775981 (149.6 m2, clear width 8.5 m), shared with other businesses; ele 3424/3431 m. sizeM is that footprint. Real name: do not put it on a sign."
+ }
+]
