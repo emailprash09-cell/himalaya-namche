@@ -145,10 +145,71 @@ def obb(pts):
     return cx,cy,w,h,ux,uz
 ROOFW=[0.30,0.17,0.17,0.14,0.12,0.10]  # blue, teal, green, red, silver, darkgreen
 WALLW=[0.42,0.28,0.16,0.14]            # stone, whitewash, wood, plaster
-out=[]
+# ---------- T1a: resolve overlapping footprints ----------
+# Overlap depth = width of the overlap region (2 x radius of its largest inscribed circle).
+# Under 1.5 m: the smaller footprint is cut back to the shared edge (usually a simplification sliver).
+# Over 1.5 m: the two footprints are merged into one outline, so the shared interior walls disappear.
+from shapely.geometry import Polygon as SPoly
+from shapely.ops import polylabel, unary_union
+from shapely.strtree import STRtree
+def ovl_depth(a,b):
+    I=a.intersection(b)
+    if I.is_empty or I.area<1e-4: return 0.0
+    g=max(getattr(I,'geoms',[I]),key=lambda q:q.area)
+    if g.geom_type!='Polygon' or g.area<1e-4: return 0.0
+    return 2*polylabel(g,0.005).distance(g.exterior)
+def largest(g):
+    if g.is_empty: return None
+    return max(getattr(g,'geoms',[g]),key=lambda q:q.area) if g.geom_type!='Polygon' else g
+SIMP=[]   # [shapely polygon or None, [props...]] in source order
 for ring,p in BLD:
     s=simplify(ring)
     if cv2.contourArea(s.astype(np.float32))<9: continue
+    SIMP.append([SPoly(s.astype(float)).buffer(0),[p]])
+def resolve_overlaps(items):
+    shrunk=merged=0
+    for _ in range(6):
+        live=[k for k,it in enumerate(items) if it[0] is not None]
+        tree=STRtree([items[k][0] for k in live]); changed=False
+        for a_i,ka in enumerate(live):
+            A=items[ka][0]
+            if A is None: continue
+            for b_i in tree.query(A):
+                kb=live[b_i]
+                if kb<=ka or items[kb][0] is None or items[ka][0] is None: continue
+                A=items[ka][0]; Bp=items[kb][0]; d=ovl_depth(A,Bp)
+                if d<=0: continue
+                if d>1.5:
+                    U=largest(unary_union([A,Bp]).buffer(0.01).buffer(-0.01))
+                    items[ka]=[U,items[ka][1]+items[kb][1]]; items[kb]=[None,[]]; merged+=1
+                else:
+                    big,small=(ka,kb) if A.area>=Bp.area else (kb,ka)
+                    cut=largest(items[small][0].difference(items[big][0].buffer(0.12)))
+                    if cut is None or cut.area<4: cut=items[small][0]   # never delete a building
+                    items[small][0]=cut.simplify(0.05); shrunk+=1
+                changed=True
+        if not changed: break
+    return shrunk,merged
+n_shr,n_mer=resolve_overlaps(SIMP)
+FINAL=[(it[0],it[1]) for it in SIMP if it[0] is not None]
+_tree=STRtree([f[0] for f in FINAL]); _maxd=0.0; _pairs=0
+for i,(Pi,_) in enumerate(FINAL):
+    for j in _tree.query(Pi):
+        if j<=i: continue
+        d=ovl_depth(Pi,FINAL[j][0])
+        if d>0.0: _pairs+=1; _maxd=max(_maxd,d)
+print('T1a footprints: shrunk',n_shr,'merged',n_mer,'| remaining overlapping pairs',_pairs,'max depth m',round(_maxd,3))
+def merged_props(ps):
+    if len(ps)==1: return ps[0]
+    pr={'lodge':5,'gompa':6,'shop':4,'museum':3,'school':3,'civic':3,'house':1}
+    best=max(ps,key=lambda q:pr[kind_of(q)]); out_p=dict(best)
+    out_p['name']=' / '.join([q.get('name') for q in ps if q.get('name')])[:38] or best.get('name','')
+    return out_p
+
+out=[]
+for poly,ps in FINAL:
+    p=merged_props(ps)
+    s=np.array(poly.exterior.coords[:-1],np.float32)
     cx,cz,w,h,ux,uz=obb(s)
     area=float(cv2.contourArea(s.astype(np.float32)))
     k=kind_of(p)
@@ -162,10 +223,13 @@ for ring,p in BLD:
     if k=='gompa': wall=1
     frame=int(rng.choice(4,p=[0.30,0.30,0.22,0.18]))
     bal=1 if (k in ('lodge','shop') and f>=3 and rng.random()<0.45) else 0
-    pts=[[round(float(q[0]),1),round(float(q[1]),1)] for q in s]
+    pts=[[round(float(q[0]),2),round(float(q[1]),2)] for q in s]
     out.append(dict(p=pts,f=f,r=roof,w=wall,fr=frame,k=k,b=bal,
                     u=[round(ux,3),round(uz,3)],c=[round(float(cx),1),round(float(cz),1)],
                     d=[round(float(w),1),round(float(h),1)],n=(p.get('name') or '')[:38]))
+_O=[SPoly(b['p']).buffer(0) for b in out]; _t=STRtree(_O)
+_od=[ovl_depth(_O[i],_O[j]) for i in range(len(_O)) for j in _t.query(_O[i]) if j>i]
+print('T1a check on written footprints: pairs overlapping',sum(1 for d in _od if d>0),'max depth m',round(max(_od+[0]),3))
 print('buildings out',len(out),'kinds',{k:sum(1 for b in out if b['k']==k) for k in set(b['k'] for b in out)})
 
 # ---------- paths as polylines for geometry (stairs, edging) ----------
