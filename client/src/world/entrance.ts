@@ -265,7 +265,7 @@ export function buildEntrance(L: Layout, near: Grid, phys: Physics): EntranceHan
       anchors.push(new THREE.Vector3(x, py + 3.55, z));
     }
   }
-  const stupaTop = new THREE.Vector3(st.x, sy + 10.5, st.z);
+  const stupaTop = new THREE.Vector3(st.x, sy + 13.2, st.z); // flags tie on the spire of the 16.5 m model
 
   // ---------------------------------------------------------------- open ground: tents, tarps, shed, boulder, hut
   const sp = new THREE.Vector2(L.spawn.x, L.spawn.z);

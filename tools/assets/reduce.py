@@ -66,7 +66,7 @@ if spire:
     for i in ([] if z0 else range(bins // 3, bins)):
         if rad[i] < 0.22 * R:
             z0 = i / bins * H; break
-    if z0 and spire < H:
+    if z0 and abs(spire - H) > 1e-3:
         f = (spire - z0) / (H - z0)
         for v in me.vertices:
             if v.co.z > z0:

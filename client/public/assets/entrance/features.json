@@ -1,0 +1,2329 @@
+{
+ "about": "Owner annotation marks on the entrance photos, decoded into the local metre frame. Written by the entrance-decode task (scratch scripts in out/entrance-decode/). See docs/plan/entrance_annotations.md.",
+ "colourKey": {
+  "yellow": "buildings of the same architecture with prayer wheels; the yellow building at the very opening is the gate (owner)",
+  "blue": "water flow",
+  "green/mint (\"light cyan green\")": "sharp edges, walls and raised objects",
+  "red": "bridges",
+  "white": "the main stupa",
+  "sampledRGB": {
+   "yellow": [
+    254,
+    230,
+    4
+   ],
+   "green (top view)": [
+    43,
+    228,
+    3
+   ],
+   "mint (eye-level views)": [
+    126,
+    255,
+    158
+   ],
+   "blue": [
+    2,
+    77,
+    228
+   ],
+   "red": [
+    226,
+    28,
+    28
+   ],
+   "white": [
+    255,
+    255,
+    255
+   ]
+  }
+ },
+ "conventions": "points/center in local metres (x east, z south, origin 27.8050 N 86.7100 E); centerWorld = center * 0.65 (game world); size in real metres [long, short]; yawDeg = compass bearing of the long axis (or of the passage for the gate), clockwise from north; in three.js rotation.y = -yawDeg * PI / 180. colour is the owner's stroke colour. Lines are ordered top of image to bottom (water: upstream to downstream).",
+ "transform": {
+  "type": "affine",
+  "from": "reference/chat/chat_05.webp pixels (u right, v down; 887 x 735). chat_06 is the same Google Earth view panned: u05 = u06 - 354, v05 = v06 - 3.",
+  "to": "local metres, x east, z south, origin 27.8050 N 86.7100 E (mlat 110816 m/deg, mlon 98541 m/deg), the frame of docs/audit/landmarks.json",
+  "formula": "x = A[0][0]*u + A[1][0]*v + A[2][0];  z = A[0][1]*u + A[1][1]*v + A[2][1]",
+  "A": [
+   [
+    0.137151,
+    0.107234
+   ],
+   [
+    -0.08331,
+    0.15662
+   ],
+   [
+    -31.131249,
+    63.997368
+   ]
+  ],
+  "metresPerPixel": [
+   0.1741,
+   0.1774
+  ],
+  "imageUpBearingDeg": 28.0,
+  "controlPoints": [
+   {
+    "point": "gate (yellow pentagon) / OSM way/344630686",
+    "px": [
+     386.4,
+     553.8
+    ],
+    "osm": [
+     -24.7,
+     191.1
+    ],
+    "pred": [
+     -24.3,
+     192.2
+    ],
+    "residual_m": 1.17,
+    "leave_one_out_m": 4.26
+   },
+   {
+    "point": "stupa (white scribble) / OSM way/344630942",
+    "px": [
+     201.0,
+     449.9
+    ],
+    "osm": [
+     -42.4,
+     156.6
+    ],
+    "pred": [
+     -41.0,
+     156.0
+    ],
+    "residual_m": 1.52,
+    "leave_one_out_m": 3.82
+   },
+   {
+    "point": "side pavilion (yellow) / OSM way/1050011454",
+    "px": [
+     270.5,
+     447.8
+    ],
+    "osm": [
+     -31.2,
+     163.4
+    ],
+    "pred": [
+     -31.3,
+     163.1
+    ],
+    "residual_m": 0.32,
+    "leave_one_out_m": 0.37
+   },
+   {
+    "point": "row pavilion 1 / OSM way/344630709",
+    "px": [
+     355.1,
+     341.7
+    ],
+    "osm": [
+     -12.1,
+     158.9
+    ],
+    "pred": [
+     -10.9,
+     155.6
+    ],
+    "residual_m": 3.51,
+    "leave_one_out_m": 4.13
+   },
+   {
+    "point": "row pavilion 2 / OSM way/344630875",
+    "px": [
+     356.3,
+     282.9
+    ],
+    "osm": [
+     -6.7,
+     149.0
+    ],
+    "pred": [
+     -5.8,
+     146.5
+    ],
+    "residual_m": 2.66,
+    "leave_one_out_m": 3.13
+   },
+   {
+    "point": "row pavilion 3 / OSM way/344630877",
+    "px": [
+     360.0,
+     244.4
+    ],
+    "osm": [
+     -2.1,
+     140.4
+    ],
+    "pred": [
+     -2.1,
+     140.9
+    ],
+    "residual_m": 0.5,
+    "leave_one_out_m": 0.6
+   },
+   {
+    "point": "row pavilion 4 / OSM way/344630878",
+    "px": [
+     353.8,
+     199.2
+    ],
+    "osm": [
+     1.8,
+     131.2
+    ],
+    "pred": [
+     0.8,
+     133.1
+    ],
+    "residual_m": 2.15,
+    "leave_one_out_m": 2.91
+   },
+   {
+    "point": "row pavilion 5 / OSM way/344630879",
+    "px": [
+     353.4,
+     149.9
+    ],
+    "osm": [
+     5.5,
+     123.8
+    ],
+    "pred": [
+     4.8,
+     125.4
+    ],
+    "residual_m": 1.75,
+    "leave_one_out_m": 2.63
+   },
+   {
+    "point": "cafe L (yellow) / OSM way/1050011453",
+    "px": [
+     266.9,
+     557.2
+    ],
+    "osm": [
+     -38.9,
+     178.3
+    ],
+    "pred": [
+     -40.9,
+     179.9
+    ],
+    "residual_m": 2.56,
+    "leave_one_out_m": 3.95
+   }
+  ],
+  "rmsResidualM": 2.05,
+  "rmsLeaveOneOutM": 3.18,
+  "similarityAlternative": {
+   "metresPerPixel": 0.172,
+   "rotationDeg": 29.1,
+   "rmsResidualM": 2.52
+  },
+  "worldFromLocal": "world = local * 0.65 about the origin (layout.json scale); human-scale sizes are not scaled",
+  "notes": "The 9 control points pair the owner's own marks with the OSM features they plainly denote. Independent check: all OSM buildings, paths and water pushed through the fit onto chat_06 (out/entrance-decode/ov06_crop.png) land on their roofs to about 1 to 3 m (roofs west of the stupa, the L-shaped cafe roof, the gate roof, the pavilion roofs over the channel). Google Earth is a slightly oblique 3D view and the strokes are about 1 m wide, so read every converted mark as +/- 3 m. A homography was unstable and is not used."
+ },
+ "features": [
+  {
+   "id": "gate",
+   "kind": "gate",
+   "colour": "yellow",
+   "points": [
+    [
+     -20.9,
+     183.8
+    ],
+    [
+     -28.0,
+     186.9
+    ],
+    [
+     -29.0,
+     194.7
+    ],
+    [
+     -28.0,
+     197.9
+    ],
+    [
+     -27.1,
+     198.9
+    ],
+    [
+     -21.7,
+     198.9
+    ],
+    [
+     -19.6,
+     196.8
+    ],
+    [
+     -21.2,
+     191.3
+    ],
+    [
+     -20.0,
+     185.1
+    ]
+   ],
+   "center": [
+    -24.4,
+    191.5
+   ],
+   "size": [
+    15.1,
+    9.3
+   ],
+   "yawDeg": 0.0,
+   "notes": "Kani gate. Owner: \"the very opening a yellow similar architecture building gate\". The outline is loose (15 x 9 m round a 4.5 m building); its centre falls 0.5 m from the OSM footprint. Use OSM way/344630686 centre (-24.7, 191.1) and the measured body: 4.5 m square, walls 2.6 m, passage 2.1 m wide x 2.2 m high running north-south at x -24.3, eave band 0.65 m with 16-18 roundels, ridge 3.8-4.0 m, gold finial top 4.5 m. yawDeg here is the passage axis (front faces south, bearing 180). Model: gate3.glb.",
+   "source": "reference/chat/chat_05.webp yellow pentagon round the small red roof at the bottom of the trail; chat_10 yellow outline px [310,32,965,579] with finial and passage; chat_09 unmarked; reference/measure/gate_scale.png",
+   "confidence": "high",
+   "inOsm": true,
+   "osm": {
+    "id": "way/344630686",
+    "center": [
+     -24.7,
+     191.1
+    ],
+    "size": [
+     6.4,
+     5.5
+    ],
+    "longAxisBearingDeg": 179.7,
+    "markToOsmM": 0.5,
+    "iou": 0.33
+   },
+   "centerWorld": [
+    -15.86,
+    124.48
+   ],
+   "crop": "out/entrance-decode/crops/c05_gate.png",
+   "px": [
+    353,
+    504,
+    423,
+    594
+   ],
+   "heightM": 4.5,
+   "yawNote": "passage axis north-south, front faces south",
+   "cropEyeLevel": "out/entrance-decode/crops/eye_gate.png"
+  },
+  {
+   "id": "pavilion_side",
+   "kind": "pavilion",
+   "colour": "yellow",
+   "points": [
+    [
+     -30.9,
+     157.3
+    ],
+    [
+     -34.7,
+     163.9
+    ],
+    [
+     -33.6,
+     166.5
+    ],
+    [
+     -30.7,
+     167.9
+    ],
+    [
+     -29.2,
+     165.8
+    ],
+    [
+     -28.4,
+     162.2
+    ]
+   ],
+   "center": [
+    -30.7,
+    162.8
+   ],
+   "size": [
+    9.3,
+    5.7
+   ],
+   "yawDeg": 29.0,
+   "notes": "Prayer-wheel pavilion beside the stupa, inside the green platform loop. OSM way/1050011454 (holds the Pemba Doma Sherpa memorial node). In chat_12 it stands straight up the steps, right of the stupa, and looks bigger than the row pavilions: use the OSM 5.8 x 5.4 m as the roof and a body of about 3.5 to 4 m (check against plaza_grid). Model: pavilion.glb.",
+   "source": "reference/chat/chat_05.webp yellow box east of the white stupa; chat_12 yellow centre px [380,303,610,493] (roof and posts); chat_10 yellow left px [202,150,300,325] (roof seen past the gate eave, right of the stupa); chat_09 unmarked; reference/measure/plaza_grid.png",
+   "confidence": "high",
+   "inOsm": true,
+   "osm": {
+    "id": "way/1050011454",
+    "center": [
+     -31.2,
+     163.4
+    ],
+    "size": [
+     5.8,
+     5.4
+    ],
+    "longAxisBearingDeg": 119.0,
+    "markToOsmM": 0.8,
+    "iou": 0.68
+   },
+   "centerWorld": [
+    -19.96,
+    105.82
+   ],
+   "crop": "out/entrance-decode/crops/c05_pavilion_side.png",
+   "px": [
+    255,
+    420,
+    289,
+    471
+   ],
+   "heightM": 3.5,
+   "yawNote": "yawDeg is taken from the OSM footprint (side bearing, 0-90); markYawDeg is the long axis of the hand-drawn outline and carries little information.",
+   "cropEyeLevel": "out/entrance-decode/crops/eye_pavilion_side.png",
+   "markYawDeg": null
+  },
+  {
+   "id": "pavilion_row_1",
+   "kind": "pavilion",
+   "colour": "yellow",
+   "points": [
+    [
+     -6.8,
+     152.9
+    ],
+    [
+     -10.6,
+     150.2
+    ],
+    [
+     -11.8,
+     150.7
+    ],
+    [
+     -14.3,
+     154.7
+    ],
+    [
+     -14.8,
+     158.2
+    ],
+    [
+     -12.1,
+     160.7
+    ],
+    [
+     -10.7,
+     160.9
+    ],
+    [
+     -6.6,
+     154.1
+    ]
+   ],
+   "center": [
+    -11.2,
+    155.6
+   ],
+   "size": [
+    9.8,
+    6.3
+   ],
+   "yawDeg": 33.2,
+   "notes": "Water-driven prayer-wheel pavilion 1 of 5, counted up from the gate. OSM way/344630709 sits on a stream culvert. The hand-drawn box is loose (its size and angle mean little); use the OSM centre and a body 2.2 to 2.8 m square, about 3.5 m tall, drum about person height and 1 m across, roof about the OSM outline (4.4 to 4.7 m), low maroon railing round the platform (chat_19). Row bearing from the marks 29 deg, OSM 27 deg. Model: pavilion.glb.",
+   "source": "reference/chat/chat_05.webp yellow box 5 of 5 counted down the column from the top (box 1 counted up from the fountain); chat_12 yellow roof right px [1070,303,1189,375], just above the right wall where the blue line ends; chat_19 and chat_04 (unmarked) show the row from the steps",
+   "confidence": "high",
+   "inOsm": true,
+   "osm": {
+    "id": "way/344630709",
+    "center": [
+     -12.1,
+     158.9
+    ],
+    "size": [
+     4.5,
+     4.4
+    ],
+    "longAxisBearingDeg": 123.2,
+    "markToOsmM": 3.4,
+    "iou": 0.26
+   },
+   "centerWorld": [
+    -7.28,
+    101.14
+   ],
+   "crop": "out/entrance-decode/crops/c05_pavilion_row_1.png",
+   "px": [
+    335,
+    314,
+    373,
+    369
+   ],
+   "heightM": 3.5,
+   "yawNote": "yawDeg is taken from the OSM footprint (side bearing, 0-90); markYawDeg is the long axis of the hand-drawn outline and carries little information.",
+   "cropEyeLevel": "out/entrance-decode/crops/eye_pavilion_row_1.png",
+   "markYawDeg": 31.1
+  },
+  {
+   "id": "pavilion_row_2",
+   "kind": "pavilion",
+   "colour": "yellow",
+   "points": [
+    [
+     -5.4,
+     141.6
+    ],
+    [
+     -8.6,
+     143.2
+    ],
+    [
+     -9.2,
+     145.0
+    ],
+    [
+     -10.4,
+     145.2
+    ],
+    [
+     -10.8,
+     146.2
+    ],
+    [
+     -6.4,
+     150.8
+    ],
+    [
+     -4.4,
+     151.7
+    ],
+    [
+     -3.4,
+     150.9
+    ],
+    [
+     -1.9,
+     147.1
+    ],
+    [
+     -3.8,
+     142.6
+    ]
+   ],
+   "center": [
+    -5.4,
+    146.4
+   ],
+   "size": [
+    9.2,
+    7.5
+   ],
+   "yawDeg": 33.5,
+   "notes": "Water-driven prayer-wheel pavilion 2 of 5, counted up from the gate. OSM way/344630875 sits on a stream culvert. The hand-drawn box is loose (its size and angle mean little); use the OSM centre and a body 2.2 to 2.8 m square, about 3.5 m tall, drum about person height and 1 m across, roof about the OSM outline (4.4 to 4.7 m), low maroon railing round the platform (chat_19). Row bearing from the marks 29 deg, OSM 27 deg. Model: pavilion.glb. The owner drew this box with a pointed (house) top and larger than the others.",
+   "source": "reference/chat/chat_05.webp yellow box 4 of 5 counted down the column from the top (box 2 counted up from the fountain); chat_19 and chat_04 (unmarked) show the row from the steps",
+   "confidence": "high",
+   "inOsm": true,
+   "osm": {
+    "id": "way/344630875",
+    "center": [
+     -6.7,
+     149.0
+    ],
+    "size": [
+     4.6,
+     4.5
+    ],
+    "longAxisBearingDeg": 123.5,
+    "markToOsmM": 2.9,
+    "iou": 0.25
+   },
+   "centerWorld": [
+    -3.51,
+    95.16
+   ],
+   "crop": "out/entrance-decode/crops/c05_pavilion_row_2.png",
+   "px": [
+    329,
+    258,
+    381,
+    304
+   ],
+   "heightM": 3.5,
+   "yawNote": "yawDeg is taken from the OSM footprint (side bearing, 0-90); markYawDeg is the long axis of the hand-drawn outline and carries little information.",
+   "markYawDeg": 136.3
+  },
+  {
+   "id": "pavilion_row_3",
+   "kind": "pavilion",
+   "colour": "yellow",
+   "points": [
+    [
+     -4.8,
+     137.1
+    ],
+    [
+     -5.6,
+     140.1
+    ],
+    [
+     -0.8,
+     144.3
+    ],
+    [
+     1.0,
+     144.1
+    ],
+    [
+     1.4,
+     142.7
+    ],
+    [
+     0.4,
+     140.8
+    ],
+    [
+     -2.8,
+     137.8
+    ]
+   ],
+   "center": [
+    -2.1,
+    140.8
+   ],
+   "size": [
+    9.0,
+    3.6
+   ],
+   "yawDeg": 30.7,
+   "notes": "Water-driven prayer-wheel pavilion 3 of 5, counted up from the gate. OSM way/344630877 sits on a stream culvert. The hand-drawn box is loose (its size and angle mean little); use the OSM centre and a body 2.2 to 2.8 m square, about 3.5 m tall, drum about person height and 1 m across, roof about the OSM outline (4.4 to 4.7 m), low maroon railing round the platform (chat_19). Row bearing from the marks 29 deg, OSM 27 deg. Model: pavilion.glb.",
+   "source": "reference/chat/chat_05.webp yellow box 3 of 5 counted down the column from the top (box 3 counted up from the fountain); chat_19 and chat_04 (unmarked) show the row from the steps",
+   "confidence": "high",
+   "inOsm": true,
+   "osm": {
+    "id": "way/344630877",
+    "center": [
+     -2.1,
+     140.4
+    ],
+    "size": [
+     4.6,
+     4.5
+    ],
+    "longAxisBearingDeg": 30.7,
+    "markToOsmM": 0.4,
+    "iou": 0.51
+   },
+   "centerWorld": [
+    -1.37,
+    91.52
+   ],
+   "crop": "out/entrance-decode/crops/c05_pavilion_row_3.png",
+   "px": [
+    336,
+    233,
+    385,
+    256
+   ],
+   "heightM": 3.5,
+   "yawNote": "yawDeg is taken from the OSM footprint (side bearing, 0-90); markYawDeg is the long axis of the hand-drawn outline and carries little information.",
+   "markYawDeg": 131.2
+  },
+  {
+   "id": "pavilion_row_4",
+   "kind": "pavilion",
+   "colour": "yellow",
+   "points": [
+    [
+     -0.6,
+     129.3
+    ],
+    [
+     -2.4,
+     132.6
+    ],
+    [
+     -2.1,
+     134.2
+    ],
+    [
+     1.9,
+     136.2
+    ],
+    [
+     3.5,
+     135.8
+    ],
+    [
+     3.9,
+     134.2
+    ],
+    [
+     3.2,
+     132.1
+    ]
+   ],
+   "center": [
+    1.1,
+    133.1
+   ],
+   "size": [
+    6.7,
+    5.0
+   ],
+   "yawDeg": 32.2,
+   "notes": "Water-driven prayer-wheel pavilion 4 of 5, counted up from the gate. OSM way/344630878 sits on a stream culvert. The hand-drawn box is loose (its size and angle mean little); use the OSM centre and a body 2.2 to 2.8 m square, about 3.5 m tall, drum about person height and 1 m across, roof about the OSM outline (4.4 to 4.7 m), low maroon railing round the platform (chat_19). Row bearing from the marks 29 deg, OSM 27 deg. Model: pavilion.glb.",
+   "source": "reference/chat/chat_05.webp yellow box 2 of 5 counted down the column from the top (box 4 counted up from the fountain); chat_19 and chat_04 (unmarked) show the row from the steps",
+   "confidence": "high",
+   "inOsm": true,
+   "osm": {
+    "id": "way/344630878",
+    "center": [
+     1.8,
+     131.2
+    ],
+    "size": [
+     4.7,
+     3.8
+    ],
+    "longAxisBearingDeg": 122.2,
+    "markToOsmM": 2.0,
+    "iou": 0.27
+   },
+   "centerWorld": [
+    0.72,
+    86.52
+   ],
+   "crop": "out/entrance-decode/crops/c05_pavilion_row_4.png",
+   "px": [
+    336,
+    186,
+    375,
+    214
+   ],
+   "heightM": 3.5,
+   "yawNote": "yawDeg is taken from the OSM footprint (side bearing, 0-90); markYawDeg is the long axis of the hand-drawn outline and carries little information.",
+   "markYawDeg": 118.6
+  },
+  {
+   "id": "pavilion_row_5",
+   "kind": "pavilion",
+   "colour": "yellow",
+   "points": [
+    [
+     3.2,
+     121.0
+    ],
+    [
+     0.8,
+     125.1
+    ],
+    [
+     6.9,
+     129.7
+    ],
+    [
+     7.8,
+     129.5
+    ],
+    [
+     8.3,
+     127.4
+    ],
+    [
+     7.3,
+     124.2
+    ]
+   ],
+   "center": [
+    5.3,
+    125.5
+   ],
+   "size": [
+    8.8,
+    4.7
+   ],
+   "yawDeg": 33.1,
+   "notes": "Water-driven prayer-wheel pavilion 5 of 5, counted up from the gate. OSM way/344630879 sits on a stream culvert. The hand-drawn box is loose (its size and angle mean little); use the OSM centre and a body 2.2 to 2.8 m square, about 3.5 m tall, drum about person height and 1 m across, roof about the OSM outline (4.4 to 4.7 m), low maroon railing round the platform (chat_19). Row bearing from the marks 29 deg, OSM 27 deg. Model: pavilion.glb.",
+   "source": "reference/chat/chat_05.webp yellow box 1 of 5 counted down the column from the top (box 5 counted up from the fountain); chat_19 and chat_04 (unmarked) show the row from the steps",
+   "confidence": "high",
+   "inOsm": true,
+   "osm": {
+    "id": "way/344630879",
+    "center": [
+     5.5,
+     123.8
+    ],
+    "size": [
+     4.4,
+     4.2
+    ],
+    "longAxisBearingDeg": 123.1,
+    "markToOsmM": 1.7,
+    "iou": 0.32
+   },
+   "centerWorld": [
+    3.44,
+    81.58
+   ],
+   "crop": "out/entrance-decode/crops/c05_pavilion_row_5.png",
+   "px": [
+    331,
+    135,
+    380,
+    164
+   ],
+   "heightM": 3.5,
+   "yawNote": "yawDeg is taken from the OSM footprint (side bearing, 0-90); markYawDeg is the long axis of the hand-drawn outline and carries little information.",
+   "markYawDeg": 127.0
+  },
+  {
+   "id": "cafe_l_building",
+   "kind": "other",
+   "colour": "yellow",
+   "points": [
+    [
+     -37.6,
+     168.5
+    ],
+    [
+     -39.1,
+     168.8
+    ],
+    [
+     -43.3,
+     173.1
+    ],
+    [
+     -44.5,
+     175.3
+    ],
+    [
+     -48.1,
+     179.1
+    ],
+    [
+     -49.5,
+     182.5
+    ],
+    [
+     -49.3,
+     184.0
+    ],
+    [
+     -47.0,
+     184.8
+    ],
+    [
+     -40.9,
+     190.5
+    ],
+    [
+     -39.6,
+     190.5
+    ],
+    [
+     -37.4,
+     188.6
+    ],
+    [
+     -34.6,
+     184.1
+    ],
+    [
+     -35.0,
+     182.7
+    ],
+    [
+     -37.4,
+     180.2
+    ],
+    [
+     -37.7,
+     178.9
+    ],
+    [
+     -35.9,
+     177.1
+    ],
+    [
+     -34.0,
+     173.1
+    ],
+    [
+     -35.1,
+     170.8
+    ]
+   ],
+   "center": [
+    -39.3,
+    179.4
+   ],
+   "size": [
+    19.4,
+    14.3
+   ],
+   "yawDeg": 35.0,
+   "notes": "OSM way/1050011453, amenity=cafe \"Stupa cafe\" (use an invented name in game). The owner outlined it in yellow, but his key gives yellow to prayer-wheel buildings and the gate; the photos show a modern restaurant with a red tile roof, fairy lights and a terrace. Read as \"same roof style\" until he says otherwise (question for the owner). Keep the OSM L footprint; its terrace fills the notch of the L facing the steps.",
+   "source": "reference/chat/chat_05.webp yellow L-shaped outline round the L red roof; it is the lit restaurant in chat_09, chat_10 (left, mint terrace lines) and chat_12 (left)",
+   "confidence": "medium",
+   "inOsm": true,
+   "osm": {
+    "id": "way/1050011453",
+    "center": [
+     -38.9,
+     178.3
+    ],
+    "size": [
+     12.3,
+     12.1
+    ],
+    "longAxisBearingDeg": 125.0,
+    "markToOsmM": 1.2,
+    "iou": 0.44
+   },
+   "centerWorld": [
+    -25.54,
+    116.61
+   ],
+   "crop": "out/entrance-decode/crops/c05_cafe_l_building.png",
+   "px": [
+    228,
+    494,
+    311,
+    605
+   ],
+   "cropEyeLevel": "out/entrance-decode/crops/eye_cafe_l_building.png",
+   "markYawDeg": 37.7,
+   "yawNote": "yawDeg is taken from the OSM footprint (side bearing, 0-90); markYawDeg is the long axis of the hand-drawn outline and carries little information."
+  },
+  {
+   "id": "stupa",
+   "kind": "stupa",
+   "colour": "white",
+   "points": [
+    [
+     -40.3,
+     148.0
+    ],
+    [
+     -42.0,
+     147.5
+    ],
+    [
+     -44.6,
+     148.4
+    ],
+    [
+     -48.3,
+     154.8
+    ],
+    [
+     -46.2,
+     160.9
+    ],
+    [
+     -42.7,
+     163.2
+    ],
+    [
+     -38.1,
+     163.2
+    ],
+    [
+     -37.6,
+     164.1
+    ],
+    [
+     -37.5,
+     162.8
+    ],
+    [
+     -35.6,
+     161.4
+    ],
+    [
+     -34.6,
+     159.5
+    ],
+    [
+     -34.2,
+     157.0
+    ],
+    [
+     -36.6,
+     151.3
+    ]
+   ],
+   "center": [
+    -41.2,
+    155.9
+   ],
+   "size": [
+    14.4,
+    14.3
+   ],
+   "yawDeg": null,
+   "notes": "Main stupa, OSM way/344630942 (man_made=stupa). Scribble centre 1.4 m from OSM; its 14 m size is the scribble, not the stupa. Use the measured shape: stepped square white plinth about 11 m, white dome about 0.6 x base, gold harmika with eyes, gold 13-ring spire with a green skirt; total height about 0.95 x base (10 to 11 m). Model: stupa2.glb (spire about 20 % too tall).",
+   "source": "reference/chat/chat_05.webp white scribble; chat_10 white outline px [16,13,224,291]; chat_12 white outline px [221,151,401,350]; reference/measure/stupa_tops.png",
+   "confidence": "high",
+   "inOsm": true,
+   "osm": {
+    "id": "way/344630942",
+    "center": [
+     -42.4,
+     156.6
+    ],
+    "size": [
+     11.8,
+     8.6
+    ],
+    "markToOsmM": 1.4
+   },
+   "centerWorld": [
+    -26.78,
+    101.34
+   ],
+   "crop": "out/entrance-decode/crops/c05_stupa.png",
+   "px": [
+    160,
+    410,
+    244,
+    490
+   ],
+   "heightM": 10.5,
+   "cropEyeLevel": "out/entrance-decode/crops/eye_stupa.png"
+  },
+  {
+   "id": "water_channel_upper",
+   "kind": "water",
+   "colour": "blue",
+   "points": [
+    [
+     1.7,
+     128.5
+    ],
+    [
+     1.2,
+     129.4
+    ],
+    [
+     0.7,
+     130.3
+    ],
+    [
+     -1.9,
+     135.6
+    ],
+    [
+     -2.4,
+     136.6
+    ],
+    [
+     -2.9,
+     137.5
+    ],
+    [
+     -8.9,
+     149.2
+    ],
+    [
+     -9.3,
+     150.2
+    ],
+    [
+     -14.9,
+     159.8
+    ],
+    [
+     -15.5,
+     160.7
+    ],
+    [
+     -16.7,
+     161.1
+    ],
+    [
+     -17.5,
+     161.8
+    ],
+    [
+     -18.2,
+     162.6
+    ],
+    [
+     -18.6,
+     163.6
+    ],
+    [
+     -18.4,
+     165.1
+    ],
+    [
+     -18.4,
+     166.4
+    ],
+    [
+     -19.1,
+     167.2
+    ],
+    [
+     -19.7,
+     168.1
+    ],
+    [
+     -20.2,
+     169.0
+    ],
+    [
+     -20.8,
+     169.9
+    ],
+    [
+     -21.3,
+     170.8
+    ],
+    [
+     -22.1,
+     171.5
+    ],
+    [
+     -22.7,
+     172.4
+    ],
+    [
+     -23.2,
+     173.3
+    ],
+    [
+     -24.0,
+     174.0
+    ]
+   ],
+   "center": null,
+   "size": null,
+   "yawDeg": null,
+   "notes": "Stream from the head pool down the pavilion row to the fountain. Agrees with OSM way/1267933025..34 to 2 to 3 m; the line runs through every row pavilion, matching the OSM culverts under each one. Flow is south-west (downhill, from the top point to the bottom point).",
+   "source": "reference/chat/chat_05.webp blue line down the pavilion column (visible between the yellow boxes); chat_12 blue right px [734,376,1112,534] running along the top of the right retaining wall from the first row pavilion down to the right bridge rail",
+   "confidence": "high",
+   "inOsm": true,
+   "osm": null,
+   "centerWorld": null,
+   "crop": "out/entrance-decode/crops/c05_water_upper.png",
+   "px": [
+    324,
+    172,
+    352,
+    472
+   ],
+   "cropEyeLevel": "out/entrance-decode/crops/eye_water_channel_upper.png"
+  },
+  {
+   "id": "fountain_marker",
+   "kind": "water",
+   "colour": "blue",
+   "points": [
+    [
+     -18.1,
+     162.9
+    ]
+   ],
+   "center": [
+    -18.1,
+    162.9
+   ],
+   "size": null,
+   "yawDeg": null,
+   "notes": "The dot sits on the Google label pin, which lands 8.7 m north-east of the OSM fountain pool way/1267933037 (-23.3, 170.1, 5.5 m across) and node/11775705677. Google pins are label anchors, not surveyed; keep the OSM pool. In plaza_grid the fountain is a tall jet in a basin right of the steps, behind the curved bridge rail.",
+   "source": "reference/chat/chat_05.webp filled blue dot painted over the Google \"Namche Bazar Fountain\" pin",
+   "confidence": "low",
+   "inOsm": true,
+   "osm": null,
+   "centerWorld": [
+    -11.77,
+    105.89
+   ],
+   "crop": "out/entrance-decode/crops/c05_fountain.png",
+   "px": [
+    324,
+    386,
+    352,
+    412
+   ]
+  },
+  {
+   "id": "water_stream_lower",
+   "kind": "water",
+   "colour": "blue",
+   "points": [
+    [
+     -27.4,
+     177.5
+    ],
+    [
+     -28.0,
+     178.4
+    ],
+    [
+     -28.7,
+     179.2
+    ],
+    [
+     -29.4,
+     180.0
+    ],
+    [
+     -30.1,
+     180.8
+    ],
+    [
+     -30.8,
+     181.6
+    ],
+    [
+     -31.4,
+     182.4
+    ],
+    [
+     -32.0,
+     183.3
+    ],
+    [
+     -32.3,
+     184.4
+    ],
+    [
+     -32.8,
+     185.4
+    ],
+    [
+     -33.3,
+     186.3
+    ],
+    [
+     -33.8,
+     187.2
+    ],
+    [
+     -34.2,
+     188.2
+    ],
+    [
+     -34.9,
+     189.0
+    ],
+    [
+     -35.9,
+     189.5
+    ],
+    [
+     -36.9,
+     190.1
+    ],
+    [
+     -37.4,
+     191.1
+    ],
+    [
+     -38.1,
+     191.8
+    ],
+    [
+     -38.8,
+     192.6
+    ],
+    [
+     -39.7,
+     193.2
+    ],
+    [
+     -40.7,
+     193.8
+    ],
+    [
+     -41.6,
+     194.4
+    ],
+    [
+     -42.6,
+     195.0
+    ],
+    [
+     -43.4,
+     195.7
+    ],
+    [
+     -44.1,
+     196.4
+    ],
+    [
+     -44.7,
+     197.3
+    ],
+    [
+     -45.5,
+     198.0
+    ],
+    [
+     -46.3,
+     198.7
+    ],
+    [
+     -47.1,
+     199.4
+    ],
+    [
+     -48.0,
+     200.1
+    ],
+    [
+     -49.1,
+     200.5
+    ],
+    [
+     -50.2,
+     201.0
+    ],
+    [
+     -50.9,
+     201.8
+    ],
+    [
+     -51.6,
+     202.5
+    ],
+    [
+     -52.8,
+     202.9
+    ],
+    [
+     -54.0,
+     203.4
+    ],
+    [
+     -55.0,
+     203.9
+    ],
+    [
+     -56.2,
+     204.3
+    ],
+    [
+     -57.1,
+     204.9
+    ],
+    [
+     -57.8,
+     205.7
+    ]
+   ],
+   "center": null,
+   "size": null,
+   "yawDeg": null,
+   "notes": "Stream after it passes under the steps just inside the gate, running south-west between the cafe and the gate and on down the ravine. Agrees with OSM culvert way/1267933035 and stream way/312775993 to about 3 m. It never crosses the trail below the gate.",
+   "source": "reference/chat/chat_05.webp blue line from the bridge south-west past the cafe; chat_12 blue left px [102,550,417,578] under the left (west) bridge rails",
+   "confidence": "high",
+   "inOsm": true,
+   "osm": null,
+   "centerWorld": null,
+   "crop": "out/entrance-decode/crops/c05_water_lower.png",
+   "px": [
+    247,
+    496,
+    334,
+    734
+   ],
+   "cropEyeLevel": "out/entrance-decode/crops/eye_water_stream_lower.png"
+  },
+  {
+   "id": "edge_main_steps_east",
+   "kind": "edge",
+   "colour": "green",
+   "points": [
+    [
+     3.4,
+     119.4
+    ],
+    [
+     2.7,
+     120.2
+    ],
+    [
+     2.1,
+     121.0
+    ],
+    [
+     1.4,
+     121.8
+    ],
+    [
+     0.8,
+     122.7
+    ],
+    [
+     0.4,
+     123.7
+    ],
+    [
+     -0.0,
+     124.7
+    ],
+    [
+     -0.4,
+     125.7
+    ],
+    [
+     -0.8,
+     126.7
+    ],
+    [
+     -1.0,
+     127.9
+    ],
+    [
+     -1.5,
+     128.9
+    ],
+    [
+     -2.0,
+     129.8
+    ],
+    [
+     -2.5,
+     130.8
+    ],
+    [
+     -3.0,
+     131.7
+    ],
+    [
+     -3.5,
+     132.6
+    ],
+    [
+     -4.0,
+     133.5
+    ],
+    [
+     -4.5,
+     134.5
+    ],
+    [
+     -5.2,
+     135.3
+    ],
+    [
+     -5.8,
+     136.1
+    ],
+    [
+     -6.5,
+     136.9
+    ],
+    [
+     -7.2,
+     137.7
+    ],
+    [
+     -7.9,
+     138.5
+    ],
+    [
+     -8.6,
+     139.2
+    ],
+    [
+     -9.1,
+     140.2
+    ],
+    [
+     -9.5,
+     141.2
+    ],
+    [
+     -10.0,
+     142.2
+    ],
+    [
+     -10.8,
+     142.9
+    ],
+    [
+     -11.4,
+     143.7
+    ],
+    [
+     -12.2,
+     144.5
+    ],
+    [
+     -13.0,
+     145.2
+    ],
+    [
+     -13.7,
+     145.9
+    ],
+    [
+     -14.4,
+     146.7
+    ],
+    [
+     -15.1,
+     147.5
+    ],
+    [
+     -15.8,
+     148.3
+    ],
+    [
+     -16.3,
+     149.2
+    ]
+   ],
+   "center": null,
+   "size": null,
+   "yawDeg": null,
+   "notes": "Sharp edge along the main stone steps way/551442828: it lies on the OSM centreline to about 1 m, between the 2 m stepped path (west) and the stream and pavilion terraces (east). Build as the kerb or low wall on the east side of the steps. High side: east (pavilion terraces) near the bottom, from chat_12 and chat_19; not certain higher up.",
+   "source": "reference/chat/chat_05.webp green line along the west side of the pavilion column; chat_19 (unmarked) shows the kerb between the steps and the pavilion terraces",
+   "confidence": "medium",
+   "inOsm": false,
+   "osm": null,
+   "centerWorld": null,
+   "crop": "out/entrance-decode/crops/c05_edge_steps.png",
+   "px": [
+    306,
+    125,
+    335,
+    332
+   ],
+   "highSide": "east"
+  },
+  {
+   "id": "edge_stupa_platform",
+   "kind": "edge",
+   "colour": "green",
+   "points": [
+    [
+     -47.6,
+     143.6
+    ],
+    [
+     -48.9,
+     145.9
+    ],
+    [
+     -50.5,
+     147.1
+    ],
+    [
+     -51.2,
+     149.2
+    ],
+    [
+     -50.6,
+     153.5
+    ],
+    [
+     -48.2,
+     161.8
+    ],
+    [
+     -46.1,
+     164.5
+    ],
+    [
+     -41.0,
+     166.5
+    ],
+    [
+     -35.8,
+     166.2
+    ],
+    [
+     -31.5,
+     171.7
+    ],
+    [
+     -27.9,
+     171.4
+    ],
+    [
+     -27.8,
+     167.7
+    ],
+    [
+     -25.8,
+     166.8
+    ],
+    [
+     -24.5,
+     164.1
+    ],
+    [
+     -23.9,
+     160.3
+    ],
+    [
+     -28.1,
+     155.5
+    ],
+    [
+     -34.8,
+     150.8
+    ],
+    [
+     -37.4,
+     149.6
+    ],
+    [
+     -36.1,
+     151.7
+    ],
+    [
+     -30.7,
+     155.5
+    ],
+    [
+     -30.4,
+     156.8
+    ],
+    [
+     -33.9,
+     158.3
+    ],
+    [
+     -35.3,
+     161.6
+    ],
+    [
+     -31.8,
+     157.7
+    ],
+    [
+     -30.4,
+     157.2
+    ],
+    [
+     -29.9,
+     158.1
+    ],
+    [
+     -28.3,
+     157.3
+    ],
+    [
+     -25.4,
+     160.3
+    ],
+    [
+     -25.7,
+     163.6
+    ],
+    [
+     -26.4,
+     165.0
+    ],
+    [
+     -28.1,
+     165.7
+    ],
+    [
+     -29.0,
+     167.4
+    ],
+    [
+     -29.2,
+     170.2
+    ],
+    [
+     -30.9,
+     170.4
+    ],
+    [
+     -32.2,
+     169.4
+    ],
+    [
+     -34.6,
+     165.8
+    ],
+    [
+     -34.9,
+     164.2
+    ],
+    [
+     -35.7,
+     164.2
+    ],
+    [
+     -36.1,
+     162.4
+    ],
+    [
+     -37.4,
+     163.3
+    ],
+    [
+     -37.1,
+     164.7
+    ],
+    [
+     -40.7,
+     165.2
+    ],
+    [
+     -45.6,
+     163.1
+    ],
+    [
+     -46.7,
+     161.8
+    ],
+    [
+     -49.3,
+     153.6
+    ],
+    [
+     -49.7,
+     148.2
+    ],
+    [
+     -48.0,
+     147.2
+    ],
+    [
+     -46.9,
+     144.8
+    ],
+    [
+     -44.3,
+     144.2
+    ],
+    [
+     -41.7,
+     147.1
+    ],
+    [
+     -39.2,
+     148.2
+    ],
+    [
+     -43.7,
+     142.8
+    ]
+   ],
+   "center": [
+    -38.7,
+    158.7
+   ],
+   "size": [
+    32.9,
+    18.3
+   ],
+   "yawDeg": 129.1,
+   "notes": "Raised paved platform (plaza) holding the stupa and the side pavilion; edge on all sides, high side inside. Converted loop is 33 x 18 m on a long axis of bearing 129 deg, including the eastern lobe round the side pavilion, which reaches the foot of the main steps at about (-27, 170). M1 has a 19 x 16 m plaza centred on the stupa only.",
+   "source": "reference/chat/chat_05.webp green closed loop round the stupa and the side pavilion; chat_03 shows the stupa on a raised paved platform above the open ground",
+   "confidence": "medium",
+   "inOsm": false,
+   "osm": null,
+   "centerWorld": [
+    -25.16,
+    103.16
+   ],
+   "crop": "out/entrance-decode/crops/c05_edge_platform.png",
+   "px": [
+    127,
+    399,
+    311,
+    506
+   ],
+   "highSide": "inside"
+  },
+  {
+   "id": "edge_trail_east_wall",
+   "kind": "edge",
+   "colour": "green",
+   "points": [
+    [
+     -24.5,
+     199.8
+    ],
+    [
+     -24.9,
+     200.8
+    ],
+    [
+     -25.2,
+     201.9
+    ],
+    [
+     -25.6,
+     202.9
+    ],
+    [
+     -26.0,
+     204.0
+    ],
+    [
+     -26.2,
+     205.1
+    ],
+    [
+     -26.4,
+     206.3
+    ],
+    [
+     -26.9,
+     207.3
+    ],
+    [
+     -27.4,
+     208.2
+    ],
+    [
+     -27.9,
+     209.1
+    ],
+    [
+     -28.6,
+     209.9
+    ],
+    [
+     -29.2,
+     210.8
+    ],
+    [
+     -29.8,
+     211.6
+    ],
+    [
+     -30.3,
+     212.6
+    ],
+    [
+     -30.7,
+     213.6
+    ],
+    [
+     -31.1,
+     214.6
+    ],
+    [
+     -31.3,
+     215.8
+    ],
+    [
+     -31.5,
+     216.9
+    ],
+    [
+     -31.9,
+     218.0
+    ],
+    [
+     -32.3,
+     219.0
+    ],
+    [
+     -32.8,
+     219.9
+    ]
+   ],
+   "center": null,
+   "size": null,
+   "yawDeg": null,
+   "notes": "Stone retaining wall on the east (right) side of the trail for about 20 m below the gate. On the OSM trail way/551441452 centreline to about 1 m, so build it at the trail's east edge. High side: east (bank above the wall), from chat_09 and chat_10.",
+   "source": "reference/chat/chat_05.webp green line up the trail to the gate's south-east corner; chat_10 mint right px [812,218,966,652]; chat_09 stone wall with a sack on top right of the gate",
+   "confidence": "medium",
+   "inOsm": false,
+   "osm": null,
+   "centerWorld": null,
+   "crop": "out/entrance-decode/crops/c05_edge_trail.png",
+   "px": [
+    400,
+    586,
+    423,
+    707
+   ],
+   "highSide": "east",
+   "cropEyeLevel": "out/entrance-decode/crops/eye_edge_trail_east_wall.png"
+  },
+  {
+   "id": "bridge_gate_inner",
+   "kind": "bridge",
+   "colour": "red",
+   "points": [
+    [
+     -27.6,
+     172.7
+    ],
+    [
+     -26.9,
+     173.5
+    ],
+    [
+     -26.2,
+     174.5
+    ],
+    [
+     -25.6,
+     175.5
+    ],
+    [
+     -25.1,
+     176.7
+    ],
+    [
+     -24.7,
+     178.2
+    ],
+    [
+     -24.1,
+     179.3
+    ],
+    [
+     -23.6,
+     180.5
+    ],
+    [
+     -23.0,
+     181.7
+    ]
+   ],
+   "center": [
+    -25.0,
+    177.0
+   ],
+   "size": [
+    10.2,
+    4.5
+   ],
+   "yawDeg": 152.9,
+   "notes": "The real crossing: the steps from the gate pass over the stream here (OSM way/1373254109 over culvert way/1267933035; no bridge tag). The stroke is the east parapet, a curved maroon railing 0.8 to 0.9 m high with the white key pattern, about 10 m along, bowed about 0.5 m. Landmarks footbridge_plaza (-28.8, 178.4) lies 4 m west of the stroke centre: that is the deck centreline; the parapets stand either side of a 4 to 5 m wide stair. Not in OSM: register as invented, reason \"owner annotation chat_05 and photos chat_11/chat_12\". Model: bridge2.glb (1.6 m wide; real about 2 m, here wider still).",
+   "source": "reference/chat/chat_05.webp red curved stroke between the gate and the fountain, across a gap in the blue line; chat_12 red right rail px [616,471,808,559] (bearings and the 0.85 m rail height put it 9 m from the camera, matching this mark); plaza_grid foreground rail; chat_10 red px [487,321,545,361] seen through the passage",
+   "confidence": "medium",
+   "inOsm": false,
+   "osm": null,
+   "centerWorld": [
+    -16.25,
+    115.05
+   ],
+   "crop": "out/entrance-decode/crops/c05_bridge_gate_inner.png",
+   "px": [
+    313,
+    475,
+    364,
+    506
+   ],
+   "ends": [
+    [
+     -27.6,
+     172.7
+    ],
+    [
+     -23.0,
+     181.7
+    ]
+   ],
+   "lengthM": 10.2,
+   "chordM": 10.1,
+   "bowM": 0.5,
+   "widthM": 4.5,
+   "railHeightM": 0.85,
+   "cropEyeLevel": "out/entrance-decode/crops/eye_bridge_gate_inner.png"
+  },
+  {
+   "id": "bridge_steps_pav1",
+   "kind": "bridge",
+   "colour": "red",
+   "points": [
+    [
+     -17.0,
+     150.6
+    ],
+    [
+     -17.7,
+     151.5
+    ],
+    [
+     -18.2,
+     152.4
+    ],
+    [
+     -18.7,
+     153.3
+    ],
+    [
+     -19.3,
+     154.2
+    ],
+    [
+     -19.9,
+     155.0
+    ],
+    [
+     -20.6,
+     155.9
+    ],
+    [
+     -21.3,
+     156.6
+    ],
+    [
+     -22.1,
+     157.3
+    ],
+    [
+     -22.8,
+     158.1
+    ],
+    [
+     -23.4,
+     159.0
+    ],
+    [
+     -24.0,
+     159.8
+    ]
+   ],
+   "center": [
+    -20.2,
+    155.4
+   ],
+   "size": [
+    11.6,
+    2.0
+   ],
+   "yawDeg": 37.3,
+   "notes": "Second red mark, on the east edge of the main steps for 11 m beside row pavilion 1 (on the OSM steps line to about 1 m). It runs along the channel, not across it, so it is a railed edge or a footbridge from the steps onto the pavilion-1 terrace over the channel; most likely the \"second footbridge further up the channel\" seen in the owner's photos. Not in OSM: register as invented, reason \"owner annotation chat_05\". Not visible in chat_10 or chat_12. Question for the owner.",
+   "source": "reference/chat/chat_05.webp red stroke continuing the green steps edge, beside row pavilion 1",
+   "confidence": "low",
+   "inOsm": false,
+   "osm": null,
+   "centerWorld": [
+    -13.13,
+    101.01
+   ],
+   "crop": "out/entrance-decode/crops/c05_bridge_steps_pav1.png",
+   "px": [
+    295,
+    338,
+    313,
+    406
+   ],
+   "ends": [
+    [
+     -17.0,
+     150.6
+    ],
+    [
+     -24.0,
+     159.8
+    ]
+   ],
+   "lengthM": 11.6,
+   "chordM": 11.6,
+   "bowM": 0.4,
+   "widthM": 2.0,
+   "railHeightM": 0.85
+  },
+  {
+   "id": "bridge_gate_west_parapet",
+   "kind": "bridge",
+   "colour": "red",
+   "points": [
+    [
+     -26.6,
+     184.5
+    ],
+    [
+     -28.0,
+     180.5
+    ],
+    [
+     -30.0,
+     176.5
+    ]
+   ],
+   "center": [
+    -28.0,
+    180.5
+   ],
+   "size": [
+    9.0,
+    4.5
+   ],
+   "yawDeg": 153.0,
+   "notes": "West parapet of the same crossing as bridge_gate_inner: the curved maroon rail with the white key pattern on the left of the steps in chat_12, continuing as the long low rail along the downstream channel at the left of the frame (px [2,474,507,627]). The top view draws only the east parapet. Position is bridge_gate_inner moved about 3.5 m west (stair width 4 to 5 m); good to about 3 m. Not in OSM: invented, reason \"owner annotation chat_12\".",
+   "source": "reference/chat/chat_12.webp red left px [2,474,507,627]; chat_11 unmarked; chat_10 red px [487,321,545,361] through the passage",
+   "confidence": "low",
+   "inOsm": false,
+   "railHeightM": 0.85,
+   "crop": "out/entrance-decode/crops/eye_bridge_gate_west_parapet.png",
+   "px": [
+    2,
+    470,
+    510,
+    630
+   ],
+   "centerWorld": [
+    -18.2,
+    117.33
+   ]
+  },
+  {
+   "id": "edge_inner_east_wall",
+   "kind": "edge",
+   "colour": "mint",
+   "points": [
+    [
+     -21.9,
+     188.0
+    ],
+    [
+     -21.4,
+     181.0
+    ],
+    [
+     -20.3,
+     174.0
+    ]
+   ],
+   "center": null,
+   "size": null,
+   "yawDeg": null,
+   "highSide": "east",
+   "notes": "Tall dressed-stone retaining wall on the right (east) of the steps from the gate's north-east corner up towards row pavilion 1; the stream runs along its top (blue right in chat_12) and the fountain basin stands at its foot. About 2 to 3 m high at the gate, lower up-slope. Course estimated from chat_11/12 bearings and the OSM fountain and stream; good to about 3 m. Not in OSM: invented, reason \"owner annotation chat_12\".",
+   "source": "reference/chat/chat_12.webp mint px [805,381,1046,511], [941,400,1189,464], [985,368,1189,427], [810,520,925,644]; chat_10 mint right px [812,218,966,652] (outside the gate the same wall line continues as edge_trail_east_wall)",
+   "confidence": "low",
+   "inOsm": false,
+   "heightM": 2.5,
+   "crop": "out/entrance-decode/crops/eye_edge_inner_east_wall.png",
+   "px": [
+    700,
+    360,
+    1189,
+    645
+   ],
+   "centerWorld": null
+  },
+  {
+   "id": "edge_cafe_terrace",
+   "kind": "edge",
+   "colour": "mint",
+   "points": [
+    [
+     -34.1,
+     172.8
+    ],
+    [
+     -32.7,
+     182.5
+    ]
+   ],
+   "center": [
+    -33.4,
+    177.6
+   ],
+   "size": null,
+   "yawDeg": 172.0,
+   "highSide": "west",
+   "notes": "Front edge of the cafe's raised terrace (railing, chairs, fairy lights), facing east to the steps across the notch of the OSM L footprint. Terrace floor about 1.5 to 2.5 m above the gate apron (chat_09/10). Ticks under the line in chat_10 are the railing posts. Not in OSM: invented, reason \"owner annotation chat_10/chat_12\".",
+   "source": "reference/chat/chat_10.webp mint left px [0,178,315,327]; chat_12 mint left px [66,311,370,535] (the vertical stroke at px x 358 is the terrace corner)",
+   "confidence": "low",
+   "inOsm": false,
+   "crop": "out/entrance-decode/crops/eye_edge_cafe_terrace.png",
+   "px": [
+    0,
+    170,
+    320,
+    330
+   ],
+   "centerWorld": [
+    -21.71,
+    115.44
+   ]
+  },
+  {
+   "id": "edge_inner_steps",
+   "kind": "edge",
+   "colour": "mint",
+   "points": [
+    [
+     -24.3,
+     187.9
+    ],
+    [
+     -25.2,
+     186.5
+    ],
+    [
+     -26.2,
+     185.1
+    ]
+   ],
+   "center": [
+    -25.2,
+    186.5
+   ],
+   "size": [
+    4.5,
+    3.4
+   ],
+   "yawDeg": 155.0,
+   "notes": "The first flight just past the gate's north face: about 6 risers (about 1 m in all) up to a landing between the two bridge parapets, 4 to 5 m wide. Lines on the treads in chat_12 and through the passage in chat_10. Follows OSM way/1373254109; M1 already builds six risers here.",
+   "source": "reference/chat/chat_12.webp mint px [498,491,554,503], [498,535,628,551], [491,610,508,644]; chat_10 mint px [501,354,589,440]",
+   "confidence": "medium",
+   "inOsm": false,
+   "crop": "out/entrance-decode/crops/eye_edge_inner_steps.png",
+   "px": [
+    480,
+    480,
+    640,
+    645
+   ],
+   "centerWorld": [
+    -16.38,
+    121.23
+   ]
+  },
+  {
+   "id": "edge_apron_kerb_west",
+   "kind": "edge",
+   "colour": "mint",
+   "points": [
+    [
+     -24.8,
+     195.8
+    ],
+    [
+     -28.0,
+     196.0
+    ],
+    [
+     -31.5,
+     196.5
+    ]
+   ],
+   "center": null,
+   "size": null,
+   "yawDeg": null,
+   "highSide": "east",
+   "notes": "Front edge of the stone apron outside the gate on its west side, where it drops to the yard with the stone water-spout trough and the blue bench (chat_09/10, not marked in the top view). Position estimated from chat_10 to about 3 m. Not in OSM: invented, reason \"owner annotation chat_10\".",
+   "source": "reference/chat/chat_10.webp mint bottom px [69,593,452,655]",
+   "confidence": "low",
+   "inOsm": false,
+   "crop": "out/entrance-decode/crops/eye_edge_apron_kerb_west.png",
+   "px": [
+    60,
+    585,
+    460,
+    657
+   ],
+   "centerWorld": null
+  },
+  {
+   "id": "kiosk_yellow_roof",
+   "kind": "other",
+   "colour": "yellow",
+   "points": [
+    [
+     -26.5,
+     166.5
+    ]
+   ],
+   "center": [
+    -26.5,
+    166.5
+   ],
+   "size": [
+    1.2,
+    1.2
+   ],
+   "yawDeg": null,
+   "notes": "Small kiosk or shrine box with a yellow roof on the plaza between the side pavilion and the fountain, at the foot of the main steps (plaza_grid px [530,265,590,340], chat_11 px [530,350,575,380]). The owner outlined it yellow. Not in the top view and not in OSM; position from bearings only, good to about 5 m. Invented, reason \"owner annotation chat_12\".",
+   "source": "reference/chat/chat_12.webp yellow px [662,432,725,473]",
+   "confidence": "low",
+   "inOsm": false,
+   "heightM": 1.6,
+   "crop": "out/entrance-decode/crops/eye_kiosk_yellow_roof.png",
+   "px": [
+    640,
+    420,
+    740,
+    490
+   ],
+   "centerWorld": [
+    -17.23,
+    108.23
+   ]
+  },
+  {
+   "id": "signboard_yellow",
+   "kind": "other",
+   "colour": "yellow",
+   "points": [
+    [
+     -22.0,
+     166.0
+    ]
+   ],
+   "center": [
+    -22.0,
+    166.0
+   ],
+   "size": [
+    1.0,
+    0.2
+   ],
+   "yawDeg": null,
+   "notes": "Tall narrow yellow outline: the lit yellow notice board on posts near the fountain (plaza_grid px [720,210,750,275]; chat_11 px [665,300,690,340]). Probably outlined because it is yellow, not as a pavilion. Position good to about 6 m. Invented, reason \"owner annotation chat_12\".",
+   "source": "reference/chat/chat_12.webp yellow px [824,354,866,428]",
+   "confidence": "low",
+   "inOsm": false,
+   "heightM": 2.5,
+   "crop": "out/entrance-decode/crops/eye_signboard_yellow.png",
+   "px": [
+    810,
+    340,
+    880,
+    440
+   ],
+   "centerWorld": [
+    -14.3,
+    107.9
+   ]
+  },
+  {
+   "id": "entrance_area_ring",
+   "kind": "other",
+   "colour": "red",
+   "points": [],
+   "center": [
+    -30.0,
+    165.0
+   ],
+   "size": null,
+   "yawDeg": null,
+   "notes": "Red hand-drawn ellipse on the whole-town Google view round the entrance area (gate, stupa, pavilion row). It is a highlight, not a bridge, so the red-means-bridge key does not apply to it.",
+   "source": "reference/chat/chat_07.webp red ellipse px about [550,405,660,600]",
+   "confidence": "high",
+   "inOsm": false,
+   "crop": "out/entrance-decode/crops/eye_entrance_area_ring.png",
+   "px": [
+    530,
+    390,
+    680,
+    615
+   ],
+   "centerWorld": [
+    -19.5,
+    107.25
+   ]
+  }
+ ]
+}

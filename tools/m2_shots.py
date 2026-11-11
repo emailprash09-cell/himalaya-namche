@@ -77,6 +77,12 @@ try:
             fly(name, fx, fy, fz, yaw, pitch)
 
         if A.quick:
+            # Warm-up: let every shader compile (look round once) before any frame time is measured.
+            for yaw in (0, 90, 180, 270):
+                pg.evaluate(f'__NAMCHE__.look({yaw},0)'); pg.wait_for_timeout(700)
+            pg.evaluate(f'__NAMCHE__.teleport({sp["x"]},{sp["z"]})')
+            pg.reload(); pg.wait_for_function('window.__NAMCHE__ && window.__NAMCHE__.ready === true', timeout=120000)
+            pg.evaluate('__NAMCHE__.quiet()'); pg.wait_for_timeout(4000)
             pg.evaluate('__NAMCHE__.setMode("fpp")'); shot('spawn_fpp', 1200)
             pg.evaluate('__NAMCHE__.setMode("tpp")'); shot('spawn_tpp', 1200)
             pg.evaluate('__NAMCHE__.setMode("fpp")')

@@ -9,7 +9,7 @@ export interface Post { render(): void; setCamera(c: THREE.Camera): void }
 
 export function buildPost(renderer: THREE.WebGPURenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera, enabled = true): Post {
   if (!enabled) return { render: () => renderer.render(scene, camera), setCamera: () => undefined };
-  const post = new THREE.PostProcessing(renderer);
+  const post = new THREE.RenderPipeline(renderer);
   const scenePass = pass(scene, camera);
   scenePass.setMRT(mrt({ output, normal: normalView }));
   const col = scenePass.getTextureNode('output');

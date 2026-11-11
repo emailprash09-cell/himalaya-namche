@@ -12,6 +12,8 @@ import { buildEntrance } from './world/entrance';
 import { buildBuildings } from './world/buildings';
 import { buildNature } from './world/nature';
 import { buildLanes, loadTown } from './world/lanes';
+import { buildLife } from './world/life';
+import { startAmbience } from './audio/ambience';
 import { PlayerController } from './player/controller';
 import { CameraRig } from './player/camera';
 import { Avatar } from './player/avatar';
@@ -35,7 +37,7 @@ async function boot(): Promise<void> {
   renderer.toneMapping = THREE.AgXToneMapping;
   renderer.toneMappingExposure = RENDER.exposure;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
   app.appendChild(renderer.domElement);
   await renderer.init();
   const backend = (renderer.backend as { isWebGPUBackend?: boolean }).isWebGPUBackend ? 'WebGPU' : 'WebGL2';
@@ -54,8 +56,11 @@ async function boot(): Promise<void> {
   scene.add(lanes.group);
   const veg = await buildNature(layout, near, mid, lodges, lanes.polylines);
   scene.add(veg.group);
+  const life = await buildLife(layout, near, mid, lodges, lanes.polylines, phys);
+  scene.add(life.group);
+  const ambience = startAmbience();
   (window as unknown as { __TOWN__: unknown }).__TOWN__ = { buildings: lodges.count, lanes: lanes.polylines.length,
-    steps: lanes.stepsCount, nature: veg.counts, chimneys: lodges.chimneys.length };
+    steps: lanes.stepsCount, nature: veg.counts, chimneys: lodges.chimneys.length, life: life.counts };
 
   // Invisible walls round the playable entrance area.
   const P = worldCfg.play;
@@ -124,6 +129,10 @@ async function boot(): Promise<void> {
     env.update(feet);
     entrance.updateFlags(time);
     entrance.updateHeroes(time, dt, feet);
+    life.update(dt, time, rig.camera, feet);
+    let streamDist = 999;
+    for (let i = 0; i < life.streams.length; i += 4) streamDist = Math.min(streamDist, life.streams[i].distanceTo(feet));
+    ambience.update(dt, rig.camera, { yaks: life.yaks(), peopleNear: life.peopleNear(feet, 25), streamDist });
     hud.update(dt, rig.mode, input.locked);
 
     post.render();

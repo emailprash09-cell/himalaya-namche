@@ -1,5 +1,34 @@
 # Status
 
+## M2.5 visual pass: done (2026-11-12, branch `m2-visual`)
+
+The town is back at its real size (the old prototype's layout, 310 buildings on full-size Copernicus terrain)
+and now looks lived in on a bright 9 am morning.
+
+- **Buildings** (`client/src/world/buildings.ts`): every building keeps its position and rotation; 2 to 4
+  storeys of 2.6 m; footprints clamped to 8-14 x 6-10 m where neighbours leave room; cut into the slope on
+  dry-stone terraces; stone ground floor, plastered upper floors, 3 to 6 framed windows a floor, doors,
+  balconies, invented signboards, low corrugated-tin roofs with ridge caps, chimney pipes, water tanks, solar
+  panels, dishes, firewood, pots and ladders.
+- **Ground and nature**: CC0 terrain splatting by slope; the prototype's 63 OSM paths as packed-dirt lanes and
+  667 stone stair treads; 886 near pines and 28,561 far pines, 303 rhododendron, 374 juniper, 3,181 grass
+  tufts that move in the wind, 1,084 rocks, puddles on the open ground.
+- **Light**: CC0 partly-cloudy sky HDRI as background and image light, warm 9 am sun (azimuth 124, elevation
+  34), GTAO ambient occlusion, gentle bloom, AgX, reversed depth buffer, light haze, valley mist.
+- **Life**: 10,737 prayer flags on rooftops and across 84 lanes, fluttering on a GPU wind shader; 41 people
+  (trekkers, porters with doko baskets, locals) walking the trail, the kora and the lanes; 2 yak trains of 3
+  with herders; smoke from 10 chimneys; 12 birds; 27 laundry lines; 6 turning prayer wheels in the pavilions
+  the owner marked yellow; synthesised wind, flags, stream, chatter, yak bells and a monastery horn.
+- **Stupa**: the generated model's gold spire is restored, 16.5 m overall.
+
+**Verified** (headless Chromium on the RTX 3050 Ti, WebGL2 backend, 1920 x 1080, frame cap off, after a
+shader warm-up): spawn 64 fps (FPP) and 62 fps (TPP), a lane in town 66 fps, the whole-town overview 64 fps;
+95th-percentile frames 17 to 19 ms; 520 to 720 draw calls. `npm run build` and `npm test` (6/6) pass. Walk test
+25/25 waypoints in FPP and TPP, never stuck or below ground, kora clockwise. No console errors; the only
+warnings are the headless browser's missing WebGPU device.
+
+**Screenshots**: `docs/screenshots/m25/` (`*_before.png`, `*_after.png`, and `steps/` after each step).
+
 ## M1 "Arrive at Namche": done (2026-11-12, branch `m1-arrival`)
 
 The player spawns on the stone path just past a small bridge below the Kani gate and can walk up through

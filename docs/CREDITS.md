@@ -35,3 +35,19 @@ geometry is built from primitives. No reference photo is used as a texture.
 
 Downloaded but not used yet: Quaternius Universal Animation Library and Universal Base Characters (CC0 1.0,
 https://quaternius.com), in `assets-src/cc0/` (git-ignored).
+
+### CC0 assets added in M2.5 (all CC0 1.0, no attribution required; listed for the record)
+
+| Asset | Source | Used for |
+| --- | --- | --- |
+| Grass004, Rock030, PavingStones069, PaintedPlaster017 | ambientCG, https://ambientcg.com | Terrain grass and rock, stone staircases, plastered walls |
+| brown_mud_dry, corrugated_iron, weathered_planks | Poly Haven, https://polyhaven.com | Packed-dirt lanes, tin roofs, doors, balconies, firewood |
+| kloofendal_48d_partly_cloudy_puresky (HDRI) | Poly Haven, https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky | Sky background and image-based light |
+| Stylized Nature MegaKit (Pine_2, Pine_5, Bush_Common, Bush_Common_Flowers, Grass_Common_Short, Rock_Medium_1/2) | Quaternius, https://quaternius.com | Pines, rhododendron, juniper, grass tufts, rocks |
+| Universal Animation Library (Walk_Loop, Walk_Formal_Loop, Idle_Loop) | Quaternius | Walking and idle animation for the crowd |
+| Modular Character Outfits - Fantasy (Peasant, Ranger) | Quaternius | Villagers, trekkers, porters, herders (recoloured) |
+| Farm Animals (Cow) | Quaternius | Yak stand-in, darkened |
+
+Converted locally to 1K WebP textures and Meshopt GLBs (`tools/assets/textures.mjs`, `people.mjs`,
+`fbx2glb.py`). KTX2 was not used: gltf-transform needs the `toktx` binary, which is not installed here.
+All sounds are synthesised in code (`client/src/audio/ambience.ts`); no audio files are shipped.
