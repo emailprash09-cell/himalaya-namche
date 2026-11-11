@@ -16,6 +16,7 @@ import { PlayerController } from './player/controller';
 import { CameraRig } from './player/camera';
 import { Avatar } from './player/avatar';
 import { Hud } from './ui/hud';
+import { buildPost } from './render/post';
 
 const FIXED_DT = 1 / 60;
 
@@ -26,15 +27,15 @@ async function boot(): Promise<void> {
   const params = new URLSearchParams(location.search);
   const renderer = new THREE.WebGPURenderer({
     antialias: true,
-    logarithmicDepthBuffer: true,
+    reversedDepthBuffer: true,
     forceWebGL: params.has('webgl'),
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, RENDER.pixelRatioCap));
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMapping = THREE.AgXToneMapping;
   renderer.toneMappingExposure = RENDER.exposure;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFShadowMap;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   app.appendChild(renderer.domElement);
   await renderer.init();
   const backend = (renderer.backend as { isWebGPUBackend?: boolean }).isWebGPUBackend ? 'WebGPU' : 'WebGL2';
@@ -42,7 +43,7 @@ async function boot(): Promise<void> {
   const scene = new THREE.Scene();
   const [data, phys] = await Promise.all([loadEntrance(), Physics.create()]);
   const { layout, near, mid, far, ground } = data;
-  const env = buildEnvironment(scene);
+  const env = buildEnvironment(scene, renderer);
   scene.add(buildTerrain(layout, near, mid, far, ground));
   phys.addHeightfield(near);
   const entrance = buildEntrance(layout, near, phys);
@@ -75,6 +76,7 @@ async function boot(): Promise<void> {
   const rig = new CameraRig(phys, player.collider, window.innerWidth / window.innerHeight);
   rig.yaw = spawnYaw;
   rig.pitch = THREE.MathUtils.degToRad(worldCfg.spawn.lookPitchDeg);
+  const post = buildPost(renderer, scene, rig.camera, !params.has('nopost'));
   const avatar = new Avatar();
   scene.add(avatar.root);
 
@@ -124,7 +126,7 @@ async function boot(): Promise<void> {
     entrance.updateHeroes(time, dt, feet);
     hud.update(dt, rig.mode, input.locked);
 
-    renderer.render(scene, rig.camera);
+    post.render();
 
     fpsFrames++; fpsTime += dt;
     if (fpsTime >= 0.5) { fps = fpsFrames / fpsTime; frameMs = (fpsTime / fpsFrames) * 1000; fpsFrames = 0; fpsTime = 0; }

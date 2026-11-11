@@ -34,16 +34,16 @@ export const CAMERA = {
 
 export const RENDER = {
   shadowMapSize: 2048,
-  shadowExtent: 70,      // m half-width of the sun's shadow box round the player
+  shadowExtent: 90,      // m half-width of the sun's shadow box round the player
   pixelRatioCap: 1.5,
-  exposure: 0.8,
+  exposure: 0.85,
 } as const;
 
 export const ENV = {
-  // Mid-morning in Namche: the sun in the south-east, about 40 degrees up.
-  sunAzimuthDeg: 135,    // clockwise from north
-  sunElevationDeg: 40,
-  fogColor: 0xb9cfe6,
-  fogNear: 260,
+  // 9 am in late October at 27.8 N: the sun in the east-south-east, low and warm (M2.5).
+  sunAzimuthDeg: 124,    // clockwise from north; matches the sun in the sky HDRI
+  sunElevationDeg: 34,
+  fogColor: 0xbfd2e6,    // light blue haze on the far slopes
+  fogNear: 1200,
   fogFar: 26000,
 } as const;

@@ -5,7 +5,6 @@
 import * as THREE from 'three/webgpu';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
-import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { cos, float, instanceIndex, positionLocal, sin, time, vec3 } from 'three/tsl';
 import { fbm2, rng } from '../core/rng';
 import type { Grid, Layout } from './layout';
@@ -114,7 +113,7 @@ export async function buildNature(L: Layout, near: Grid, mid: Grid, town: Buildi
       if (real < 3540 && R() < 0.4) { push('rhodo', jx, jz, mtx(jx, y - 0.1, jz, yaw, 1.6 + R() * 1.2)); counts.rhodo++; }
       else { push(R() < 0.5 ? 'pine_a' : 'pine_b', jx, jz, mtx(jx, y - 0.2, jz, yaw, sc * 1.4)); counts.pineNear++; }
     } else {
-      const c = new THREE.Color().setHSL(0.29 + R() * 0.05, 0.35 + R() * 0.15, 0.17 + R() * 0.06);
+      const c = new THREE.Color().setHSL(0.3 + R() * 0.05, 0.4 + R() * 0.15, 0.1 + R() * 0.05);
       push('cone', jx, jz, mtx(jx, y - 0.3, jz, yaw, sc * 1.35, 1.1 + R() * 0.4), c); counts.pineFar++;
     }
   }

@@ -1,6 +1,7 @@
 // Sky, sun, ambient light, haze. Mid-morning, clear with cumulus.
 import * as THREE from 'three/webgpu';
 import { SkyMesh } from 'three/addons/objects/SkyMesh.js';
+import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
 import { ENV, RENDER } from '../config/game';
 import { rng } from '../core/rng';
 
@@ -10,7 +11,7 @@ export interface Environment {
   update(focus: THREE.Vector3): void;
 }
 
-export function buildEnvironment(scene: THREE.Scene): Environment {
+export function buildEnvironment(scene: THREE.Scene, renderer?: THREE.WebGPURenderer): Environment {
   const az = THREE.MathUtils.degToRad(ENV.sunAzimuthDeg), el = THREE.MathUtils.degToRad(ENV.sunElevationDeg);
   // Azimuth clockwise from north; north is -z, east is +x.
   const sunDir = new THREE.Vector3(Math.sin(az) * Math.cos(el), Math.sin(el), -Math.cos(az) * Math.cos(el)).normalize();
@@ -30,9 +31,22 @@ export function buildEnvironment(scene: THREE.Scene): Environment {
   sky.name = 'sky';
   scene.add(sky);
 
-  const hemi = new THREE.HemisphereLight(0xbcd4f2, 0x5f5a45, 0.9);
+  // M2.5: a photographed CC0 sky (Poly Haven, kloofendal_48d_partly_cloudy_puresky: deep blue with big cumulus)
+  // as background and image-based light. Its sun sits at azimuth 124 degrees, which matches the 9 am sun here.
+  const hemi = new THREE.HemisphereLight(0xbcd4f2, 0x5f5a45, 0.45);
   scene.add(hemi);
-  const sun = new THREE.DirectionalLight(0xfff1dc, 3.2);
+  if (renderer) {
+    new HDRLoader().load('assets/sky/sky_2k.hdr', (tex) => {
+      tex.mapping = THREE.EquirectangularReflectionMapping;
+      scene.background = tex;
+      scene.environment = tex;
+      scene.backgroundIntensity = 0.9;
+      scene.environmentIntensity = 0.45;
+      sky.visible = false;
+      clouds.visible = false;
+    });
+  }
+  const sun = new THREE.DirectionalLight(0xffe4c4, 3.4);
   sun.castShadow = true;
   sun.shadow.mapSize.set(RENDER.shadowMapSize, RENDER.shadowMapSize);
   const e = RENDER.shadowExtent;
@@ -43,7 +57,9 @@ export function buildEnvironment(scene: THREE.Scene): Environment {
   scene.add(sun, sun.target);
 
   scene.fog = new THREE.Fog(ENV.fogColor, ENV.fogNear, ENV.fogFar);
-  scene.add(cumulus(sunDir));
+  const clouds = cumulus(sunDir);
+  scene.add(clouds);
+  scene.add(valleyMist());
 
   const snapped = new THREE.Vector3();
   return {
@@ -113,4 +129,34 @@ function cumulus(sunDir: THREE.Vector3): THREE.Group {
     g.add(s);
   }
   return g;
+}
+
+/** Low mist lying in the gorges below the town: soft translucent layers at valley level, off the play area. */
+function valleyMist(): THREE.Group {
+  const c = document.createElement('canvas'); c.width = 256; c.height = 256;
+  const g = c.getContext('2d')!;
+  const r = rng(5);
+  for (let i = 0; i < 40; i++) {
+    const x = 40 + r() * 176, y = 70 + r() * 116, rad = 30 + r() * 60;
+    const gr = g.createRadialGradient(x, y, 0, x, y, rad);
+    gr.addColorStop(0, 'rgba(255,255,255,0.22)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 256, 256);
+  }
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, opacity: 0.85, color: 0xeef3f8, side: THREE.DoubleSide });
+  const grp = new THREE.Group(); grp.name = 'valley-mist';
+  // The Bhote Koshi and Dudh Koshi gorges lie 300 to 600 m below Namche, to the west and south.
+  const spots: [number, number, number, number][] = [
+    [-900, -260, 900, 1400], [-1400, -380, 700, -200], [200, -330, 1700, 1300], [900, -420, 1900, 1100],
+    [-1700, -420, 2000, 1500], [-300, -300, 1400, 900], [1500, -380, 900, 1000],
+  ];
+  for (const [x, y, z, s] of spots) {
+    for (let k = 0; k < 3; k++) {
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(s, s * 0.6).rotateX(-Math.PI / 2), mat);
+      m.position.set(x + (r() - 0.5) * 300, y + k * 18, z + (r() - 0.5) * 300);
+      m.rotation.y = r() * Math.PI; m.renderOrder = 2;
+      grp.add(m);
+    }
+  }
+  return grp;
 }
