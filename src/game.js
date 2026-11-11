@@ -717,7 +717,9 @@ for (const b of BLD){
   const samp = (x, z) => { const g = townGround(x, z); if (g < gmin) gmin = g; if (g > gmax) gmax = g; };
   for (let i = 0; i < n; i++){ const p = poly[i], q = poly[(i + 1) % n]; samp(p[0], p[1]); samp((p[0] + q[0]) / 2, (p[1] + q[1]) / 2); }
   samp(cx, cz);
-  const pad = gmin + 0.65 * (gmax - gmin), floors = b.f, eave = pad + floors * FLOOR;
+  // T1c: the floor sits 0.15 m above the highest ground sample (vertices, edge midpoints, centroid),
+  // so no wall is ever buried on the uphill side; the stone plinth runs down to 1 m below the lowest sample.
+  const pad = gmax + 0.15, floors = b.f, eave = pad + floors * FLOOR;
   const st = styleOf(b), S = STY[st], R = mulberry(1000 + b.i * 7919);
   const tint = new THREE.Color(1, 1, 1).multiplyScalar(0.9 + R() * 0.12), trimC = C(S.trim), lintC = C(shade(S.frame, -0.3));
   const E = [];
@@ -729,11 +731,17 @@ for (const b of BLD){
   if (!E.length) continue;
   let fac = null; for (const e of E){ if (e.L < 4) continue; if (!fac || e.g < fac.g - 0.3 || (Math.abs(e.g - fac.g) < 0.3 && e.L > fac.L)) fac = e; }
   if (!fac) fac = E.reduce((m, e) => e.L > m.L ? e : m, E[0]);
+  // T1c: with the floor above the highest ground, a door on the downhill facade would hang in the air.
+  // The door goes on the wall whose ground outside the door bay is highest; balconies and signs stay on fac.
+  const doorBay = (e) => { const nb = Math.max(1, Math.round(e.L / BAY)), bw = e.L / nb, t = (Math.floor(nb / 2) + 0.5) * bw; return [e.a[0] + e.ax * t + e.nx * 0.6, e.a[1] + e.az * t + e.nz * 0.6, bw]; };
+  let door = null, doorG = -1e9;
+  for (const e of E){ const [x, z, bw] = doorBay(e); if (bw < 1.9) continue; const g = townGround(x, z) + (e === fac ? 0.05 : 0); if (g > doorG){ doorG = g; door = e; } }
+  if (!door) door = fac;
   for (const e of E){
-    const po = 0.14, pa = [e.a[0] + e.nx * po, e.a[1] + e.nz * po], pb = [e.b[0] + e.nx * po, e.b[1] + e.nz * po], yt = pad + 0.32, yb = gmin - 1.2;
+    const po = 0.14, pa = [e.a[0] + e.nx * po, e.a[1] + e.nz * po], pb = [e.b[0] + e.nx * po, e.b[1] + e.nz * po], yt = pad + 0.32, yb = gmin - 1.0;
     G.stones.quad([pa[0], yb, pa[1]], [pb[0], yb, pb[1]], [pb[0], yt, pb[1]], [pa[0], yt, pa[1]], tint, [0, yb / 1.8], [e.L / 1.8, yb / 1.8], [e.L / 1.8, yt / 1.8], [0, yt / 1.8]);
     G.stones.quad([e.a[0], yt, e.a[1]], [pa[0], yt, pa[1]], [pb[0], yt, pb[1]], [e.b[0], yt, e.b[1]], tint, [0, 0], [0, 0.08], [e.L / 1.8, 0.08], [e.L / 1.8, 0]);
-    const nb = Math.max(1, Math.round(e.L / BAY)), bw = e.L / nb, isF = e === fac, doorJ = Math.floor(nb / 2);
+    const nb = Math.max(1, Math.round(e.L / BAY)), bw = e.L / nb, isF = e === door, doorJ = Math.floor(nb / 2);
     for (let fl = 0; fl < floors; fl++){
       const y0 = pad + fl * FLOOR, y1 = y0 + FLOOR;
       for (let j = 0; j < nb; j++){
@@ -830,7 +838,7 @@ for (const b of BLD){
     const u0 = (b.signSlot % 4) / 4, v0 = 1 - (Math.floor(b.signSlot / 4) + 1) / 16;
     G.sign.quad([sx - hx, y, sz - hz], [sx + hx, y, sz + hz], [sx + hx, y + h, sz + hz], [sx - hx, y + h, sz - hz], WHITE, [u0, v0], [u0 + 0.25, v0], [u0 + 0.25, v0 + 1 / 16], [u0, v0 + 1 / 16]);
   }
-  b.pad = pad; b.eave = eave; b.top = ridgeY + (isG ? 2.6 : 0.3); b.fac = fac;
+  b.pad = pad; b.eave = eave; b.top = ridgeY + (isG ? 2.6 : 0.3); b.fac = fac; b.door = door; b.gmin = gmin; b.gmax = gmax;
 }
 // prayer flags between neighbouring ridges
 {
@@ -1461,6 +1469,6 @@ function frame(){
 setStatus('Ready. You’re looking down on Namche from the trail to Syangboche.');
 goBtn.disabled = false;
 window.__namcheReady = true;
-window.__namche = { SPAWN, renderer, scene, farH, player, setNight, camera, PEAKS, start, groundAt, townGround, LMK, D, freeCam: (a) => { freeCam = a; }, rebuildGrass };
+window.__namche = { BLD, SPAWN, renderer, scene, farH, player, setNight, camera, PEAKS, start, groundAt, townGround, LMK, D, freeCam: (a) => { freeCam = a; }, rebuildGrass };
 requestAnimationFrame(frame);
 })().catch((e) => { const s = document.querySelector('#status'); if (s){ s.textContent = 'Something broke while building the town: ' + (e && e.message ? e.message : e); s.style.color = '#ffb4a8'; } console.error(e); });
