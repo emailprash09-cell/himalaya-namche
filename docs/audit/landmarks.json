@@ -30,7 +30,7 @@
   "sizeM": null,
   "inOsm": false,
   "confidence": "medium",
-  "note": "Derived, not an OSM feature: the point 45 m down trail way/551441452 from the gate. From here the gate is 45 m away at bearing 4 deg and the stupa 81 m at bearing 350 deg, which matches the owner's entrance photo (stupa centre, gate right). Tune against the photo; 30 to 60 m down-trail all work. ele 3386/3385 m (SRTM/GLO-30)."
+  "note": "Derived, not an OSM feature: the point 45 m down trail way/551441452 from the gate. From here the gate is 45 m away at bearing 4 deg and the stupa 81 m at bearing 350 deg, which matches the owner's entrance photo (stupa centre, gate right). Tune against the photo; 30 to 60 m down-trail all work. Photo check: the gate and the stupa in reference/chat/chat_03.webp subtend about 7 and 10 deg and sit about 20 deg apart, which fits a camera 40 to 45 m below the gate (rough; horizontal field of view taken as about 56 deg). M1 spawns nearer: 15.5 world m below the gate (real point (-31.2, 218.0), 23.8 m down-trail at scale 0.65), framed with the wider in-game field of view. ele 3386/3385 m (SRTM/GLO-30)."
  },
  {
   "key": "trail_from_below",
@@ -48,7 +48,7 @@
   "sizeM": null,
   "inOsm": true,
   "confidence": "high",
-  "note": "highway=path, 1,710.6 m inside the export, from (574.3, 1349.8) at 3,098 m up to the gate; no surface or width tag. x,z here is the point 100 m below the gate. First 100 m below the gate drops 12 to 17 m. It never crosses a mapped stream. ele 3382/3387 m (SRTM/GLO-30)."
+  "note": "highway=path, 1,710.6 m inside the export, from (574.3, 1349.8) at 3,098 m up to the gate; no surface or width tag. x,z here is the point 100 m below the gate. The first 100 m below the gate drop 17 m on SRTM but only 4 m on GLO-30, which dips about 7 m at 30 to 40 m down and rises again; M1 terrain is GLO-30. It never crosses a mapped stream. ele 3382/3387 m (SRTM/GLO-30)."
  },
  {
   "key": "bridge_below_gate",
@@ -62,7 +62,7 @@
   "sizeM": null,
   "inOsm": false,
   "confidence": "low",
-  "note": "NOT IN OSM, and no data supports it: the export has no bridge=* tag at all and the trail below the gate never crosses a waterway (the stream runs away south-west, 16 m from the trail at the gate and 57 m at 60 m down). x,z is only a suggested spot for an INVENTED bridge, 65 m down-trail, just behind the spawn. The real stream crossing is footbridge_plaza, inside the gate. Ask the owner. ele 3385/3389 m (SRTM/GLO-30)."
+  "note": "NOT IN OSM, and no data supports it: the export has no bridge=* tag at all and the trail below the gate never crosses a waterway (the stream runs away south-west, 16 m from the trail at the gate and 57 m at 60 m down). x,z is only a suggested spot for an INVENTED bridge, 65 m down-trail, just behind the spawn. The real stream crossing is footbridge_plaza, inside the gate. Ask the owner. M1 builds its invented footbridge at real (-32.5, 222.4), 28.7 m down-trail (18.7 world m at 0.65), with an invented rill draining west into way/312775993. The owner's red marks on reference/chat/chat_05.webp put his \"bridges\" inside the gate: footbridge_plaza and channel_railing_west. ele 3385/3389 m (SRTM/GLO-30)."
  },
  {
   "key": "footbridge_plaza",
@@ -83,6 +83,20 @@
   "note": "The only place in the whole export where a path crosses a waterway: way/1373254109 over culvert way/1267933035 (tunnel=yes, layer=-1), 10 m north of the gate. OSM tags no bridge; the owner's photos show a curved footbridge with maroon railings and a white key pattern here, and a second one further up the channel (not locatable from OSM). ele 3401/3391 m (SRTM/GLO-30)."
  },
  {
+  "key": "channel_railing_west",
+  "name": "Long railing on the west side of the channel north of the fountain (the owner's second \"bridge\")",
+  "osmId": null,
+  "tags": {},
+  "x": -18.8,
+  "z": 163.8,
+  "lat": 27.803522,
+  "lon": 86.709809,
+  "sizeM": null,
+  "inOsm": false,
+  "confidence": "low",
+  "note": "NOT IN OSM. The owner marked two red \"bridge\" lines on reference/chat/chat_05.webp: a short curved one at the crossing just south of the fountain (footbridge_plaza) and a long one, about 11 m (map scale 6.6 px/m), on the west side of the open stream from the fountain north towards pavilion 1, between the stream and the main steps. x,z is its estimated middle; it runs from about (-22.0, 168.0) to (-15.5, 159.5). Maroon railing with a white key pattern, 0.8 to 0.9 m high (history.md). Register as invented when built. ele 3403/3396 m (SRTM/GLO-30)."
+ },
+ {
   "key": "kani_gate",
   "name": "Kani gate (entrance gate building)",
   "osmId": "way/344630686",
@@ -100,6 +114,22 @@
   "inOsm": true,
   "confidence": "high",
   "note": "building=yes footprint 5.6 m east-west by 6.4 m north-south, axis-aligned, containing node/13793755901 (historic=city_gate). The passage runs north-south through its middle at x = -24.3 (way/551441451). The brief asks for 4.5 m square; photo measurement gives a 4.5 m front, so the OSM outline is probably the roof line. ele 3399/3391 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "kani_gate_node",
+  "name": "Kani gate point (historic=city_gate)",
+  "osmId": "node/13793755901",
+  "tags": {
+   "historic": "city_gate"
+  },
+  "x": -25.0,
+  "z": 192.3,
+  "lat": 27.803265,
+  "lon": 86.709746,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "The OSM point for the gate, 1.2 m south of the centroid of footprint way/344630686 (see kani_gate). tools/geo/bake_entrance.py reads this node directly for its reference height hRef. ele 3399/3390 m (SRTM/GLO-30)."
  },
  {
   "key": "gate_to_steps_path",
@@ -158,7 +188,7 @@
   ],
   "inOsm": true,
   "confidence": "high",
-  "note": "building=yes + man_made=stupa + religion=buddhist; rectangle 11.8 by 8.6 m, long side bearing about 56 deg. Photo measurement: base about 11 m. The prototype draws this footprint as a two-storey house and invents a stupa 119 m to the east; both must go. ele 3403/3393 m (SRTM/GLO-30)."
+  "note": "building=yes + man_made=stupa + religion=buddhist; rectangle 11.8 by 8.6 m, long sides run west-north-west to east-south-east (bearing 124/304 deg). Photo measurement: base about 11 m. The prototype draws this footprint as a two-storey house and invents a stupa 119 m to the east; both must go. ele 3403/3393 m (SRTM/GLO-30)."
  },
  {
   "key": "stupa_kora_loop",
@@ -168,14 +198,14 @@
    "highway": "path",
    "sac_scale": "hiking"
   },
-  "x": -44.5,
-  "z": 158.5,
-  "lat": 27.80357,
-  "lon": 86.709548,
+  "x": -42.1,
+  "z": 156.3,
+  "lat": 27.80359,
+  "lon": 86.709572,
   "sizeM": null,
   "inOsm": true,
   "confidence": "medium",
-  "note": "Closed loop of mapped paths round the stupa and its side pavilion: way/56081261 (north), part of way/1373254110 (south-west) and the bottom of the steps way/551442828 (east). Perimeter 109.5 m, 1.8 to 18.5 m from the stupa wall. A tighter paved ring at the base is not mapped. ele 3402/3392 m (SRTM/GLO-30)."
+  "note": "Closed loop of mapped paths round the stupa and its side pavilion: way/56081261 (north), part of way/1373254110 (south-west) and the bottom of the steps way/551442828 (east). Perimeter 109.5 m, 1.8 to 18.5 m from the stupa wall. A tighter paved ring at the base is not mapped. x,z is the centre of the closed loop, practically the stupa centre. ele 3403/3393 m (SRTM/GLO-30)."
  },
  {
   "key": "stupa_side_pavilion",
@@ -194,7 +224,24 @@
   ],
   "inOsm": true,
   "confidence": "medium",
-  "note": "Untagged building=yes, 5.8 by 5.4 m, 8 m south-east of the stupa; node/11704172271 (historic=memorial, Pemba Doma Sherpa) sits inside it. The owner's photos show a red-roofed prayer-wheel pavilion here. Function is from the photos, footprint from OSM. ele 3403/3393 m (SRTM/GLO-30)."
+  "note": "Untagged building=yes, 5.8 by 5.4 m, 4.0 m from the stupa wall to the east-south-east (13.0 m centre to centre, bearing 121 deg); node/11704172271 (historic=memorial, Pemba Doma Sherpa) sits inside it. The owner's photos show a red-roofed prayer-wheel pavilion here. Function is from the photos, footprint from OSM. ele 3403/3393 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "memorial_chorten_stupa",
+  "name": "Memorial chorten beside the stupa",
+  "osmId": "node/11704172271",
+  "tags": {
+   "historic": "memorial",
+   "inscription:en": "Late Pemba Doma Sherpa (7 July 1970 - 22 May 2007)"
+  },
+  "x": -31.6,
+  "z": 163.1,
+  "lat": 27.803528,
+  "lon": 86.70968,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "historic=memorial with an inscription to the mountaineer Pemba Doma Sherpa (1970 to 2007), inside the stupa-side pavilion footprint way/1050011454, 6.7 m from the stupa wall. history.md identifies it as the white chorten in the owner's game screenshot. ele 3403/3393 m (SRTM/GLO-30)."
  },
  {
   "key": "fountain",
@@ -214,7 +261,23 @@
   ],
   "inOsm": true,
   "confidence": "high",
-  "note": "natural=water polygon, 24.3 m2, 5.5 m across, with node/11775705677 (amenity=fountain) at (-23.4, 169.8). The open stream runs through it. ele 3402/3394 m (SRTM/GLO-30)."
+  "note": "natural=water polygon, 24.3 m2, 5.5 m across, with node/11775705677 (amenity=fountain) at (-23.4, 169.8). The open stream runs through it. The OSM outline is round (12 vertices, circularity 0.98, 5.7 by 5.7 m); history.md reads the photo ref_11 as a sunken rectangular pool. Unresolved; use the OSM size. ele 3402/3394 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "fountain_jet",
+  "name": "Fountain jet in the pool",
+  "osmId": "node/11775705677",
+  "tags": {
+   "amenity": "fountain"
+  },
+  "x": -23.4,
+  "z": 169.8,
+  "lat": 27.803468,
+  "lon": 86.709762,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "amenity=fountain point inside the pool way/1267933037, on the open stream way/1267933034. ele 3402/3394 m (SRTM/GLO-30)."
  },
  {
   "key": "water_spouts_gate",
@@ -228,7 +291,7 @@
   "sizeM": null,
   "inOsm": false,
   "confidence": "low",
-  "note": "NOT IN OSM. Owner's photos: a stone trough with 3 or 4 brass spouts and a blue bench on the left (west) side of the gate as you walk in. Position is a guess within about 5 m; register as invented. ele 3398/3389 m (SRTM/GLO-30)."
+  "note": "NOT IN OSM. Owner's photos: a stone trough with 3 or 4 brass spouts and a blue bench on the left (west) side of the gate as you walk in. Position is a guess within about 5 m; register as invented. The culvert way/1267933035 runs under this spot to (-35.6, 193.2), 8 m west of the gate front, then to its outlet at (-40.3, 190.7); the spouts are most likely fed from it. reference/chat/chat_09.webp shows three running spouts on a stone wall west of the gate, set back about level with the gate front, with the cafe terrace behind. ele 3398/3389 m (SRTM/GLO-30)."
  },
  {
   "key": "drinking_water_trail",
@@ -280,7 +343,7 @@
   ],
   "inOsm": false,
   "confidence": "medium",
-  "note": "NOT IN OSM (no landuse, marketplace or camp-site feature; the fetch query never asked for them). Evidence: the brief puts it on the open ground below the stupa; the owner's entrance photo shows bare flat ground with tents left of the stupa; OSM has a building-free patch of about 1.2 ha here (x -149..18, z 151..267) and both DEMs show the gentlest ground along z 165..195. Centre good to about 20 m, outline invented. ele 3393/3387 m (SRTM/GLO-30)."
+  "note": "NOT IN OSM (no landuse, marketplace or camp-site feature; the fetch query never asked for them). Evidence: the brief puts it on the open ground below the stupa; the owner's entrance photo shows bare flat ground with tents left of the stupa; OSM has a building-free patch of about 1.2 ha here (x -149..18, z 151..267) and both DEMs show the gentlest ground along z 165..195. Centre good to about 20 m, outline invented. The entrance photo shows the flat bare ground left (west) of the stupa at about stupa level, with tents on the lower ground in front of it. Caution: stream way/312775993 grazes the south-east corner of a 55 by 28 m box centred here (M1 bakes 36 by 18 world m at 0.65); keep the market edge 3 m or more from the stream. ele 3393/3387 m (SRTM/GLO-30)."
  },
  {
   "key": "stream_head_pool",
@@ -316,7 +379,7 @@
   "sizeM": null,
   "inOsm": true,
   "confidence": "high",
-  "note": "Chain of 12 ways, way/1267933025 to way/1267933036: 105.0 m from (15.6, 109.9) to the culvert outlet (-40.3, 190.7); 58.7 m open in 6 pieces and 46.2 m in 6 culverts (tunnel=yes, layer=-1). Five culverts lie exactly under the five pavilions. Runs 3.3 to 9.7 m east of the main steps and drops 15 to 22 m. ele 3403/3396 m (SRTM/GLO-30)."
+  "note": "Chain of 12 ways, way/1267933025 to way/1267933036: 105.0 m from (15.6, 109.9) to the culvert outlet (-40.3, 190.7); 58.7 m open in 6 pieces and 46.2 m in 6 culverts (tunnel=yes, layer=-1). Five culverts lie exactly under the five pavilions. Runs 2.3 to 10.2 m east of the main-steps centre-line between the head pool and the fountain and drops 15 to 22 m. ele 3403/3396 m (SRTM/GLO-30)."
  },
  {
   "key": "stream_below_gate",
@@ -452,6 +515,23 @@
   "note": "amenity=police, description=Checkpost, name as spelt in OSM. 7.0 by 6.3 m. On the trail 549 m below the gate (5.7 m off it) and 63 to 73 m lower. Beside it: node/11704178324 (shop, tea house), toilets, recycling, bench and drinking water node/11245070713. ele 3325/3327 m (SRTM/GLO-30)."
  },
  {
+  "key": "checkpoint_tea_house",
+  "name": "Tea house at the checkpoint",
+  "osmId": "node/11704178324",
+  "tags": {
+   "name": "Checkpoint Tea House",
+   "shop": "yes"
+  },
+  "x": 90.9,
+  "z": 572.9,
+  "lat": 27.799831,
+  "lon": 86.710922,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "shop=yes with a tea-house name, 531 m down-trail from the gate and 9.1 m off it, 22 m from the checkpost wall; toilets node/11704167102, recycling node/11704151731 and drinking water node/11245070713 are within 23 m. A natural rest stop for missions on the trail. Real name: do not put it on a sign. ele 3340/3339 m (SRTM/GLO-30)."
+ },
+ {
   "key": "town_centre",
   "name": "Town centre: the four-way lane junction",
   "osmId": "way/56081262",
@@ -518,7 +598,7 @@
   "sizeM": null,
   "inOsm": true,
   "confidence": "high",
-  "note": "highway=path, 382.3 m, (48.8, 17.9) to (293.2, 36.4), climbing 78 to 79 m; passes the library, bank, hospital and school side. ele 3453/3460 m (SRTM/GLO-30)."
+  "note": "highway=path, 382.3 m, (48.8, 17.9) to (293.2, 36.4), climbing 79 to 80 m; passes the library, bank, hospital and school side. ele 3453/3460 m (SRTM/GLO-30)."
  },
  {
   "key": "lane_upper_cross",
@@ -680,7 +760,7 @@
   ],
   "inOsm": true,
   "confidence": "high",
-  "note": "building=yes + amenity=monastery + religion=buddhist, 13.4 by 9.1 m. The only polygon tagged as the monastery; use it for the prayer hall. 36 m to the east, node/1492311484 (building=monastery, same name) marks the top of the gompa steps. ele 3471/3479 m (SRTM/GLO-30)."
+  "note": "building=yes + amenity=monastery + religion=buddhist, 13.4 by 9.1 m. The only polygon tagged as the monastery; use it for the prayer hall. 36 m to the east, node/1492311484 (building=monastery, same name) marks the top of the gompa steps. Hero interior candidate (docs/audit/osm_data.md section 5). ele 3471/3479 m (SRTM/GLO-30)."
  },
  {
   "key": "gompa_entrance",
@@ -719,6 +799,22 @@
   "inOsm": true,
   "confidence": "medium",
   "note": "Untagged building=yes, 208.0 m2, courtyard plan open to the south-west, clear width 6.3 m. Probably part of the gompa compound (quarters or courtyard range); unconfirmed. A small 5.4 by 4.9 m building, way/344631222, stands 14 m north, and node/12818448601 (amenity=place_of_worship) 24 m north. ele 3470/3475 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "gompa_upper_shrine",
+  "name": "Small place of worship above the gompa",
+  "osmId": "node/12818448601",
+  "tags": {
+   "amenity": "place_of_worship"
+  },
+  "x": -106.7,
+  "z": -41.4,
+  "lat": 27.805373,
+  "lon": 86.708918,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "amenity=place_of_worship, untyped and unnamed, 13.6 m north of the wall of the C-shaped building way/344631168 (24.6 m from its centre) and 4.5 m from path way/1482381168. Probably part of the gompa compound (a chapel or chorten); its form is unknown. ele 3481/3484 m (SRTM/GLO-30)."
  },
  {
   "key": "sherpa_culture_museum",
@@ -762,7 +858,7 @@
   ],
   "inOsm": true,
   "confidence": "high",
-  "note": "tourism=museum; OSM name in Nepali means Sagarmatha National Park Museum, name:en is Tenzing Norgay Sherpa Heritage Center; ele=3563. 37.9 by 18.6 m, nine-vertex outline, clear width 13.3 m. 903 m and 153 to 162 m of climb from the entrance. Untagged buildings south of it are presumably park and army offices. ele 3551/3554 m (SRTM/GLO-30)."
+  "note": "tourism=museum; OSM name in Nepali means Sagarmatha National Park Museum, name:en is Tenzing Norgay Sherpa Heritage Center; ele=3563. 37.9 by 18.6 m, nine-vertex outline, clear width 13.3 m. 903 m and 153 to 162 m of climb from the entrance. Untagged buildings south of it are presumably park and army offices. The two names disagree: treat the building as the park museum and visitor centre and the memorial node beside it as the Tenzing Norgay area. ele 3551/3554 m (SRTM/GLO-30)."
  },
  {
   "key": "tenzing_memorial",
@@ -908,7 +1004,7 @@
   "sizeM": null,
   "inOsm": true,
   "confidence": "high",
-  "note": "tourism=viewpoint (named Best view point Namche in OSM), 10 m from the west helipad. The natural camera for the amphitheatre vista. ele 3491/3504 m (SRTM/GLO-30)."
+  "note": "tourism=viewpoint (named Best view point Namche in OSM), 4.5 m from the edge of the west helipad (12 m centre to centre). The natural camera for the amphitheatre vista. ele 3491/3504 m (SRTM/GLO-30)."
  },
  {
   "key": "lookout_chhorkung",
@@ -964,6 +1060,39 @@
   "note": "historic=wayside_shrine + wayside_shrine=mani + natural=rock, on the main trail. ele 3531/3525 m (SRTM/GLO-30)."
  },
  {
+  "key": "shrine_west_trail",
+  "name": "Wayside shrine on the west trail",
+  "osmId": "node/13838891601",
+  "tags": {
+   "historic": "wayside_shrine"
+  },
+  "x": -223.7,
+  "z": 68.9,
+  "lat": 27.804378,
+  "lon": 86.70773,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "medium",
+  "note": "historic=wayside_shrine without a subtype (chorten or mani stone), 8.6 m from way/1153599584, the trail west towards the west helipad and Thame, 116 m south-west of the gompa. Good for a clockwise-walk bonus. ele 3483/3496 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "chorten_upper_trail",
+  "name": "Chorten on the trail up to Syangboche",
+  "osmId": "node/6342603190",
+  "tags": {
+   "historic": "wayside_shrine",
+   "wayside_shrine": "chorten"
+  },
+  "x": -114.8,
+  "z": -320.8,
+  "lat": 27.807895,
+  "lon": 86.708834,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "historic=wayside_shrine + wayside_shrine=chorten, 0.5 m from the nearest path, about 150 m above the town. Outside the town proper. ele 3617/3635 m (SRTM/GLO-30)."
+ },
+ {
   "key": "syangboche_airstrip",
   "name": "Syangboche airstrip",
   "osmId": "way/312895324",
@@ -988,6 +1117,26 @@
   "inOsm": true,
   "confidence": "high",
   "note": "aeroway=aerodrome, 482 by 62 m, 300 m above the town; runway line way/222642247 is 441 m as drawn. Outside the play area; a skyline feature only. ele 3756/3745 m (SRTM/GLO-30)."
+ },
+ {
+  "key": "sagarmatha_next",
+  "name": "Sagarmatha Next (museum near Syangboche, not a brief landmark)",
+  "osmId": "node/7033837230",
+  "tags": {
+   "construction": "yes",
+   "description": "Sagarmatha Next is a museum and art exhibit about sustainability in Sagarmatha National Park.",
+   "ele": "3775",
+   "name": "Sagarmatha Next",
+   "tourism": "museum"
+  },
+  "x": 499.4,
+  "z": -620.1,
+  "lat": 27.810596,
+  "lon": 86.715068,
+  "sizeM": null,
+  "inOsm": true,
+  "confidence": "high",
+  "note": "tourism=museum + construction=yes, ele=3775: a sustainability museum and art space by the Syangboche airstrip, about 1,420 m by path and 365 m above the entrance. Listed so it is not mistaken for the Sherpa Culture Museum; outside any play area. ele 3763/3761 m (SRTM/GLO-30)."
  },
  {
   "key": "health_post",
@@ -1052,7 +1201,7 @@
   ],
   "inOsm": true,
   "confidence": "high",
-  "note": "amenity=pharmacy, 1.9 m outside the wall of way/344628778 (295.2 m2, 34.8 by 12.1 m), which also carries a bakery, a bank and a cash machine. sizeM is that block. ele 3424/3419 m (SRTM/GLO-30)."
+  "note": "amenity=pharmacy, 1.9 m outside the wall of way/344628778 (295.2 m2, 34.8 by 12.1 m), which also carries a bakery, a bank and a cash machine. sizeM is that block. Hero interior candidate (docs/audit/osm_data.md section 5). ele 3424/3419 m (SRTM/GLO-30)."
  },
  {
   "key": "pharmacy_clinic",
@@ -1131,7 +1280,7 @@
   ],
   "inOsm": true,
   "confidence": "high",
-  "note": "shop=bakery inside way/312775920 (278.4 m2, 22.9 by 15.5 m, clear width 11.5 m) with a coffee shop node. 169 m from the entrance. Best bakery interior candidate. Use an invented name. ele 3421/3416 m (SRTM/GLO-30)."
+  "note": "shop=bakery inside way/312775920 (278.4 m2, 22.9 by 15.5 m, clear width 11.5 m) with a coffee shop node. 169 m from the entrance. Best bakery interior candidate. Use an invented name. Hero interior candidate (docs/audit/osm_data.md section 5). ele 3421/3416 m (SRTM/GLO-30)."
  },
  {
   "key": "bakery_main_street_east",
@@ -1191,7 +1340,7 @@
   ],
   "inOsm": true,
   "confidence": "high",
-  "note": "The only shop=outdoor in the export, inside way/312775969 (158.6 m2, 17.0 by 10.7 m, clear width 10.7 m) with a bar and a massage shop. 266 m from the entrance, 40 m north-west of the centre. Use an invented name. ele 3430/3428 m (SRTM/GLO-30)."
+  "note": "The only shop=outdoor in the export, inside way/312775969 (158.6 m2, 17.0 by 10.7 m, clear width 10.7 m) with a bar and a massage shop. 266 m from the entrance, 45 m west-north-west of the centre. Use an invented name. Hero interior candidate (docs/audit/osm_data.md section 5). ele 3430/3428 m (SRTM/GLO-30)."
  },
  {
   "key": "gear_shop_alt",
@@ -1228,7 +1377,7 @@
   ],
   "inOsm": false,
   "confidence": "low",
-  "note": "NOT IN OSM: the export has no office=* feature, and the fetch query never asked for one. x,z and sizeM are a suggested host, untagged footprint way/345803160 (163.9 m2, 20.7 by 9.5 m), 40 m north of the centre and 10.6 m off the main trail. The footprint is real; the use is invented and must be registered. ele 3436/3434 m (SRTM/GLO-30)."
+  "note": "NOT IN OSM: the export has no office=* feature, and the fetch query never asked for one. x,z and sizeM are a suggested host, untagged footprint way/345803160 (163.9 m2, 20.7 by 9.5 m), 40 m north of the centre and 10.6 m off the main trail. The footprint is real; the use is invented and must be registered. The query in scripts/fetch_osm.sh never fetched office=* nodes, so OSM may still hold travel agents that this export lacks. Hero interior candidate (docs/audit/osm_data.md section 5). ele 3436/3434 m (SRTM/GLO-30)."
  },
  {
   "key": "school",
@@ -1352,7 +1501,7 @@
   ],
   "inOsm": true,
   "confidence": "high",
-  "note": "Lodge footprint, 333.3 m2, clear width 13.5 m, bowl; 352 m by path from the entrance; ele 3431/3444 m. Real name: do not put it on a sign."
+  "note": "Lodge footprint, 333.3 m2, clear width 13.5 m, bowl; 352 m by path from the entrance; Hero interior candidate (docs/audit/osm_data.md section 5). ele 3431/3444 m. Real name: do not put it on a sign."
  },
  {
   "key": "lodge_way_300645632",
@@ -1762,7 +1911,7 @@
   ],
   "inOsm": true,
   "confidence": "high",
-  "note": "Lodge footprint, 215.3 m2, clear width 9.8 m, bowl; 240 m by path from the entrance; ele 3447/3454 m. Real name: do not put it on a sign."
+  "note": "Lodge footprint, 215.3 m2, clear width 9.8 m, bowl; 240 m by path from the entrance; Data fault: the OSM ring traces the same four corners twice (self-intersection), so a raw shoelace area reads 430.5 m2; the true area is 215.3 m2 (repaired with buffer(0)). ele 3447/3454 m. Real name: do not put it on a sign."
  },
  {
   "key": "lodge_way_312775968",
@@ -2276,7 +2425,7 @@
   ],
   "inOsm": true,
   "confidence": "high",
-  "note": "Lodge node inside footprint way/300645649 (429.2 m2, clear width 13.6 m); ele 3411/3405 m. sizeM is that footprint. Real name: do not put it on a sign."
+  "note": "Lodge node inside footprint way/300645649 (429.2 m2, clear width 13.6 m); Hero interior candidate (docs/audit/osm_data.md section 5). ele 3411/3405 m. sizeM is that footprint. Real name: do not put it on a sign."
  },
  {
   "key": "lodge_node_5227617621",
@@ -2410,7 +2559,7 @@
   ],
   "inOsm": true,
   "confidence": "high",
-  "note": "Lodge node inside footprint way/312775986 (391.5 m2, clear width 13.3 m); ele 3429/3423 m. sizeM is that footprint. Real name: do not put it on a sign."
+  "note": "Lodge node inside footprint way/312775986 (391.5 m2, clear width 13.3 m); Hero interior candidate (docs/audit/osm_data.md section 5). ele 3429/3423 m. sizeM is that footprint. Real name: do not put it on a sign."
  },
  {
   "key": "lodge_node_6452255985",
