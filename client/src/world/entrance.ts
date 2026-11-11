@@ -7,6 +7,7 @@ import { StaticBuilder, boxM, ribbon, trs } from './builder';
 import type { Grid, Layout } from './layout';
 import { sampleGrid } from './layout';
 import type { Physics } from './physics';
+import { Hero, loadModel, type HeroSpec } from './models';
 
 type P3 = [number, number, number];
 const xyz = (p: [number, number, number]): P3 => [p[0], p[2], p[1]]; // baked [x, z, y] -> [x, y, z]
@@ -21,6 +22,9 @@ export interface EntranceHandles {
   updateFlags(t: number): void;
   triangles: number;
   stupaTop: THREE.Vector3;
+  /** Resolves when the generated models have loaded (or failed and kept the M1 version). */
+  modelsReady: Promise<{ loaded: string[]; failed: string[]; heroes: HeroSpec[] }>;
+  updateHeroes(t: number, dt: number, player: THREE.Vector3): void;
 }
 
 export function buildEntrance(L: Layout, near: Grid, phys: Physics): EntranceHandles {
@@ -54,6 +58,11 @@ export function buildEntrance(L: Layout, near: Grid, phys: Physics): EntranceHan
   B.material('tin', new THREE.MeshStandardMaterial({ map: tin, color: 0xc8ccd0, roughness: 0.45, metalness: 0.6 }));
   B.material('rock', std(0x8a8782, 0.95, { flatShading: true }));
   B.material('water', std(0x55707c, 0.12, { metalness: 0.1 }), false);
+
+  // Gate and stupa visuals go in their own group: the reduced Higgsfield models replace them
+  // when they load (world/models.ts). The colliders below stay in either case.
+  const BL = new StaticBuilder();
+  BL.shareMaterialsFrom(B);
 
   // ---------------------------------------------------------------- the route
   const pts = L.route.pts.map(xyz);
@@ -165,34 +174,34 @@ export function buildEntrance(L: Layout, near: Grid, phys: Physics): EntranceHan
     const W = 4.5, half = W / 2, pw = 2.1, ph = 2.2, side = (W - pw) / 2;
     for (const sx of [-1, 1]) {
       const cx = sx * (pw / 2 + side / 2);
-      B.add('dark', boxM(side + 0.06, 0.45, W + 0.06, 1), m(cx, 0.2, 0));
-      B.add('white', boxM(side, 2.2, W, 1), m(cx, 0.45 + 1.1, 0));
-      for (const sz of [-1, 1]) B.add('red', boxM(0.2, ph, 0.2, 1), m(sx * (pw / 2 + 0.06), ph / 2, sz * (half - 0.08)));
+      BL.add('dark', boxM(side + 0.06, 0.45, W + 0.06, 1), m(cx, 0.2, 0));
+      BL.add('white', boxM(side, 2.2, W, 1), m(cx, 0.45 + 1.1, 0));
+      for (const sz of [-1, 1]) BL.add('red', boxM(0.2, ph, 0.2, 1), m(sx * (pw / 2 + 0.06), ph / 2, sz * (half - 0.08)));
     }
-    B.add('white', boxM(pw, 0.4, W, 1), m(0, ph + 0.2, 0));
-    B.add('red', boxM(pw + 0.3, 0.12, W + 0.04, 1), m(0, ph + 0.02, 0));
+    BL.add('white', boxM(pw, 0.4, W, 1), m(0, ph + 0.2, 0));
+    BL.add('red', boxM(pw + 0.3, 0.12, W + 0.04, 1), m(0, ph + 0.02, 0));
     // Painted frieze on both faces above the passage.
     const fr = new THREE.PlaneGeometry(W - 0.2, 0.34);
-    B.add('frieze', fr, m(0, ph + 0.27, half + 0.012));
-    B.add('frieze', fr, m(0, ph + 0.27, -half - 0.012, Math.PI));
+    BL.add('frieze', fr, m(0, ph + 0.27, half + 0.012));
+    BL.add('frieze', fr, m(0, ph + 0.27, -half - 0.012, Math.PI));
     // Dark eave band with white roundels (17 a side).
-    B.add('dark', boxM(W + 0.3, 0.65, W + 0.3, 1), m(0, 2.6 + 0.325, 0));
+    BL.add('dark', boxM(W + 0.3, 0.65, W + 0.3, 1), m(0, 2.6 + 0.325, 0));
     const disc = new THREE.CylinderGeometry(0.115, 0.115, 0.06, 12).rotateX(Math.PI / 2);
     for (let k = 0; k < 17; k++) {
       const t = -2.16 + k * 0.27;
-      B.add('white', disc, m(t, 2.93, half + 0.17));
-      B.add('white', disc, m(t, 2.93, -half - 0.17));
-      B.add('white', disc, m(half + 0.17, 2.93, t, Math.PI / 2));
-      B.add('white', disc, m(-half - 0.17, 2.93, t, Math.PI / 2));
+      BL.add('white', disc, m(t, 2.93, half + 0.17));
+      BL.add('white', disc, m(t, 2.93, -half - 0.17));
+      BL.add('white', disc, m(half + 0.17, 2.93, t, Math.PI / 2));
+      BL.add('white', disc, m(-half - 0.17, 2.93, t, Math.PI / 2));
     }
     // Red tiled hipped roof, ridge about 3.95 m, single gold finial on a red base, top 4.5 m.
     const roof = new THREE.ConeGeometry(5.7 / Math.SQRT2 * 1.0, 0.75, 4, 1, false, Math.PI / 4);
-    B.add('roof', roof, m(0, 3.25 + 0.375, 0));
-    B.add('roof', boxM(5.5, 0.08, 5.5, 1), m(0, 3.26, 0));
-    B.add('red', new THREE.CylinderGeometry(0.16, 0.2, 0.18, 12), m(0, 4.05, 0));
-    B.add('gold', new THREE.SphereGeometry(0.13, 14, 10), m(0, 4.22, 0));
-    B.add('gold', new THREE.ConeGeometry(0.09, 0.22, 12), m(0, 4.39, 0));
-    B.add('gold', new THREE.SphereGeometry(0.04, 8, 6), m(0, 4.5, 0));
+    BL.add('roof', roof, m(0, 3.25 + 0.375, 0));
+    BL.add('roof', boxM(5.5, 0.08, 5.5, 1), m(0, 3.26, 0));
+    BL.add('red', new THREE.CylinderGeometry(0.16, 0.2, 0.18, 12), m(0, 4.05, 0));
+    BL.add('gold', new THREE.SphereGeometry(0.13, 14, 10), m(0, 4.22, 0));
+    BL.add('gold', new THREE.ConeGeometry(0.09, 0.22, 12), m(0, 4.39, 0));
+    BL.add('gold', new THREE.SphereGeometry(0.04, 8, 6), m(0, 4.5, 0));
     // Colliders: two side blocks, the lintel, the roof.
     const c = Math.cos(G.yaw), s = Math.sin(G.yaw);
     const at = (x: number, z: number) => [G.x + x * c + z * s, G.z - x * s + z * c];
@@ -216,29 +225,29 @@ export function buildEntrance(L: Layout, near: Grid, phys: Physics): EntranceHan
   }
   const sm = (y: number) => trs(st.x, py + 0.05 + y, st.z);
   const sy = py + 0.05;
-  B.add('white', boxM(11.0, 1.1, 11.0, 2), sm(0.55));
-  B.add('maroon', boxM(11.04, 0.5, 11.04, 1), sm(0.42));
-  B.add('blue', boxM(11.08, 0.3, 11.08, 1), sm(0.95));
-  B.add('white', boxM(9.2, 0.85, 9.2, 2), sm(1.1 + 0.425));
-  B.add('white', boxM(7.6, 0.75, 7.6, 2), sm(1.95 + 0.375));
-  B.add('white', new THREE.CylinderGeometry(3.35, 3.4, 0.45, 40), sm(2.7 + 0.225));
-  B.add('white', new THREE.SphereGeometry(3.3, 40, 16, 0, Math.PI * 2, 0, Math.PI / 2), trs(st.x, sy + 3.15, st.z, 0, 1, 0.95, 1));
-  B.add('gold', boxM(1.95, 1.3, 1.95, 1), sm(6.25 + 0.65));
+  BL.add('white', boxM(11.0, 1.1, 11.0, 2), sm(0.55));
+  BL.add('maroon', boxM(11.04, 0.5, 11.04, 1), sm(0.42));
+  BL.add('blue', boxM(11.08, 0.3, 11.08, 1), sm(0.95));
+  BL.add('white', boxM(9.2, 0.85, 9.2, 2), sm(1.1 + 0.425));
+  BL.add('white', boxM(7.6, 0.75, 7.6, 2), sm(1.95 + 0.375));
+  BL.add('white', new THREE.CylinderGeometry(3.35, 3.4, 0.45, 40), sm(2.7 + 0.225));
+  BL.add('white', new THREE.SphereGeometry(3.3, 40, 16, 0, Math.PI * 2, 0, Math.PI / 2), trs(st.x, sy + 3.15, st.z, 0, 1, 0.95, 1));
+  BL.add('gold', boxM(1.95, 1.3, 1.95, 1), sm(6.25 + 0.65));
   const eye = new THREE.PlaneGeometry(1.95, 1.2);
   for (let k = 0; k < 4; k++) {
     const a = (k * Math.PI) / 2;
-    B.add('eyes', eye, trs(st.x + Math.sin(a) * 0.985, sy + 6.9, st.z + Math.cos(a) * 0.985, a));
+    BL.add('eyes', eye, trs(st.x + Math.sin(a) * 0.985, sy + 6.9, st.z + Math.cos(a) * 0.985, a));
   }
-  B.add('gold', boxM(2.25, 0.16, 2.25, 1), sm(7.55 + 0.08));
-  B.add('green', new THREE.CylinderGeometry(1.15, 1.3, 0.32, 24), sm(7.71 + 0.16));
+  BL.add('gold', boxM(2.25, 0.16, 2.25, 1), sm(7.55 + 0.08));
+  BL.add('green', new THREE.CylinderGeometry(1.15, 1.3, 0.32, 24), sm(7.71 + 0.16));
   // 13 gold tiers.
   for (let k = 0; k < 13; k++) {
     const r0 = 1.0 - (k / 13) * 0.62, r1 = r0 - 0.04;
-    B.add('gold', new THREE.CylinderGeometry(r1, r0, 0.2, 20), sm(8.03 + k * 0.2 + 0.1));
+    BL.add('gold', new THREE.CylinderGeometry(r1, r0, 0.2, 20), sm(8.03 + k * 0.2 + 0.1));
   }
-  B.add('gold', new THREE.ConeGeometry(0.62, 0.26, 20), sm(10.66 + 0.13));
-  B.add('gold', new THREE.SphereGeometry(0.13, 12, 8), sm(10.9));
-  B.add('gold', new THREE.ConeGeometry(0.07, 0.35, 10), sm(11.15));
+  BL.add('gold', new THREE.ConeGeometry(0.62, 0.26, 20), sm(10.66 + 0.13));
+  BL.add('gold', new THREE.SphereGeometry(0.13, 12, 8), sm(10.9));
+  BL.add('gold', new THREE.ConeGeometry(0.07, 0.35, 10), sm(11.15));
   phys.addBox(st.x, sy + 0.55, st.z, 5.5, 0.55, 5.5);
   phys.addBox(st.x, sy + 1.52, st.z, 4.6, 0.43, 4.6);
   phys.addBox(st.x, sy + 2.33, st.z, 3.8, 0.38, 3.8);
@@ -330,6 +339,93 @@ export function buildEntrance(L: Layout, near: Grid, phys: Physics): EntranceHan
   if (L.sidePath.length > 1) B.add('path', ribbon(L.sidePath.map(xyz), 1.6, 0.05, 3));
 
   const group = B.build('entrance');
+  const prims = BL.build('landmark-primitives');
+  group.add(prims);
+
+  // ---------------------------------------------------------------- the owner's models (Higgsfield, reduced)
+  // Positions: the gate and stupa stay on their OSM footprints (way/344630686, way/344630942); the decoded
+  // colour marks (docs/plan/entrance_features.json) put them within 0.3 m and 0.9 m of the same spots.
+  const heroes: Hero[] = [];
+  const loaded: string[] = [], failed: string[] = [];
+  const swap = async (name: string, place: (o: THREE.Object3D) => void, hide: () => void) => {
+    try {
+      const o = await loadModel(name);
+      place(o);
+      group.add(o);
+      hide();
+      loaded.push(name);
+    } catch (err) {
+      failed.push(name);
+      console.warn(`model ${name} failed to load, keeping the M1 version`, err);
+    }
+  };
+  // Primitive meshes are merged per material across gate and stupa, so they are hidden together once
+  // both models are in; if only one loads, both primitives stay (no landmark is ever missing).
+  let landmarksIn = 0;
+  const hidePrims = () => { if (++landmarksIn === 2) prims.visible = false; };
+  const gateP = swap('gate', (o) => {
+    o.position.set(L.gate.x, L.gate.y, L.gate.z);
+    o.rotation.y = L.gate.yaw;
+  }, hidePrims);
+  const stupaP = swap('stupa', (o) => {
+    o.position.set(st.x, sy, st.z);
+  }, hidePrims);
+
+  // Hero NPCs at real height, feet on the ground; capsules so the player cannot walk through them.
+  const groundY = (x: number, z: number) => phys.groundAt(x, z, 400) ?? ground(x, z);
+  const routeAt = (s: number): P3 => {
+    let i = 1;
+    while (i < along.length - 1 && along[i] < s) i++;
+    const t = Math.min(1, Math.max(0, (s - along[i - 1]) / (along[i] - along[i - 1] || 1)));
+    const a = pts[i - 1], b = pts[i];
+    return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+  };
+  let sSpawn = 0, bestD = Infinity;
+  pts.forEach((p, i) => { const d = Math.hypot(p[0] - L.spawn.x, p[2] - L.spawn.z); if (d < bestD) { bestD = d; sSpawn = along[i]; } });
+  const offPath = (s: number, side: number, m: number): { x: number; z: number; yaw: number } => {
+    const a = routeAt(s - 0.5), b = routeAt(s + 0.5), c = routeAt(s);
+    const dx = b[0] - a[0], dz = b[2] - a[2], len = Math.hypot(dx, dz) || 1;
+    const rx = -dz / len, rz = dx / len; // right of the walking direction
+    return { x: c[0] + rx * side * m, z: c[2] + rz * side * m, yaw: Math.atan2(-dx, -dz) };
+  };
+  const heroSpecs: HeroSpec[] = [];
+  {
+    // The guide waits on the right verge a few steps up the path, facing down towards the player.
+    const g = offPath(sSpawn + 6.5, 1, 1.75);
+    heroSpecs.push({ name: 'char_guide', x: g.x, y: 0, z: g.z, yaw: g.yaw + Math.PI - 0.5 });
+    // A trekker (the mountaineer) resting on the right verge just below the gate, looking across the
+    // path at the stupa. (The left side is the dry-stone wall, which she would stand on.)
+    const m = offPath(gateS - 3.2, 1, 1.9);
+    heroSpecs.push({ name: 'char_mountaineer', x: m.x, y: 0, z: m.z, yaw: m.yaw + Math.PI / 2 });
+    // The monk on the east edge of the stupa plaza, outside the kora lane, facing the stupa.
+    const mx = st.x + L.plaza.w / 2 - 0.5, mz = st.z + 2.5;
+    heroSpecs.push({ name: 'char_monk', x: mx, y: 0, z: mz, yaw: Math.atan2(-(st.x - mx), -(st.z - mz)) });
+    // The lodge owner in front of the lodge nearest the plaza, facing the stupa.
+    let lodge = L.lodges[0], ld = Infinity;
+    for (const l of L.lodges) { const d = Math.hypot(l.x - st.x, l.z - st.z); if (d < ld) { ld = d; lodge = l; } }
+    if (lodge) {
+      const dx = st.x - lodge.x, dz = st.z - lodge.z, len = Math.hypot(dx, dz) || 1;
+      const r = Math.max(lodge.w, lodge.d) / 2 + 1.1;
+      const ox = lodge.x + (dx / len) * r, oz = lodge.z + (dz / len) * r;
+      heroSpecs.push({ name: 'char_lodge', x: ox, y: 0, z: oz, yaw: Math.atan2(-dx, -dz) });
+    }
+  }
+  const heroP = Promise.all(heroSpecs.map(async (h, i) => {
+    try {
+      const o = await loadModel(h.name);
+      h.y = groundY(h.x, h.z);
+      const hero = new Hero(h, o, i * 1.37);
+      heroes.push(hero);
+      group.add(hero.root);
+      phys.addCylinder(h.x, h.y + 0.87, h.z, 0.6, 0.27);
+      loaded.push(h.name);
+    } catch (err) {
+      failed.push(h.name);
+      console.warn(`model ${h.name} failed to load`, err);
+    }
+  }));
+  const modelsReady = Promise.all([gateP, stupaP, heroP]).then(() => ({ loaded, failed, heroes: heroSpecs }));
+  const updateHeroes = (t: number, dt: number, player: THREE.Vector3) => { for (const h of heroes) h.update(t, dt, player); };
 
   // ---------------------------------------------------------------- prayer flags (instanced)
   const lungta = [0x2a5fc4, 0xf4f1e8, 0xc8281e, 0x2f8f3c, 0xf0c419]; // blue, white, red, green, yellow
@@ -377,5 +473,5 @@ export function buildEntrance(L: Layout, near: Grid, phys: Physics): EntranceHan
   };
   updateFlags(0);
 
-  return { group, flags, updateFlags, triangles: B.triangles + flagList.length * 2, stupaTop };
+  return { group, flags, updateFlags, triangles: B.triangles + BL.triangles + flagList.length * 2, stupaTop, modelsReady, updateHeroes };
 }

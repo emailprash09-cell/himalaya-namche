@@ -116,6 +116,7 @@ async function boot(): Promise<void> {
     avatar.setVisible(rig.mode === 'tpp' && distanceToHead > 0.9);
     env.update(feet);
     entrance.updateFlags(time);
+    entrance.updateHeroes(time, dt, feet);
     hud.update(dt, rig.mode, input.locked);
 
     renderer.render(scene, rig.camera);
@@ -135,6 +136,13 @@ async function boot(): Promise<void> {
     debug.afterFrame(info0(renderer), fps);
     requestAnimationFrame(frame);
   };
+  // The generated models stream in after the terrain; wait for them (at most 20 s) so the first frame
+  // shows them. A model that fails keeps its M1 primitive version.
+  const models = await Promise.race([
+    entrance.modelsReady,
+    new Promise<null>((r) => setTimeout(() => r(null), 20000)),
+  ]);
+  (window as unknown as { __MODELS__: unknown }).__MODELS__ = models ?? { timedOut: true };
   hud.ready();
   debug.markReady(performance.now() - t0);
   requestAnimationFrame(frame);

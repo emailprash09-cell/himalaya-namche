@@ -23,7 +23,13 @@ Every third-party asset, library and data source the game uses, with its licence
 
 ## Art
 
-M1 ships no third-party models or textures. Every texture (flagstones, dry-stone wall, whitewash, the
+M2 adds the owner's generated models: the Kani gate (gate3), the main stupa (stupa2) and four characters
+(guide, lodge owner, monk, mountaineer). They were generated for the owner on his Higgsfield account during
+this project (job ids in `docs/FABLE_EXPORT.md` and the memory notes) and reduced locally with
+`tools/assets/reduce.py` (Blender 4.5.3) and gltf-transform 4 (MIT). No further generation was used. They
+live in `client/public/assets/models/`.
+
+Apart from those, every texture (flagstones, dry-stone wall, whitewash, the
 gate frieze, the painted eyes on the stupa, tin, clouds) is drawn procedurally on a canvas at load, and all
 geometry is built from primitives. No reference photo is used as a texture.
 

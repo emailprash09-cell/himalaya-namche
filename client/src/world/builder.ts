@@ -13,6 +13,11 @@ export class StaticBuilder {
     this.shadow.set(key, castShadow);
   }
 
+  /** Use another builder's materials (same objects), so parts can be built into a separate group. */
+  shareMaterialsFrom(other: StaticBuilder): void {
+    for (const [k, m] of other.mats) this.material(k, m, other.shadow.get(k));
+  }
+
   add(key: string, geo: THREE.BufferGeometry, m?: THREE.Matrix4): void {
     if (!this.mats.has(key)) throw new Error(`StaticBuilder: no material '${key}'`);
     let g = geo.index ? geo : withIndex(geo);

@@ -72,3 +72,4 @@ scale 0.65) and come from `client/public/assets/entrance/layout.json`.
 | Prayer-flag strings and their eight poles | Stupa spire to the plaza corners and edges | Flags are never mapped. | Photos of the stupa flags. |
 | Lodge heights, colours, windows, roofs | 24 OSM footprints north of the stupa | OSM gives the outline only; storeys, colours and roofs are seeded by the footprint id; the blue-roofed and pink lodges follow the photo. | OSM `building:levels`, `roof:colour`, `building:colour`. |
 | Forest and shrubs | Ridge above the town, verges | Scattered by noise and altitude rules. | OSM `natural=wood`/`scrub` polygons. |
+| Hero NPCs (guide, trekker, monk, lodge owner) | Guide on the right verge 6.5 m above the spawn; trekker on the right verge 3 m below the gate; monk on the east edge of the stupa plaza; lodge owner in front of the lodge nearest the plaza | People are never mapped; spots chosen to stay off the walking line. | None needed: these are characters. |
