@@ -42,8 +42,8 @@ export function buildLodges(L: Layout, phys: Physics, storey: number): LodgeHand
     // Walls.
     m.compose(p.set(l.x, (stoneTop + pad + H) / 2, l.z), q, s.set(l.w, pad + H - stoneTop, l.d));
     walls.setMatrixAt(i, m);
-    let wall = WALLS[Math.floor(r() * WALLS.length)];
-    let roof = ROOFS[Math.floor(r() * ROOFS.length)];
+    let wall: number | string = l.wall ?? WALLS[Math.floor(r() * WALLS.length)];
+    let roof: number | string = l.roof ?? ROOFS[Math.floor(r() * ROOFS.length)];
     if (l.role === 'blueRoof') { wall = 0xf3f0e8; roof = 0x1f63c6; }
     if (l.role === 'pinkWhite') { wall = 0xe7aeb4; roof = 0xb3322a; }
     walls.setColorAt(i, c.set(wall));
@@ -58,7 +58,7 @@ export function buildLodges(L: Layout, phys: Physics, storey: number): LodgeHand
     eaves.setMatrixAt(i, m);
     eaves.setColorAt(i, c.set(roof).multiplyScalar(0.7));
     // Window rows on all four faces.
-    const frame = FRAMES[Math.floor(r() * FRAMES.length)];
+    const frame: number | string = l.frame ?? FRAMES[Math.floor(r() * FRAMES.length)];
     const faces: [number, number, number][] = [[0, l.d / 2, l.w], [Math.PI, l.d / 2, l.w], [Math.PI / 2, l.w / 2, l.d], [-Math.PI / 2, l.w / 2, l.d]];
     for (const [fa, off, len] of faces) {
       const bays = Math.max(1, Math.floor((len - 1.4) / 2.7));

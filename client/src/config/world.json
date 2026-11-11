@@ -1,13 +1,13 @@
 {
-  "_comment": "World tuning shared by the bake (tools/geo/bake_entrance.py) and the client. Distances in world metres unless named *_real.",
+  "_comment": "World tuning shared by the bake (tools/geo/bake_entrance.py) and the client. Distances in world metres. M2.5: worldScale 1.0, the town at its real size as in the old prototype (no compression).",
   "geo": { "lat0": 27.805, "lon0": 86.71, "mlat": 110816.0, "mlon": 98541.0 },
-  "worldScale": 0.65,
-  "near": { "x0": -112, "z0": 36, "size": 168, "step": 0.5 },
-  "mid": { "x0": -640, "z0": -700, "sizeX": 1180, "sizeZ": 1340, "step": 5 },
-  "far": { "lat": [27.62, 27.999], "lon": [86.45, 86.99], "step": 110 },
-  "play": { "x0": -92, "z0": 64, "x1": 30, "z1": 182 },
-  "spawn": { "downTrail": 15.5, "bridgeBehind": 3.2, "lookPitchDeg": 4.0 },
-  "lodges": { "max": 24, "footprintScale": 0.82, "minSide": 6.5, "maxSide": 15.0, "storey": 2.55 },
-  "market": { "w": 36, "d": 18 },
-  "plaza": { "w": 19, "d": 16 }
+  "worldScale": 1.0,
+  "near": { "x0": -400, "z0": -360, "sizeX": 960, "sizeZ": 720, "step": 1.0 },
+  "mid": { "x0": -3000, "z0": -3000, "sizeX": 6000, "sizeZ": 6000, "step": 12 },
+  "far": { "lat": [27.62, 27.999], "lon": [86.45, 86.99], "step": 160 },
+  "play": { "x0": -392, "z0": -352, "x1": 552, "z1": 352 },
+  "spawn": { "downTrail": 24.0, "bridgeBehind": 4.9, "lookPitchDeg": 4.0 },
+  "lodges": { "max": 1000, "footprintScale": 1.0, "minSide": 2.5, "maxSide": 60.0, "storey": 2.55, "stupaClear": 12.0, "gap": 0.0 },
+  "market": { "w": 48, "d": 24 },
+  "plaza": { "w": 26, "d": 16 }
 }

@@ -6,6 +6,8 @@ export interface Placed { x: number; z: number; y: number; yaw?: number }
 export interface Lodge {
   id: string; x: number; z: number; w: number; d: number; yaw: number;
   yMin: number; yMax: number; storeys: number; seed: number; role: 'blueRoof' | 'pinkWhite' | null;
+  /** M2.5: the old prototype's colours (hex strings) and kind, from data/namche_layout.json. */
+  roof?: string; wall?: string; frame?: string; kind?: string; name?: string | null;
 }
 
 export interface WaterLine { id: string; invented: boolean; pts: [number, number, number][] }
@@ -14,6 +16,7 @@ export interface Layout {
   scale: number;
   hRef: number;
   near: GridInfo; mid: GridInfo; far: GridInfo;
+  play?: { x0: number; z0: number; x1: number; z1: number };
   gate: Placed & { yaw: number };
   stupa: Placed;
   plaza: Placed & { w: number; d: number };

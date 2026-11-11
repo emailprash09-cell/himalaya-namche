@@ -188,6 +188,7 @@ rill, _ = resample(rill, 0.5)
 
 # ---------------------------------------------------------------- grids
 NEAR = CFG['near']; MID = CFG['mid']
+NSX = NEAR.get('sizeX', NEAR.get('size')); NSZ = NEAR.get('sizeZ', NEAR.get('size'))
 
 
 def grid_xy(x0, z0, sx, sz, step):
@@ -220,7 +221,7 @@ def sstep(e0, e1, x):
 
 
 # Near grid.
-X, Z, nxn, nzn = grid_xy(NEAR['x0'], NEAR['z0'], NEAR['size'], NEAR['size'], NEAR['step'])
+X, Z, nxn, nzn = grid_xy(NEAR['x0'], NEAR['z0'], NSX, NSZ, NEAR['step'])
 P = np.stack([X.ravel(), Z.ravel()], 1)
 Hn = wy(h_real(P[:, 0] / S, P[:, 1] / S)).astype(np.float64)
 ground = np.zeros(len(P), np.uint8)  # 0 grass, 1 dirt, 2 stone paving, 3 stream bed, 4 rock
@@ -301,8 +302,8 @@ def near_h(x, z):
 # Mid grid: plain smoothed ground, sunk 1.5 m inside the near window so the near mesh covers it.
 Xm, Zm, nxm, nzm = grid_xy(MID['x0'], MID['z0'], MID['sizeX'], MID['sizeZ'], MID['step'])
 Hm = wy(h_real(Xm.ravel() / S, Zm.ravel() / S)).reshape(nzm, nxm).astype(np.float32)
-inner = ((Xm > NEAR['x0'] + 3) & (Xm < NEAR['x0'] + NEAR['size'] - 3) &
-         (Zm > NEAR['z0'] + 3) & (Zm < NEAR['z0'] + NEAR['size'] - 3))
+inner = ((Xm > NEAR['x0'] + 3) & (Xm < NEAR['x0'] + NSX - 3) &
+         (Zm > NEAR['z0'] + 3) & (Zm < NEAR['z0'] + NSZ - 3))
 Hm[inner] -= 1.5
 Hm.tofile(os.path.join(OUT, 'mid.bin'))
 
@@ -321,7 +322,7 @@ Hf.tofile(os.path.join(OUT, 'far.bin'))
 
 # ---------------------------------------------------------------- lodges from OSM footprints
 LC = CFG['lodges']
-EXCLUDE = {'way/344630942', 'way/344630686', 'way/1050011453', 'way/1050011454'}
+EXCLUDE = {'way/344630942', 'way/344630686', 'way/1050011454'}  # stupa, gate, side pavilion (built separately)
 corridors = [LineString(route).buffer(3.2), LineString(kora_side).buffer(2.0),
              LineString(steps_main).buffer(2.0),
              Polygon([(stupa_c[0] - PW / 2, stupa_c[1] - PD / 2), (stupa_c[0] + PW / 2, stupa_c[1] - PD / 2),
@@ -331,31 +332,27 @@ corridors = [LineString(route).buffer(3.2), LineString(kora_side).buffer(2.0),
 for w in water:
     corridors.append(LineString(w['pts']).buffer(1.5))
 cands = []
-for f in OSM['features']:
-    p = f['properties']
-    if 'building' not in p or f['id'] in EXCLUDE or f['geometry']['type'] != 'Polygon':
+TOWN = json.load(open(os.path.join(ROOT, 'data/namche_layout.json'), encoding='utf8'))
+for e in TOWN['buildings']:
+    if e['osmId'] in EXCLUDE:
         continue
-    if any(k in p for k in ('man_made', 'historic', 'amenity')):
-        continue
-    pr = way_pts(f['id'])
-    c = Polygon(pr).centroid
-    # North of the plaza, the slope the entrance view looks at.
-    if not (-190 < c.x < 70 and -40 < c.y < 168):
-        continue
-    poly = Polygon(to_world_xz(pr))
+    poly = Polygon(to_world_xz(np.array(e['footprint'])))
+    if not poly.is_valid:
+        poly = poly.buffer(0)
     mrr = poly.minimum_rotated_rectangle
     q = np.array(mrr.exterior.coords)[:4]
     e1 = q[1] - q[0]; e2 = q[2] - q[1]
     l1, l2 = np.linalg.norm(e1), np.linalg.norm(e2)
-    # Footprints are scaled gently about their centroids (human-scale things are never shrunk much).
-    k = LC['footprintScale'] / S
-    w_ = float(np.clip(l1 * k, LC['minSide'], LC['maxSide'])); d_ = float(np.clip(l2 * k, LC['minSide'] * 0.8, LC['maxSide']))
+    k = LC['footprintScale']
+    w_ = float(np.clip(l1 * k, LC['minSide'], LC['maxSide'])); d_ = float(np.clip(l2 * k, LC['minSide'], LC['maxSide']))
     yaw = -math.atan2(e1[1], e1[0])
     cx, cz = poly.centroid.x, poly.centroid.y
     rect = Polygon([(-w_ / 2, -d_ / 2), (w_ / 2, -d_ / 2), (w_ / 2, d_ / 2), (-w_ / 2, d_ / 2)])
     rect = rotate(rect, -yaw, origin=(0, 0), use_radians=True)
     rect = Polygon([(x + cx, z + cz) for x, z in rect.exterior.coords])
-    cands.append(dict(id=f['id'], cx=cx, cz=cz, w=w_, d=d_, yaw=yaw, poly=rect, area=poly.area))
+    cands.append(dict(id=e['osmId'] or e['id'], cx=cx, cz=cz, w=w_, d=d_, yaw=yaw, poly=rect, area=poly.area,
+                      storeys=int(e['storeys']), roof=e['roofColour'], wall=e['wallColour'], frame=e['frameColour'],
+                      kind=e['type'], name=e['name']))
 # Priority: closest to the line of sight from the spawn to the stupa first, then size.
 spawn_xz = route[i_sp]
 for c in cands:
@@ -364,12 +361,14 @@ for c in cands:
     c['score'] = c['area'] / (1 + c['dist'] / 60)
 cands.sort(key=lambda c: -c['score'])
 chosen = []
+dropped = []
 for c in cands:
     if any(c['poly'].intersects(k) for k in corridors):
+        dropped.append(c['id'])
         continue
-    if math.hypot(c['cx'] - stupa_c[0], c['cz'] - stupa_c[1]) < 17:
+    if math.hypot(c['cx'] - stupa_c[0], c['cz'] - stupa_c[1]) < LC['stupaClear']:
         continue
-    if any(c['poly'].buffer(1.2).intersects(o['poly']) for o in chosen):
+    if any(c['poly'].buffer(LC['gap']).intersects(o['poly']) for o in chosen):
         continue
     chosen.append(c)
     if len(chosen) >= LC['max']:
@@ -377,7 +376,7 @@ for c in cands:
 
 
 def ground_at(x, z):
-    inside = (NEAR['x0'] < x < NEAR['x0'] + NEAR['size']) and (NEAR['z0'] < z < NEAR['z0'] + NEAR['size'])
+    inside = (NEAR['x0'] < x < NEAR['x0'] + NSX) and (NEAR['z0'] < z < NEAR['z0'] + NSZ)
     if inside:
         return float(near_h(x, z)[0])
     return float(wy(h_real(x / S, z / S))[0])
@@ -388,10 +387,10 @@ for c in chosen:
     cs = np.array(c['poly'].exterior.coords)[:4]
     hs = [ground_at(x, z) for x, z in list(cs) + [(c['cx'], c['cz'])]]
     hsh = int(hashlib.md5(c['id'].encode()).hexdigest()[:8], 16)
-    storeys = 2 + (hsh % 3) if c['w'] * c['d'] > 60 else 2 + (hsh % 2)
     lodges.append(dict(id=c['id'], x=round(c['cx'], 2), z=round(c['cz'], 2), w=round(c['w'], 2), d=round(c['d'], 2),
-                       yaw=round(c['yaw'], 4), yMin=round(min(hs), 2), yMax=round(max(hs), 2), storeys=storeys,
-                       seed=hsh, role=None))
+                       yaw=round(c['yaw'], 4), yMin=round(min(hs), 2), yMax=round(max(hs), 2), storeys=c['storeys'],
+                       seed=hsh, role=None, roof=c['roof'], wall=c['wall'], frame=c['frame'], kind=c['kind'],
+                       name=c['name']))
 # Roles from the entrance photo: a blue-roofed lodge left of the stupa, a pink-and-white one behind it.
 if lodges:
     def nearest(target):
@@ -411,6 +410,7 @@ layout = dict(
                 dem='Copernicus GLO-30 DEM (ESA, Copernicus programme)'),
     scale=S, hRef=H_REF,
     near=dict(x0=NEAR['x0'], z0=NEAR['z0'], step=NEAR['step'], nx=nxn, nz=nzn),
+    play=CFG['play'],
     mid=dict(x0=MID['x0'], z0=MID['z0'], step=MID['step'], nx=nxm, nz=nzm),
     far=dict(x0=float(xa), z0=float(za), step=fstep, nx=nxf, nz=nzf),
     gate=dict(x=float(gate_mid[0]), z=float(gate_mid[1]), y=gate_floor, yaw=gate_yaw, osm='way/344630686'),
@@ -431,6 +431,6 @@ layout = dict(
 )
 json.dump(layout, open(os.path.join(OUT, 'layout.json'), 'w'), indent=1)
 print(f'hRef {H_REF} m, gate floor {gate_floor:.2f}, plaza {plaza_y:.2f}, market {mk_y:.2f}')
-print(f'spawn {layout["spawn"]}, bridge {bridge}, lodges {len(lodges)} of {len(cands)} candidates')
+print(f'spawn {layout["spawn"]}, bridge {bridge}, lodges {len(lodges)} of {len(cands)} candidates, dropped on corridors {len(dropped)}: {dropped}')
 print(f'near {nxn}x{nzn}, mid {nxm}x{nzm}, far {nxf}x{nzf}')
 print('far peak max (real m):', float(Hf.max() / S + H_REF))

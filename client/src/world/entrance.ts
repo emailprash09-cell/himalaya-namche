@@ -271,7 +271,10 @@ export function buildEntrance(L: Layout, near: Grid, phys: Physics): EntranceHan
   const sp = new THREE.Vector2(L.spawn.x, L.spawn.z);
   const look = new THREE.Vector2(st.x - sp.x, st.z - sp.y).normalize();
   const left = new THREE.Vector2(look.y, -look.x);
+  // M1 tuned these offsets at world scale 0.65; keep them at the same real distances at any scale.
+  const K = 0.65 / L.scale;
   const place = (fwdM: number, leftM: number) => {
+    fwdM *= K; leftM *= K;
     const x = sp.x + look.x * fwdM + left.x * leftM, z = sp.y + look.y * fwdM + left.y * leftM;
     return { x, z, y: ground(x, z) };
   };
