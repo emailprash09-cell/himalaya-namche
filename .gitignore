@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+data/merged.npy
+data/data.js
+build/*.html
+shots/
+
+reference/
+!reference/README.md
+docs/HIMALAYA_The_Summit_Concept_Brief.docx
+__pycache__/
+.venv/
+shots/
