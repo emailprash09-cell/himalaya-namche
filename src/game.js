@@ -109,7 +109,23 @@ function rectPoly(x, z, hw, hd, ang){ const c = Math.cos(ang), s = Math.sin(ang)
 const SOLIDS = [];
 function addSolid(poly, top){ const o = { poly, top, bb: bbOf(poly), solid: true }; SOLIDS.push(o); hashAdd(o); return o; }
 function freeAt(x, z, r){ return inside(x, z) && !nearBuilding(x, z, r); }
-function findFree(x, z, r, maxR){ if (freeAt(x, z, r)) return [x, z]; for (let rad = 2; rad <= (maxR || 70); rad += 2){ const n = Math.max(8, Math.floor(rad * 1.3)); for (let k = 0; k < n; k++){ const a = k / n * Math.PI * 2, px = x + Math.cos(a) * rad, pz = z + Math.sin(a) * rad; if (freeAt(px, pz, r)) return [px, pz]; } } return null; }
+// T1d: anything with a collision box keeps off the walking line of every path, so no prop can stand on a stair.
+// (Only this one rule from the props task; doorways and facades are not checked yet.)
+const PSEG = new Map(), PCELL = 10;
+for (const p of D.paths) for (let i = 0; i < p.p.length - 1; i++){
+  const a = p.p[i], b = p.p[i + 1];
+  for (let gx = Math.floor((Math.min(a[0], b[0]) - 2) / PCELL); gx <= Math.floor((Math.max(a[0], b[0]) + 2) / PCELL); gx++) for (let gz = Math.floor((Math.min(a[1], b[1]) - 2) / PCELL); gz <= Math.floor((Math.max(a[1], b[1]) + 2) / PCELL); gz++){ const k = gx + ',' + gz; if (!PSEG.has(k)) PSEG.set(k, []); PSEG.get(k).push([a, b]); }
+}
+function pathDist(x, z){
+  let best = 1e9;
+  for (let gx = Math.floor(x / PCELL) - 1; gx <= Math.floor(x / PCELL) + 1; gx++) for (let gz = Math.floor(z / PCELL) - 1; gz <= Math.floor(z / PCELL) + 1; gz++){
+    const L = PSEG.get(gx + ',' + gz); if (!L) continue;
+    for (const [a, b] of L){ const ex = b[0] - a[0], ez = b[1] - a[1], t = clamp(((x - a[0]) * ex + (z - a[1]) * ez) / (ex * ex + ez * ez || 1), 0, 1); best = Math.min(best, Math.hypot(x - a[0] - ex * t, z - a[1] - ez * t)); }
+  }
+  return best;
+}
+const clearOfPaths = (x, z, r) => pathDist(x, z) >= r + 1.0;   // 1.0 m: half the widest stair plus a margin
+function findFree(x, z, r, maxR, paths){ const ok = (px, pz) => freeAt(px, pz, r) && (!paths || clearOfPaths(px, pz, r)); if (ok(x, z)) return [x, z]; for (let rad = 2; rad <= (maxR || 70); rad += 2){ const n = Math.max(8, Math.floor(rad * 1.3)); for (let k = 0; k < n; k++){ const a = k / n * Math.PI * 2, px = x + Math.cos(a) * rad, pz = z + Math.sin(a) * rad; if (ok(px, pz)) return [px, pz]; } } return null; }
 const corePts = [];
 for (const p of D.paths){ if (!p.c) continue; for (let k = 0; k < p.p.length - 1; k++){ const a = p.p[k], b = p.p[k + 1], L = Math.hypot(b[0] - a[0], b[1] - a[1]), n = Math.max(1, Math.floor(L / 4)); for (let t = 0; t < n; t++){ const f = t / n; corePts.push([a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, Math.atan2(b[1] - a[1], b[0] - a[0])]); } } }
 
@@ -126,17 +142,17 @@ const POI = D.poi, LMK = {}, PADS = [];
 LMK.pav = [];
 for (const off of [[16, 4], [-15, 6], [4, -16], [-6, 17], [14, -12]]){
   if (LMK.pav.length >= 2) break;
-  const q = findFree(LMK.stupa[0] + off[0], LMK.stupa[1] + off[1], 4.4, 16);
+  const q = findFree(LMK.stupa[0] + off[0], LMK.stupa[1] + off[1], 4.4, 16, true);
   if (q){ const ang = Math.atan2(LMK.stupa[1] - q[1], LMK.stupa[0] - q[0]); LMK.pav.push([q[0], q[1], ang, LMK.pav.length === 0]); addSolid(rectPoly(q[0], q[1], 3.1, 3.1, ang), bicubic(q[0], q[1]) + 6); PADS.push({ x: q[0], z: q[1], hw: 3.6, hd: 3.6, ux: Math.cos(ang), uz: Math.sin(ang) }); }
 }
 { let best = null; for (const p of corePts){ const d = Math.hypot(p[0] - 30, p[1] - 40); if (!best || d < best.d) best = { d, p }; }
-  if (best){ const p = best.p, nx = -Math.sin(p[2]), nz = Math.cos(p[2]); const q = findFree(p[0] + nx * 4.5, p[1] + nz * 4.5, 3.4, 30); if (q){ LMK.pav.push([q[0], q[1], p[2], false]); addSolid(rectPoly(q[0], q[1], 2.6, 2.6, p[2]), bicubic(q[0], q[1]) + 6); PADS.push({ x: q[0], z: q[1], hw: 3.0, hd: 3.0, ux: Math.cos(p[2]), uz: Math.sin(p[2]) }); } } }
+  if (best){ const p = best.p, nx = -Math.sin(p[2]), nz = Math.cos(p[2]); const q = findFree(p[0] + nx * 4.5, p[1] + nz * 4.5, 3.4, 30, true); if (q){ LMK.pav.push([q[0], q[1], p[2], false]); addSolid(rectPoly(q[0], q[1], 2.6, 2.6, p[2]), bicubic(q[0], q[1]) + 6); PADS.push({ x: q[0], z: q[1], hw: 3.0, hd: 3.0, ux: Math.cos(p[2]), uz: Math.sin(p[2]) }); } } }
 LMK.mani = [];
-{ const q = findFree(LMK.stupa[0], LMK.stupa[1] + 15, 3.2, 26); if (q){ const ang = Math.atan2(q[1] - LMK.stupa[1], q[0] - LMK.stupa[0]) + Math.PI / 2; LMK.mani.push([q[0], q[1], ang, 9]); } }
-{ const Rm = mulberry(5150); for (let t = 0; t < 400 && LMK.mani.length < 4; t++){ const p = corePts[Math.floor(Rm() * corePts.length)]; if (!p) break; const nx = -Math.sin(p[2]), nz = Math.cos(p[2]); const x = p[0] + nx * 2.9, z = p[1] + nz * 2.9; if (LMK.mani.some((m) => Math.hypot(m[0] - x, m[1] - z) < 60)) continue; let ok = true; for (const u of [-4, 0, 4]) if (!freeAt(x + Math.cos(p[2]) * u, z + Math.sin(p[2]) * u, 1.4)) ok = false; if (ok) LMK.mani.push([x, z, p[2], 8]); } }
+{ const q = findFree(LMK.stupa[0], LMK.stupa[1] + 15, 3.2, 26, true); if (q){ const ang = Math.atan2(q[1] - LMK.stupa[1], q[0] - LMK.stupa[0]) + Math.PI / 2; LMK.mani.push([q[0], q[1], ang, 9]); } }
+{ const Rm = mulberry(5150); for (let t = 0; t < 400 && LMK.mani.length < 4; t++){ const p = corePts[Math.floor(Rm() * corePts.length)]; if (!p) break; const nx = -Math.sin(p[2]), nz = Math.cos(p[2]); const x = p[0] + nx * 2.9, z = p[1] + nz * 2.9; if (LMK.mani.some((m) => Math.hypot(m[0] - x, m[1] - z) < 60)) continue; let ok = true; for (const u of [-4, 0, 4]) if (!freeAt(x + Math.cos(p[2]) * u, z + Math.sin(p[2]) * u, 1.4) || !clearOfPaths(x + Math.cos(p[2]) * u, z + Math.sin(p[2]) * u, 0.7)) ok = false; if (ok) LMK.mani.push([x, z, p[2], 8]); } }
 for (const m of LMK.mani){ addSolid(rectPoly(m[0], m[1], m[3] / 2 + 0.2, 0.7, m[2]), bicubic(m[0], m[1]) + 1.6); PADS.push({ x: m[0], z: m[1], hw: m[3] / 2 + 0.6, hd: 1.1, ux: Math.cos(m[2]), uz: Math.sin(m[2]) }); }
 LMK.chortens = [];
-for (const p of POI){ if ((p.k === 'shrine' && !p.used) || p.k === 'memorial'){ const q = findFree(p.x, p.z, 2.2, 14); if (q){ LMK.chortens.push([q[0], q[1], p.k === 'memorial' ? 1.15 : 0.9]); addSolid(rectPoly(q[0], q[1], 2.0, 2.0, 0), bicubic(q[0], q[1]) + 6); PADS.push({ x: q[0], z: q[1], hw: 2.6, hd: 2.6, ux: 1, uz: 0 }); } } }
+for (const p of POI){ if ((p.k === 'shrine' && !p.used) || p.k === 'memorial'){ const q = findFree(p.x, p.z, 2.2, 14, true); if (q){ LMK.chortens.push([q[0], q[1], p.k === 'memorial' ? 1.15 : 0.9]); addSolid(rectPoly(q[0], q[1], 2.0, 2.0, 0), bicubic(q[0], q[1]) + 6); PADS.push({ x: q[0], z: q[1], hw: 2.6, hd: 2.6, ux: 1, uz: 0 }); } } }
 LMK.heli = POI.filter((p) => p.k === 'helipad').map((p) => [p.x, p.z, clamp(p.r || 8, 6, 14)]);
 for (const h of LMK.heli) PADS.push({ x: h[0], z: h[1], hw: h[2] + 1.5, hd: h[2] + 1.5, ux: 1, uz: 0 });
 { const ev = POI.find((p) => p.k === 'viewpoint' && /everest/i.test(p.n)) || { x: 523.2, z: 270.2 }; const q = findFree(ev.x, ev.z, 3, 40) || [ev.x, ev.z]; LMK.view = q; PADS.push({ x: q[0] + 3, z: q[1] + 3, hw: 8, hd: 8, ux: 1, uz: 0 }); }
@@ -196,17 +212,327 @@ for (let iz = 0; iz < TZ; iz++){
     const fh = farH(x, z); H[k] = fh + (h - fh) * wB;
   }
 }
-function townGround(x, z){
+// T1d: terrain cells under the stairs are refined to a fine grid (REFN x REFN sub-cells) so the ground can be
+// fitted to the steps locally. RCELL maps a coarse cell to its fine patch (-1 = not refined); FH holds fine heights.
+const REFN = coarse ? 8 : 12, RCELL = new Int32Array((TX - 1) * (TZ - 1)).fill(-1), RSLOT = [];
+let FH = null;
+function coarseGround(x, z){
   const gx = (x - TX0) / SX, gz = (z - TZ0) / SZ;
   const ix = clamp(Math.floor(gx), 0, TX - 2), iz = clamp(Math.floor(gz), 0, TZ - 2), u = gx - ix, v = gz - iz;
   const a = H[iz * TX + ix], b = H[(iz + 1) * TX + ix], c = H[(iz + 1) * TX + ix + 1], d = H[iz * TX + ix + 1];
   if (u + v <= 1) return a + (d - a) * u + (b - a) * v;
   return c + (b - c) * (1 - u) + (d - c) * (1 - v);
 }
+// fine triangle under (x, z) in a refined cell: [i0, i1, i2] fine vertex indices and barycentric weights
+function fineTri(slot, x, z){
+  const R = RSLOT[slot], fu = clamp(((x - TX0) / SX - R.ix) * REFN, 0, REFN), fv = clamp(((z - TZ0) / SZ - R.iz) * REFN, 0, REFN);
+  const i = Math.min(REFN - 1, Math.floor(fu)), j = Math.min(REFN - 1, Math.floor(fv)), u = fu - i, v = fv - j, W = REFN + 1, V = R.v;
+  const a = V[j * W + i], b = V[(j + 1) * W + i], c = V[(j + 1) * W + i + 1], d = V[j * W + i + 1];
+  return u + v <= 1 ? [a, d, b, 1 - u - v, u, v] : [b, d, c, 1 - u, 1 - v, u + v - 1];
+}
+function townGround(x, z){
+  if (FH){
+    const ix = clamp(Math.floor((x - TX0) / SX), 0, TX - 2), iz = clamp(Math.floor((z - TZ0) / SZ), 0, TZ - 2), slot = RCELL[iz * (TX - 1) + ix];
+    if (slot >= 0){ const t = fineTri(slot, x, z); return FH[t[0]] * t[3] + FH[t[1]] * t[4] + FH[t[2]] * t[5]; }
+  }
+  return coarseGround(x, z);
+}
 const TXmin = TX0, TXmax = TX0 + (TX - 1) * SX, TZmin = TZ0, TZmax = TZ0 + (TZ - 1) * SZ;
 const inTown = (x, z, m) => { m = m || 0; return x > TXmin + m && x < TXmax - m && z > TZmin + m && z < TZmax - m; };
 const groundAt = (x, z) => inTown(x, z) ? townGround(x, z) : farH(x, z);
 const gridK = (x, z) => clamp(Math.round((z - TZ0) / SZ), 0, TZ - 1) * TX + clamp(Math.round((x - TX0) / SX), 0, TX - 1);
+
+/* ================= T1d: stair flights =================
+   Laid out before the terrain mesh is built, because the ground is then fitted to the stairs.
+   Where:  every highway=steps way, plus any path stretch whose DEM grade, measured over a 3 m window,
+           is steeper than 25 degrees (rise/run > 0.466). Below that the path stays a ramp.
+   Shape:  a flight runs between bends (a turn of more than 20 degrees starts a new flight, with a flat
+           landing at the bend). Risers are constant within a flight, 0.15-0.20 m; each riser sits where the
+           terrain profile crosses the next half-riser, so the flight follows the ground; treads are
+           0.28-0.35 m, and any spare length is collected into landings of at least 0.9 m.
+   Fit:    every tread is a solid stone block down to below the ground. Terrain vertices under a flight are
+           lowered just enough that no ground pokes through a tread (they never move up).
+   Walk:   the player walks on a smooth invisible ramp over the treads (STAIRHASH, used by playerGround). */
+const STAIR = { GRADE: Math.tan(25 * Math.PI / 180), RISE: [0.15, 0.20], RUN: [0.28, 0.35], LAND: 0.9, DS: 0.25, BEND: 20 * Math.PI / 180 };
+const FLIGHTS = [], LANDINGS = [], STAIRLOG = { stepsWays: 0, stepsWaysWithStairs: 0, flightsSteps: 0, flightsGrade: 0, treads: 0, landings: 0, bendLandings: 0, tooSteep: 0, narrowed: 0, carvedVerts: 0, carveMax: 0, stepsWayCover: [] };
+function wallClear(x, z){
+  let best = 1e9;
+  for (let gx = Math.floor((x - 3) / CELLM); gx <= Math.floor((x + 3) / CELLM); gx++) for (let gz = Math.floor((z - 3) / CELLM); gz <= Math.floor((z + 3) / CELLM); gz++){
+    const L = BH.get(gx + ',' + gz); if (!L) continue;
+    for (const o of L){ if (o.solid || x < o.bb[0] - 3 || x > o.bb[1] + 3 || z < o.bb[2] - 3 || z > o.bb[3] + 3) continue; if (pip(o.poly, x, z)) return 0; best = Math.min(best, edgeDist(o.poly, x, z)[0]); }
+  }
+  return best;
+}
+{
+  const placed = new Map(), PC4 = 2;   // stations of flights already built, to skip a second way over the same ground
+  const occKey = (x, z) => Math.floor(x / PC4) + ',' + Math.floor(z / PC4);
+  const occupied = (x, z, r, path) => { for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++){ const L = placed.get((Math.floor(x / PC4) + i) + ',' + (Math.floor(z / PC4) + j)); if (L) for (const q of L) if (q[3] !== path && Math.hypot(q[0] - x, q[1] - z) < r + q[2]) return true; } return false; };   // only other ways count
+  const order = D.paths.map((p, i) => i).sort((a, b) => (D.paths[b].s - D.paths[a].s) || (D.paths[b].c - D.paths[a].c));
+  for (const pi of order){
+    const p = D.paths[pi], P = p.p;
+    if (p.s) STAIRLOG.stepsWays++;
+    // stations every DS metres along the centre-line
+    const st = []; let acc = 0;
+    const bendAt = new Set();
+    for (let i = 0; i < P.length - 1; i++){
+      const a = P[i], b = P[i + 1], L = Math.hypot(b[0] - a[0], b[1] - a[1]); if (L < 1e-3) continue;
+      if (i > 0){ const a0 = P[i - 1], h0 = Math.atan2(a[1] - a0[1], a[0] - a0[0]), h1 = Math.atan2(b[1] - a[1], b[0] - a[0]); let dh = Math.abs(h1 - h0); if (dh > Math.PI) dh = 2 * Math.PI - dh; if (dh > STAIR.BEND) bendAt.add(st.length); }
+      const n = Math.max(1, Math.round(L / STAIR.DS));
+      for (let k = 0; k < n; k++){ const t = k / n; st.push({ x: a[0] + (b[0] - a[0]) * t, z: a[1] + (b[1] - a[1]) * t, s: acc + L * t }); }
+      acc += L;
+    }
+    const last = P[P.length - 1]; st.push({ x: last[0], z: last[1], s: acc });
+    const n = st.length; if (n < 3) continue;
+    const at = (s) => { s = clamp(s, 0, acc); let lo = 0, hi = n - 1; while (hi - lo > 1){ const m = (lo + hi) >> 1; if (st[m].s <= s) lo = m; else hi = m; } const A = st[lo], B = st[hi], t = (s - A.s) / ((B.s - A.s) || 1); return [A.x + (B.x - A.x) * t, A.z + (B.z - A.z) * t]; };
+    const demAt = (s) => { const q = at(s); return bicubic(q[0], q[1]); };
+    // flag stations: inside the walkable town, not in water, and steps-tagged or steeper than 25 degrees over 3 m
+    const flag = new Uint8Array(n);
+    let stepsLen = 0, stepsStair = 0;
+    for (let i = 0; i < n; i++){
+      const q = st[i], ok = inTown(q.x, q.z, 20) && inside(q.x, q.z) && mWater(q.x, q.z) < 0.3;
+      let s0 = q.s - 1.5, s1 = q.s + 1.5; if (s0 < 0){ s1 -= s0; s0 = 0; } if (s1 > acc){ s0 -= s1 - acc; s1 = acc; } s0 = Math.max(0, s0);
+      const grade = (s1 - s0) >= 3 - 1e-6 ? Math.abs(demAt(s1) - demAt(s0)) / (s1 - s0) : 0;
+      q.grade = grade; flag[i] = ok && (p.s || grade > STAIR.GRADE) ? 1 : 0;
+      if (p.s && ok) stepsLen += STAIR.DS;
+    }
+    // close gaps under 1.5 m, drop runs under 1.2 m
+    for (let i = 0; i < n; ){ if (flag[i]){ i++; continue; } let j = i; while (j < n && !flag[j]) j++; if (i > 0 && j < n && (j - i) * STAIR.DS < 1.5) for (let k = i; k < j; k++) if (inside(st[k].x, st[k].z)) flag[k] = 1; i = j; }
+    for (let i = 0; i < n; ){ if (!flag[i]){ i++; continue; } let j = i; while (j < n && flag[j]) j++; if ((j - i) * STAIR.DS < 1.2) for (let k = i; k < j; k++) flag[k] = 0; i = j; }
+    // nominal width: OSM width tag, else 1.6 m in the built-up bazaar, 1.0 m elsewhere
+    const runs = [];
+    for (let i = 0; i < n; ){ if (!flag[i]){ i++; continue; } let j = i; while (j < n && flag[j]) j++; runs.push([i, j - 1]); i = j; }
+    const dirAt = (s0, s1) => { const q0 = at(s0), q1 = at(s1); const fx = q1[0] - q0[0], fz = q1[1] - q0[1], l = Math.hypot(fx, fz) || 1; return [fx / l, fz / l]; };
+    for (const [r0, r1] of runs){
+      // one width for the whole run so flights and landings line up
+      const mid = at((st[r0].s + st[r1].s) / 2);
+      let nb = 0; for (const b of BLD) if (Math.hypot(b.cx - mid[0], b.cz - mid[1]) < 18) nb++;
+      const main = !!(p.s || nb >= 4);
+      let hw = (p.w ? p.w : (main ? 1.6 : 1.0)) / 2;
+      let minClr = 1e9; for (let k = r0; k <= r1; k++) minClr = Math.min(minClr, wallClear(st[k].x, st[k].z));
+      if (minClr - 0.08 < hw){ hw = Math.max(0.4, minClr - 0.08); STAIRLOG.narrowed++; }
+      // nodes: the two ends of the run, and one landing per bend. Bends closer together than a stair width plus
+      // 0.3 m share one landing, so two landings never face each other across a gap too small for a step.
+      const nodes = [{ a: st[r0].s, b: st[r0].s, end: true }];
+      for (let k = r0 + 1; k < r1; k++){
+        if (!bendAt.has(k)) continue;
+        const sk = st[k].s, last = nodes[nodes.length - 1];
+        if (!last.end && sk - last.b < 2 * hw + 0.3) last.b = sk; else nodes.push({ a: sk, b: sk, end: false });
+      }
+      nodes.push({ a: st[r1].s, b: st[r1].s, end: true });
+      const nn = nodes.length, land = [];
+      for (let c = 1; c < nn - 1; c++){
+        const N0 = nodes[c], sm = (N0.a + N0.b) / 2, q = at(sm), y = townGround(q[0], q[1]);
+        // the landing covers the path from a stair half-width before the first bend to one after the last
+        const pts = [];
+        for (let ss = N0.a - hw; ss <= N0.b + hw + 1e-6; ss += 0.25){
+          const f = dirAt(clamp(ss - 0.3, N0.a - hw - 0.6, N0.b + hw + 0.6), clamp(ss + 0.3, N0.a - hw - 0.6, N0.b + hw + 0.6)), c0 = at(ss);
+          const fi = ss < N0.a ? dirAt(N0.a - hw - 0.6, N0.a - hw) : ss > N0.b ? dirAt(N0.b + hw, N0.b + hw + 0.6) : f;
+          pts.push([c0[0] - fi[1] * hw, c0[1] + fi[0] * hw], [c0[0] + fi[1] * hw, c0[1] - fi[0] * hw]);
+        }
+        { const pa = at(N0.a - hw), pb = at(N0.b + hw), di = dirAt(N0.a - hw - 0.6, N0.a - hw), dout = dirAt(N0.b + hw, N0.b + hw + 0.6);
+          pts.push([pa[0] - di[1] * hw, pa[1] + di[0] * hw], [pa[0] + di[1] * hw, pa[1] - di[0] * hw], [pb[0] - dout[1] * hw, pb[1] + dout[0] * hw], [pb[0] + dout[1] * hw, pb[1] - dout[0] * hw]);
+          const bx = di[0] - dout[0], bz = di[1] - dout[1], bl = Math.hypot(bx, bz);   // outward bisector of the turn
+          if (bl > 1e-3) pts.push([q[0] + bx / bl * hw * 1.45, q[1] + bz / bl * hw * 1.45]); }
+        // convex hull (monotone chain)
+        pts.sort((u, v) => u[0] - v[0] || u[1] - v[1]);
+        const cr = (o, u, v) => (u[0] - o[0]) * (v[1] - o[1]) - (u[1] - o[1]) * (v[0] - o[0]), lo = [], hi = [];
+        for (const pt of pts){ while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], pt) <= 0) lo.pop(); lo.push(pt); }
+        for (let i = pts.length - 1; i >= 0; i--){ const pt = pts[i]; while (hi.length >= 2 && cr(hi[hi.length - 2], hi[hi.length - 1], pt) <= 0) hi.pop(); hi.push(pt); }
+        const hull = lo.slice(0, -1).concat(hi.slice(0, -1));
+        const Ld = { poly: hull, y, bb: bbOf(hull), s: sm, path: pi };
+        land[c] = Ld; LANDINGS.push(Ld); STAIRLOG.bendLandings++;
+      }
+      // the stretch between two nodes, trimmed by a half-width at each landing
+      const seg = [];
+      for (let c = 0; c < nn - 1; c++){
+        const bendLo = c > 0, bendHi = c + 1 < nn - 1;
+        let sLo = nodes[c].b + (bendLo ? hw : 0), sHi = nodes[c + 1].a - (bendHi ? hw : 0);
+        const rawLen = sHi - sLo;
+        // skip ground another (higher-priority) way's flight already covers, e.g. where two ways share a junction
+        if (!bendLo) while (sLo < sHi){ const q = at(sLo); if (!occupied(q[0], q[1], 0.9, pi)) break; sLo += STAIR.DS; }
+        if (!bendHi) while (sHi > sLo){ const q = at(sHi); if (!occupied(q[0], q[1], 0.9, pi)) break; sHi -= STAIR.DS; }
+        const connector = bendLo || bendHi, need = connector ? 0.3 : 1.2;
+        seg.push({ bendLo, bendHi, sLo, sHi, connector, ok: sHi - sLo >= need, short: rawLen < need });
+      }
+      // landing heights. Pinned first: a landing with no room for a step between it and the run's end takes the
+      // end's ground height; a landing next to ground another way's flight covers keeps its own ground height.
+      // The rest start at the ground of the bend and move just enough that no flight between two nodes is steeper
+      // than 0.20 m rise per 0.30 m tread (the run's ends stay on the ground).
+      if (nn > 2){
+        const GMAX = STAIR.RISE[1] / 0.30, y = [], fixed = [], len = [];
+        for (let c = 0; c < nn; c++){ const q = at(nodes[c].a); fixed.push(nodes[c].end); y.push(land[c] ? land[c].y : townGround(q[0], q[1])); }
+        for (let c = 0; c < nn - 1; c++){
+          if (seg[c].short){
+            if (fixed[c] && !fixed[c + 1]){ y[c + 1] = y[c]; fixed[c + 1] = true; }
+            else if (fixed[c + 1] && !fixed[c]){ y[c] = y[c + 1]; fixed[c] = true; }
+          } else if (!seg[c].ok){ fixed[c] = true; fixed[c + 1] = true; }
+          len.push(Math.max(0.05, seg[c].sHi - seg[c].sLo));
+        }
+        for (let it = 0; it < 2000; it++){
+          let worst = 0;
+          for (let c = 0; c < nn - 1; c++){
+            if (!seg[c].ok) continue;
+            const d = y[c + 1] - y[c], lim = GMAX * len[c], ex = Math.abs(d) - lim; if (ex <= 1e-4) continue; worst = Math.max(worst, ex);
+            const sg = Math.sign(d), fa = fixed[c], fb = fixed[c + 1];
+            if (!fa && !fb){ y[c] += sg * ex / 2; y[c + 1] -= sg * ex / 2; } else if (!fa) y[c] += sg * ex; else if (!fb) y[c + 1] -= sg * ex;
+          }
+          if (worst < 1e-3) break;
+        }
+        for (let c = 1; c < nn - 1; c++){ STAIRLOG.landingShift = Math.max(STAIRLOG.landingShift || 0, Math.abs(y[c] - land[c].y)); land[c].y = y[c]; }
+      }
+      for (let c = 0; c < nn - 1; c++){
+        const { bendLo, bendHi, sLo, sHi, connector, ok } = seg[c];   // a connector touches a landing, so it is built even if short or nearly level
+        if (!ok){ if (connector) STAIRLOG.shortConnector = (STAIRLOG.shortConnector || 0) + 1; continue; }
+        // terrain profile along the flight (ground before fitting), tilted so its ends meet the landing heights
+        const prof0 = (s) => { const q = at(s); return townGround(q[0], q[1]); };
+        const yLo = bendLo ? land[c].y : prof0(sLo), yHi = bendHi ? land[c + 1].y : prof0(sHi), cLo = yLo - prof0(sLo), cHi = yHi - prof0(sHi);
+        const prof = (s) => prof0(s) + cLo + (cHi - cLo) * clamp((s - sLo) / (sHi - sLo), 0, 1);
+        let A = sLo, B = sHi, hA = yLo, hB = yHi;
+        if (hB < hA){ const t = A; A = B; B = t; const u = hA; hA = hB; hB = u; }
+        const dir = B > A ? 1 : -1, L = Math.abs(B - A), dH = hB - hA;
+        if (!connector && dH < 2 * STAIR.RISE[0]){ STAIRLOG.tooLow = (STAIRLOG.tooLow || 0) + 1; continue; }   // under two risers: leave it a ramp
+        // riser count: one that puts the riser inside 0.15-0.20 m if any does, else the one nearest that range
+        // (a short connector to a landing may have one riser, or none if it is within 7.5 cm of level)
+        const minN = connector ? (dH < 0.075 ? 0 : 1) : 2;
+        let N = minN, bestV = 1e9;
+        if (minN > 0) for (let m = Math.max(minN, Math.floor(dH / STAIR.RISE[1])); m <= Math.ceil(dH / STAIR.RISE[0]) + 1; m++){
+          const rr = dH / m, tt = (L - 0.3) / Math.max(1, m - 1);
+          const viol = 2 * (rr > STAIR.RISE[1] ? rr - STAIR.RISE[1] : rr < STAIR.RISE[0] ? STAIR.RISE[0] - rr : 0) + (m > 1 && tt < STAIR.RUN[0] ? STAIR.RUN[0] - tt : 0);
+          if (viol < bestV - 1e-9 || (Math.abs(viol - bestV) < 1e-9 && Math.abs(rr - 0.175) < Math.abs(dH / N - 0.175))){ bestV = viol; N = m; }
+        }
+        const r = N ? dH / N : 0;
+        // riser k (1..N) where the rising envelope of the profile first reaches hA + (k - 0.5) r
+        const sr = [0]; let env = hA, k = 1;
+        for (let d = 0; d <= L + 1e-6 && k <= N; d += 0.05){ env = Math.max(env, prof(A + dir * d)); while (k <= N && env >= hA + (k - 0.5) * r){ sr.push(d); k++; } }
+        while (sr.length <= N) sr.push(L);
+        sr.push(L);   // sr[0] = 0, sr[1..N] risers, sr[N+1] = L
+        const endMin = Math.min(0.15, L / (N + 1) / 2);
+        if (N >= 1){
+          // treads at least RUN[0]; the end treads at least 0.15 m
+          sr[1] = Math.max(sr[1], endMin); for (let i = 2; i <= N; i++) sr[i] = Math.max(sr[i], sr[i - 1] + STAIR.RUN[0]);
+          if (sr[N] > L - endMin){
+            sr[N] = L - endMin; for (let i = N - 1; i >= 1; i--) sr[i] = Math.min(sr[i], sr[i + 1] - STAIR.RUN[0]);
+            if (sr[1] < endMin){ STAIRLOG.tooSteep++; const t = (L - 2 * endMin) / Math.max(1, N - 1); for (let i = 1; i <= N; i++) sr[i] = endMin + (i - 1) * t; }
+          }
+          // treads between RUN[1] and LAND become a normal tread or a landing, whichever keeps the flight nearer the ground
+          // (error diffusion: each choice moves every later riser by the same amount, cum tracks the total drift)
+          let cum = 0;
+          for (let i = 1; i < N; i++){
+            const t = sr[i + 1] - sr[i];
+            if (t > STAIR.RUN[1] && t < STAIR.LAND){
+              const dShort = 0.32 - t, dLong = STAIR.LAND - t, roomLong = sr[N] + dLong <= L - endMin;
+              const pick = (!roomLong || Math.abs(cum + dShort) <= Math.abs(cum + dLong)) ? dShort : dLong;
+              for (let j = i + 1; j <= N; j++) sr[j] += pick;
+              cum += pick;
+            }
+          }
+        }
+        // geometry frame at distance d from the bottom; the direction is measured inside this flight only,
+        // never across a bend, so the end edges match the landing edges
+        const s0f = Math.min(A, B), s1f = Math.max(A, B);
+        const frame = (d) => { const s = A + dir * d, q = at(s), f = dirAt(clamp(s - 0.6, s0f, s1f), clamp(s + 0.6, s0f, s1f)), fx = f[0] * dir, fz = f[1] * dir; return { x: q[0], z: q[1], fx, fz, nx: -fz, nz: fx }; };
+        const edges = sr.map(frame), ys = []; for (let i = 0; i <= N; i++) ys.push(hA + i * r);
+        const F = { path: pi, kind: p.s ? 'steps' : 'grade', main, hw, r, N, L, dH, sr, edges, ys, A, B, dir, at, s0: s0f, s1: s1f, connector };
+        FLIGHTS.push(F); STAIRLOG.treads += N + 1;
+        for (let i = 1; i < N; i++) if (sr[i + 1] - sr[i] >= STAIR.LAND - 1e-6) STAIRLOG.landings++;
+        if (p.s) STAIRLOG.flightsSteps++; else STAIRLOG.flightsGrade++;
+        if (p.s) stepsStair += L;
+        for (let ss = s0f; ss <= s1f + 1e-6; ss += STAIR.DS){ const q = at(ss), key = occKey(q[0], q[1]); if (!placed.has(key)) placed.set(key, []); placed.get(key).push([q[0], q[1], hw, pi]); }
+      }
+    }
+    if (p.s){ if (stepsStair > 0) STAIRLOG.stepsWaysWithStairs++; STAIRLOG.stepsWayCover.push({ path: pi, inTownM: +stepsLen.toFixed(1), stairM: +stepsStair.toFixed(1) }); }
+  }
+}
+// tread quads: corners in order (left-bottom, right-bottom, right-top, left-top), height y
+function treadQuad(F, i, grow, growEnd){
+  const e0 = F.edges[i], e1 = F.edges[i + 1], h = F.hw + (grow || 0), g = growEnd || 0;
+  const b0 = [e0.x - e0.fx * g, e0.z - e0.fz * g], b1 = [e1.x + e1.fx * g, e1.z + e1.fz * g];
+  return [[b0[0] + e0.nx * h, b0[1] + e0.nz * h], [b0[0] - e0.nx * h, b0[1] - e0.nz * h], [b1[0] - e1.nx * h, b1[1] - e1.nz * h], [b1[0] + e1.nx * h, b1[1] + e1.nz * h]];
+}
+// fit the ground: terrain may not poke through any tread or landing.
+// (1) every coarse cell within 0.6 m of a tread or landing is refined to a fine grid that follows the coarse
+//     surface exactly, so its edges meet the neighbouring coarse triangles without cracks;
+// (2) each sample point P under a tread gives a constraint  sum_j w_j(P) (FH_j - drop_j) <= top(P) - 0.03  on the
+//     three fine vertices j around it. Start from a safe answer, then give back as much of each drop as the
+//     constraints allow (Gauss-Seidel on the slack). Vertices only move down; vertices on the edge of the refined
+//     area are pinned, so the coarse terrain outside is untouched.
+{
+  const CLEAR = 0.03, W = REFN + 1, FW = (TX - 1) * REFN + 1;
+  const footprints = [];
+  for (const F of FLIGHTS) for (let i = 0; i <= F.N; i++) footprints.push({ q: treadQuad(F, i, 0.1, i === 0 || i === F.N ? 0.05 : 0), top: F.ys[i] });
+  const markPt = (x, z) => { const ix = Math.floor((x - TX0) / SX), iz = Math.floor((z - TZ0) / SZ); if (ix < 0 || iz < 0 || ix > TX - 2 || iz > TZ - 2) return; const c = iz * (TX - 1) + ix; if (RCELL[c] < 0){ RCELL[c] = RSLOT.length; RSLOT.push({ ix, iz, v: null }); } };
+  const eachIn = (q, step, fn) => { const nu = Math.max(2, Math.ceil(Math.hypot(q[1][0] - q[0][0], q[1][1] - q[0][1]) / step) + 1), nv = Math.max(2, Math.ceil(Math.hypot(q[3][0] - q[0][0], q[3][1] - q[0][1]) / step) + 1);
+    for (let i = 0; i < nu; i++) for (let j = 0; j < nv; j++){ const u = i / (nu - 1), v = j / (nv - 1); fn(lerp(lerp(q[0][0], q[1][0], u), lerp(q[3][0], q[2][0], u), v), lerp(lerp(q[0][1], q[1][1], u), lerp(q[3][1], q[2][1], u), v)); } };
+  for (const fp of footprints) eachIn(fp.q, 0.3, (x, z) => { for (const dx of [-0.6, 0, 0.6]) for (const dz of [-0.6, 0, 0.6]) markPt(x + dx, z + dz); });
+  for (const Ld of LANDINGS){ const [a, b, c, d] = Ld.bb; for (let x = a - 0.6; x <= b + 0.6; x += 0.3) for (let z = c - 0.6; z <= d + 0.6; z += 0.3) markPt(x, z); }
+  // fine vertices, shared between neighbouring refined cells
+  const key2i = new Map(), fx = [], fz = [], fh = [], pinned = [];
+  const isRef = (cx, cz) => cx >= 0 && cz >= 0 && cx <= TX - 2 && cz <= TZ - 2 && RCELL[cz * (TX - 1) + cx] >= 0;
+  for (const R of RSLOT){
+    R.v = new Int32Array(W * W);
+    for (let j = 0; j <= REFN; j++) for (let i = 0; i <= REFN; i++){
+      const gx = R.ix * REFN + i, gz = R.iz * REFN + j, key = gz * FW + gx; let v = key2i.get(key);
+      if (v === undefined){
+        v = fh.length; key2i.set(key, v); const x = TX0 + gx * SX / REFN, z = TZ0 + gz * SZ / REFN; fx.push(x); fz.push(z); fh.push(coarseGround(x, z));
+        const cxs = gx % REFN === 0 ? [gx / REFN - 1, gx / REFN] : [Math.floor(gx / REFN)], czs = gz % REFN === 0 ? [gz / REFN - 1, gz / REFN] : [Math.floor(gz / REFN)];
+        let pin = false; for (const cx of cxs) for (const cz of czs) if (!isRef(cx, cz)) pin = true; pinned.push(pin);
+      }
+      R.v[j * W + i] = v;
+    }
+  }
+  FH = new Float64Array(fh);
+  // constraints
+  const SV = [], SW = [], ST = [];
+  const addP = (x, z, top) => { const ix = clamp(Math.floor((x - TX0) / SX), 0, TX - 2), iz = clamp(Math.floor((z - TZ0) / SZ), 0, TZ - 2), slot = RCELL[iz * (TX - 1) + ix]; if (slot < 0) return; const t = fineTri(slot, x, z); SV.push(t[0], t[1], t[2]); SW.push(t[3], t[4], t[5]); ST.push(top - CLEAR); };
+  for (const fp of footprints) eachIn(fp.q, 0.1, (x, z) => addP(x, z, fp.top));
+  for (const Ld of LANDINGS){ const [a, b, c, d] = Ld.bb; for (let x = a; x <= b; x += 0.1) for (let z = c; z <= d; z += 0.1) if (pip(Ld.poly, x, z)) addP(x, z, Ld.y); }
+  const NV = FH.length, NS = ST.length, drop = new Float64Array(NV), slack = new Float64Array(NS);
+  for (let p = 0; p < NS; p++){
+    let h = 0, wfree = 0; for (let k = 0; k < 3; k++){ h += SW[p * 3 + k] * FH[SV[p * 3 + k]]; if (!pinned[SV[p * 3 + k]]) wfree += SW[p * 3 + k]; }
+    const ex = h - ST[p]; if (ex > 0 && wfree > 1e-6) for (let k = 0; k < 3; k++){ const v = SV[p * 3 + k]; if (!pinned[v]) drop[v] = Math.max(drop[v], ex / wfree); }
+  }
+  for (let p = 0; p < NS; p++){ let h = 0; for (let k = 0; k < 3; k++) h += SW[p * 3 + k] * (FH[SV[p * 3 + k]] - drop[SV[p * 3 + k]]); slack[p] = ST[p] - h; }
+  const cnt = new Int32Array(NV + 1); for (let i = 0; i < NS * 3; i++) cnt[SV[i] + 1]++;
+  for (let v = 0; v < NV; v++) cnt[v + 1] += cnt[v];
+  const fp2 = cnt.slice(), inc = new Int32Array(NS * 3); for (let i = 0; i < NS * 3; i++) inc[fp2[SV[i]]++] = i;
+  const verts = []; for (let v = 0; v < NV; v++) if (drop[v] > 0) verts.push(v);
+  for (let sweep = 0; sweep < 80; sweep++){
+    let moved = 0;
+    for (const v of verts){
+      if (drop[v] <= 0) continue;
+      let dmax = drop[v];
+      for (let q = cnt[v]; q < cnt[v + 1]; q++){ const i = inc[q], w = SW[i]; if (w > 1e-6) dmax = Math.min(dmax, slack[(i / 3) | 0] / w); }
+      if (dmax > 1e-6){ drop[v] -= dmax; moved += dmax; for (let q = cnt[v]; q < cnt[v + 1]; q++){ const i = inc[q]; slack[(i / 3) | 0] -= SW[i] * dmax; } }
+    }
+    if (moved < 1e-4) break;
+  }
+  let unsat = 0; for (let p = 0; p < NS; p++) if (slack[p] < -1e-4) unsat++;
+  for (let v = 0; v < NV; v++) if (drop[v] > 0){ FH[v] -= drop[v]; STAIRLOG.carvedVerts++; STAIRLOG.carveMax = Math.max(STAIRLOG.carveMax, drop[v]); }
+  STAIRLOG.carveSamples = NS; STAIRLOG.unsatisfied = unsat; STAIRLOG.refinedCells = RSLOT.length; STAIRLOG.fineVerts = NV;
+  window.__fine = { fx, fz };
+}
+// walkable ramp over the treads, looked up by playerGround
+const STAIRHASH = new Map(), SCELL = 4;
+for (const F of FLIGHTS) for (let i = 0; i <= F.N; i++){
+  const q = treadQuad(F, i, 0.05), bb = bbOf(q), o = { F, i, poly: q, bb };
+  for (let gx = Math.floor(bb[0] / SCELL); gx <= Math.floor(bb[1] / SCELL); gx++) for (let gz = Math.floor(bb[2] / SCELL); gz <= Math.floor(bb[3] / SCELL); gz++){ const key = gx + ',' + gz; if (!STAIRHASH.has(key)) STAIRHASH.set(key, []); STAIRHASH.get(key).push(o); }
+}
+for (const Ld of LANDINGS){ const bb = Ld.bb; for (let gx = Math.floor(bb[0] / SCELL); gx <= Math.floor(bb[1] / SCELL); gx++) for (let gz = Math.floor(bb[2] / SCELL); gz <= Math.floor(bb[3] / SCELL); gz++){ const key = gx + ',' + gz; if (!STAIRHASH.has(key)) STAIRHASH.set(key, []); STAIRHASH.get(key).push({ land: Ld, poly: Ld.poly, bb }); } }
+// height of the visible stone surface (tread top) and of the smooth ramp the player walks on; null off the stairs
+function stairAt(x, z){
+  const L = STAIRHASH.get(Math.floor(x / SCELL) + ',' + Math.floor(z / SCELL)); if (!L) return null;
+  let land = null;
+  for (const o of L){
+    if (x < o.bb[0] || x > o.bb[1] || z < o.bb[2] || z > o.bb[3] || !pip(o.poly, x, z)) continue;
+    if (o.land){ land = o.land; continue; }
+    const F = o.F, i = o.i, e0 = F.edges[i], T = F.sr[i + 1] - F.sr[i], y = F.ys[i], r = F.r;
+    const d = clamp((x - e0.x) * e0.fx + (z - e0.z) * e0.fz, 0, T);
+    let a = i > 0 ? 0.16 : 0, b = i < F.N ? 0.16 : 0; if (a + b > T){ const k = T / (a + b); a *= k; b *= k; }
+    let ramp = y; if (a > 0 && d < a) ramp = y - r / 2 + (r / 2) * (d / a); else if (b > 0 && d > T - b) ramp = y + (r / 2) * ((d - (T - b)) / b);
+    return { top: y, ramp, F, i };
+  }
+  return land ? { top: land.y, ramp: land.y, land } : null;
+}
 
 /* ================= palettes ================= */
 const PAL = {
@@ -602,11 +928,27 @@ const maskTex = new THREE.Texture(imA); maskTex.wrapS = maskTex.wrapT = THREE.Cl
       col[k * 3] = tc.r; col[k * 3 + 1] = tc.g; col[k * 3 + 2] = tc.b;
     }
   }
-  const idx = new Uint32Array((TX - 1) * (TZ - 1) * 6); let q = 0;
-  for (let iz = 0; iz < TZ - 1; iz++) for (let ix = 0; ix < TX - 1; ix++){ const a = iz * TX + ix, b = (iz + 1) * TX + ix, c = (iz + 1) * TX + ix + 1, d = iz * TX + ix + 1; idx[q++] = a; idx[q++] = b; idx[q++] = d; idx[q++] = b; idx[q++] = c; idx[q++] = d; }
+  const yard0 = new Float32Array(TN); for (let k = 0; k < TN; k++) yard0[k] = clamp(NEARB[k] * 1.25 + PADW[k], 0, 1) * (1 - FIELD[k]) * BORD[k];
+  const NF = FH ? FH.length : 0, NT = TN + NF, nRef = RSLOT.length;
+  const pos2 = new Float32Array(NT * 3), col2 = new Float32Array(NT * 3), yard = new Float32Array(NT);
+  pos2.set(pos); col2.set(col); yard.set(yard0);
+  if (NF){
+    const fx = window.__fine.fx, fz = window.__fine.fz;
+    for (let v = 0; v < NF; v++){
+      const x = fx[v], z = fz[v], gx = (x - TX0) / SX, gz = (z - TZ0) / SZ, ix = clamp(Math.floor(gx), 0, TX - 2), iz = clamp(Math.floor(gz), 0, TZ - 2), u = clamp(gx - ix, 0, 1), w = clamp(gz - iz, 0, 1);
+      const k00 = iz * TX + ix, k10 = k00 + 1, k01 = k00 + TX, k11 = k01 + 1, o = (TN + v) * 3;
+      pos2[o] = x; pos2[o + 1] = FH[v]; pos2[o + 2] = z;
+      for (let ch = 0; ch < 3; ch++) col2[o + ch] = (col[k00 * 3 + ch] * (1 - u) + col[k10 * 3 + ch] * u) * (1 - w) + (col[k01 * 3 + ch] * (1 - u) + col[k11 * 3 + ch] * u) * w;
+      yard[TN + v] = (yard0[k00] * (1 - u) + yard0[k10] * u) * (1 - w) + (yard0[k01] * (1 - u) + yard0[k11] * u) * w;
+    }
+    delete window.__fine;
+  }
+  const idx = new Uint32Array(((TX - 1) * (TZ - 1) - nRef) * 6 + nRef * REFN * REFN * 6); let q = 0;
+  for (let iz = 0; iz < TZ - 1; iz++) for (let ix = 0; ix < TX - 1; ix++){ if (RCELL[iz * (TX - 1) + ix] >= 0) continue; const a = iz * TX + ix, b = (iz + 1) * TX + ix, c = (iz + 1) * TX + ix + 1, d = iz * TX + ix + 1; idx[q++] = a; idx[q++] = b; idx[q++] = d; idx[q++] = b; idx[q++] = c; idx[q++] = d; }
+  for (const R of RSLOT){ const V = R.v, W = REFN + 1; for (let j = 0; j < REFN; j++) for (let i = 0; i < REFN; i++){ const a = TN + V[j * W + i], b = TN + V[(j + 1) * W + i], c = TN + V[(j + 1) * W + i + 1], d = TN + V[j * W + i + 1]; idx[q++] = a; idx[q++] = b; idx[q++] = d; idx[q++] = b; idx[q++] = c; idx[q++] = d; } }
   const g = new THREE.BufferGeometry();
-  const yard = new Float32Array(TN); for (let k = 0; k < TN; k++) yard[k] = clamp(NEARB[k] * 1.25 + PADW[k], 0, 1) * (1 - FIELD[k]) * BORD[k];
-  g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.setAttribute('yard', new THREE.BufferAttribute(yard, 1)); g.setIndex(new THREE.BufferAttribute(idx, 1)); g.computeVertexNormals();
+  g.setAttribute('position', new THREE.BufferAttribute(pos2, 3)); g.setAttribute('color', new THREE.BufferAttribute(col2, 3)); g.setAttribute('yard', new THREE.BufferAttribute(yard, 1)); g.setIndex(new THREE.BufferAttribute(idx, 1)); g.computeVertexNormals();
+  STAIRLOG.terrainTris = idx.length / 3;
   const mat = new THREE.MeshLambertMaterial({ vertexColors: true, map: paveTex });
   const ORX = Math.round(TX0) + '.0', ORZ = Math.round(TZ0) + '.0';
   mat.onBeforeCompile = (sh) => {
@@ -928,7 +1270,7 @@ const maniRocks = [];
   for (let t = 0; t < 600 && maniRocks.length < 16; t++){
     const p = allPts[Math.floor(R() * allPts.length)]; if (!p) break;
     const side = R() < 0.5 ? -1 : 1, nx = -Math.sin(p[2]) * side, nz = Math.cos(p[2]) * side, x = p[0] + nx * 3.0, z = p[1] + nz * 3.0;
-    if (!inTown(x, z, 40) || !freeAt(x, z, 1.6) || maniRocks.some((m) => Math.hypot(m[0] - x, m[1] - z) < 30)) continue;
+    if (!inTown(x, z, 40) || !freeAt(x, z, 1.6) || !clearOfPaths(x, z, 1.2) || maniRocks.some((m) => Math.hypot(m[0] - x, m[1] - z) < 30)) continue;
     const y = groundAt(x, z), face = Math.atan2(-nz, -nx); maniRocks.push([x, y, z, face]);
     const fx = x - nx * 0.9, fz = z - nz * 0.9, tx = -nz * 0.6, tz = nx * 0.6;
     G.mani.quad([fx - tx, y + 0.12, fz - tz], [fx + tx, y + 0.12, fz + tz], [fx + tx, y + 1.0, fz + tz], [fx - tx, y + 1.0, fz - tz], WHITE, [0, 0], [1, 0], [1, 1], [0, 1]);
@@ -955,25 +1297,26 @@ for (const v of LMK.views){ if (freeAt(v[0], v[1], 1.5)){ bench(v[0], v[1], 0); 
 
 /* ================= stairs, bridges, lamps, signposts ================= */
 setStatus('Cutting stone stairs and building bridges…'); await nextFrame();
-for (const p of D.paths){
-  const w = p.c ? 2.5 : 1.5;
-  for (let i = 0; i < p.p.length - 1; i++){
-    const a = p.p[i], b = p.p[i + 1], L = Math.hypot(b[0] - a[0], b[1] - a[1]); if (L < 0.5) continue;
-    if (!inTown(a[0], a[1], 20) || !inTown(b[0], b[1], 20)) continue;
-    const ha = groundAt(a[0], a[1]), hb2 = groundAt(b[0], b[1]), slope = Math.abs(hb2 - ha) / L;
-    if (slope < (p.s ? 0.06 : 0.16)) continue;
-    const n = Math.max(1, Math.floor(L / 0.42)), ax = (b[0] - a[0]) / L, az = (b[1] - a[1]) / L, nx = -az, nz = ax, R = mulberry(Math.floor(a[0] * 13 + a[1] * 7) | 0), up = hb2 > ha;
-    for (let k = 0; k < n; k++){
-      const t0 = k * L / n, t1 = (k + 1) * L / n, mx = a[0] + ax * (t0 + t1) / 2, mz = a[1] + az * (t0 + t1) / 2;
-      if (!inside(mx, mz) || mWater(mx, mz) > 0.3) continue;
-      const top = groundAt(mx, mz) + 0.1, col = new THREE.Color(1, 1, 1).multiplyScalar(0.8 + R() * 0.32), hw = w / 2 + (R() - 0.5) * 0.15;
-      const P0 = [a[0] + ax * t0 - nx * hw, a[1] + az * t0 - nz * hw], P1 = [a[0] + ax * t0 + nx * hw, a[1] + az * t0 + nz * hw], P2 = [a[0] + ax * t1 + nx * hw, a[1] + az * t1 + nz * hw], P3 = [a[0] + ax * t1 - nx * hw, a[1] + az * t1 - nz * hw];
-      const uo = R(), vo = R();
-      G.steps.quad([P0[0], top, P0[1]], [P1[0], top, P1[1]], [P2[0], top, P2[1]], [P3[0], top, P3[1]], col, [uo, vo], [uo + w / 3, vo], [uo + w / 3, vo + 0.14], [uo, vo + 0.14]);
-      const Ed = up ? [P0, P1] : [P3, P2], ybt = top - 0.45, rc = col.clone().multiplyScalar(0.72);
-      G.steps.quad([Ed[0][0], ybt, Ed[0][1]], [Ed[1][0], ybt, Ed[1][1]], [Ed[1][0], top, Ed[1][1]], [Ed[0][0], top, Ed[0][1]], rc, [uo, 0], [uo + w / 3, 0], [uo + w / 3, 0.15], [uo, 0.15]);
-    }
+// T1d: each tread is a solid stone block, flat on top, its sides running down to below the (fitted) ground.
+// Adjacent treads share their edge lines, so a flight is one continuous run with no gaps or overlaps.
+for (const F of FLIGHTS){
+  const R = mulberry(9001 + F.path * 131 + Math.round(F.A * 7));
+  for (let i = 0; i <= F.N; i++){
+    const q = treadQuad(F, i), y = F.ys[i];
+    let gmin = 1e9; for (const c of q) gmin = Math.min(gmin, townGround(c[0], c[1])); for (let k = 0; k < 4; k++){ const a = q[k], b = q[(k + 1) % 4]; gmin = Math.min(gmin, townGround((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)); }
+    const yb = Math.min(gmin, y) - 0.3, col = new THREE.Color(1, 1, 1).multiplyScalar(0.82 + R() * 0.26), rc = col.clone().multiplyScalar(0.72), sc = col.clone().multiplyScalar(0.8);
+    const v = (p, h) => [p[0], h, p[1]], W = F.hw * 2, T = F.sr[i + 1] - F.sr[i], uo = R(), vo = R();
+    G.steps.quad(v(q[0], y), v(q[1], y), v(q[2], y), v(q[3], y), col, [uo, vo], [uo + W / 3, vo], [uo + W / 3, vo + T / 3], [uo, vo + T / 3]);
+    G.steps.quad(v(q[1], yb), v(q[0], yb), v(q[0], y), v(q[1], y), rc, [uo, 0], [uo + W / 3, 0], [uo + W / 3, (y - yb) / 3], [uo, (y - yb) / 3]);   // riser / front
+    G.steps.quad(v(q[0], yb), v(q[3], yb), v(q[3], y), v(q[0], y), sc, [0, 0], [T / 3, 0], [T / 3, (y - yb) / 3], [0, (y - yb) / 3]);           // side
+    G.steps.quad(v(q[2], yb), v(q[1], yb), v(q[1], y), v(q[2], y), sc, [0, 0], [T / 3, 0], [T / 3, (y - yb) / 3], [0, (y - yb) / 3]);           // side
+    if (i === F.N) G.steps.quad(v(q[3], yb), v(q[2], yb), v(q[2], y), v(q[3], y), rc, [0, 0], [W / 3, 0], [W / 3, (y - yb) / 3], [0, (y - yb) / 3]);   // back of the top tread
   }
+}
+for (const Ld of LANDINGS){
+  const P = Ld.poly, y = Ld.y, col = C('#e6e2da'); let gmin = 1e9; for (const c of P) gmin = Math.min(gmin, townGround(c[0], c[1]));
+  for (let k = 1; k < P.length - 1; k++) G.steps.tri([P[0][0], y, P[0][1]], [P[k][0], y, P[k][1]], [P[k + 1][0], y, P[k + 1][1]], col, [P[0][0] / 3, P[0][1] / 3], [P[k][0] / 3, P[k][1] / 3], [P[k + 1][0] / 3, P[k + 1][1] / 3]);
+  for (let k = 0; k < P.length; k++){ const a = P[k], b = P[(k + 1) % P.length]; G.steps.quad([a[0], gmin - 0.3, a[1]], [b[0], gmin - 0.3, b[1]], [b[0], y, b[1]], [a[0], y, a[1]], col.clone().multiplyScalar(0.75)); }
 }
 const DECKS = [];
 function segX(a, b, c, d){ const r0 = b[0] - a[0], r1 = b[1] - a[1], s0 = d[0] - c[0], s1 = d[1] - c[1], den = r0 * s1 - r1 * s0; if (Math.abs(den) < 1e-9) return null; const t = ((c[0] - a[0]) * s1 - (c[1] - a[1]) * s0) / den, u = ((c[0] - a[0]) * r1 - (c[1] - a[1]) * r0) / den; if (t < 0 || t > 1 || u < 0 || u > 1) return null; return [a[0] + r0 * t, a[1] + r1 * t, Math.atan2(r1, r0)]; }
@@ -1003,7 +1346,7 @@ const lampHeads = [];
   for (let i = 0; i < corePts.length; i += 7){
     const p = corePts[i]; if (last && Math.hypot(p[0] - last[0], p[1] - last[1]) < 22) continue;
     const nx = -Math.sin(p[2]), nz = Math.cos(p[2]), x = p[0] + nx * 1.9, z = p[1] + nz * 1.9;
-    if (!freeAt(x, z, 0.8)) continue; last = p;
+    if (!freeAt(x, z, 0.8) || !clearOfPaths(x, z, 0.25)) continue; last = p;
     const y = groundAt(x, z), dark = C('#3a3f44'), a = Math.atan2(-nz, -nx), c = Math.cos(a), s = Math.sin(a);
     box(G.det, x, y, z, 0.12, 4.6, 0.12, dark); box(G.det, x + c * 0.45, y + 4.45, z + s * 0.45, 0.9, 0.08, 0.1, dark, a);
     box(G.det, x + c * 0.85, y + 4.3, z + s * 0.85, 0.42, 0.14, 0.26, C('#d9dde0'), a); box(G.det, x, y + 4.75, z, 0.7, 0.05, 0.45, C('#1f2f4a'), a);
@@ -1013,7 +1356,7 @@ const lampHeads = [];
 }
 { // signpost by the stupa, like the yellow lodge boards in town
   let best = null; for (const p of corePts){ const d = Math.hypot(p[0] - LMK.stupa[0], p[1] - LMK.stupa[1]); if (d > 11 && (!best || d < best.d)) best = { d, p }; }
-  if (best){ const p = best.p, nx = -Math.sin(p[2]), nz = Math.cos(p[2]), q = findFree(p[0] + nx * 2.2, p[1] + nz * 2.2, 0.6, 8); if (q){ const y = groundAt(q[0], q[1]); box(G.det, q[0], y, q[1], 0.12, 3.6, 0.12, C('#3a3f44')); const pg = new THREE.PlaneGeometry(1.2, 2.4); const pm = new THREE.Mesh(pg, new THREE.MeshLambertMaterial({ map: postTex, side: THREE.DoubleSide })); pm.position.set(q[0], y + 2.3, q[1]); pm.rotation.y = -p[2]; scene.add(pm); addSolid(rectPoly(q[0], q[1], 0.3, 0.3, 0), y + 3.6); } }
+  if (best){ const p = best.p, nx = -Math.sin(p[2]), nz = Math.cos(p[2]), q = findFree(p[0] + nx * 2.2, p[1] + nz * 2.2, 0.6, 8, true); if (q){ const y = groundAt(q[0], q[1]); box(G.det, q[0], y, q[1], 0.12, 3.6, 0.12, C('#3a3f44')); const pg = new THREE.PlaneGeometry(1.2, 2.4); const pm = new THREE.Mesh(pg, new THREE.MeshLambertMaterial({ map: postTex, side: THREE.DoubleSide })); pm.position.set(q[0], y + 2.3, q[1]); pm.rotation.y = -p[2]; scene.add(pm); addSolid(rectPoly(q[0], q[1], 0.3, 0.3, 0), y + 3.6); } }
 }
 
 /* ================= running water ================= */
@@ -1254,7 +1597,7 @@ const SPAWN = (() => {
 const player = { x: SPAWN.x, z: SPAWN.z, y: 0, yaw: 0, pitch: -0.02 };
 const spawnYaw = Math.atan2(-(SPAWN.face[0] - SPAWN.x), -(SPAWN.face[1] - SPAWN.z));
 player.yaw = spawnYaw;
-function playerGround(x, z){ let g = groundAt(x, z); for (const d of DECKS){ if (x > d.bb[0] && x < d.bb[1] && z > d.bb[2] && z < d.bb[3] && pip(d.poly, x, z)) g = Math.max(g, d.y); } return g; }
+function playerGround(x, z){ const sa = stairAt(x, z); if (sa) return sa.ramp; let g = groundAt(x, z); for (const d of DECKS){ if (x > d.bb[0] && x < d.bb[1] && z > d.bb[2] && z < d.bb[3] && pip(d.poly, x, z)) g = Math.max(g, d.y); } return g; }
 player.y = playerGround(player.x, player.z) + 1.65;
 const keys = {}, WALK = 2.6, RUN = 5.6, EYE = 1.65;
 let runToggle = false, playing = false, bobT = 0;
@@ -1404,23 +1747,26 @@ rebuildGrass(SPAWN.x, SPAWN.z);
 /* ================= loop ================= */
 window.addEventListener('resize', () => { renderer.setSize(window.innerWidth, window.innerHeight, false); camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); });
 const clock = new THREE.Clock(), altEl = $('#altv'), coordEl = $('#coordv'), geo = D.geo, v3 = new THREE.Vector3();
+// one controller step (shared by the render loop and the ?test walk test)
+function movePlayer(dt, fwd, side, running){
+  let mx = side, mz = fwd; const l = Math.hypot(mx, mz); if (l > 1){ mx /= l; mz /= l; }
+  const speed = running ? RUN : WALK, fx = -Math.sin(player.yaw), fz = -Math.cos(player.yaw), rx = Math.cos(player.yaw), rz = -Math.sin(player.yaw);
+  if (l > 0.01){
+    let nx = player.x + (fx * mz + rx * mx) * speed * dt, nz = player.z + (fz * mz + rz * mx) * speed * dt;
+    const wasIn = inside(player.x, player.z);
+    if (wasIn && !inside(nx, nz)){ if (inside(nx, player.z)) nz = player.z; else if (inside(player.x, nz)) nx = player.x; else { nx = player.x; nz = player.z; } }
+    [nx, nz] = collide(nx, nz);
+    if (inside(nx, nz) || !wasIn){ player.x = nx; player.z = nz; }
+    bobT += dt * speed * 2.1;
+  }
+  const gy = playerGround(player.x, player.z) + EYE + Math.sin(bobT) * 0.035 * Math.min(1, l);
+  player.y += (gy - player.y) * (1 - Math.exp(-dt * 11));
+}
 function frame(){
   const dt = Math.min(clock.getDelta(), 0.1); t0 += dt; flagUniform.value = t0; waterU.value = t0;
   if (freeCam){ camera.position.set(freeCam[0], freeCam[1], freeCam[2]); camera.rotation.set(freeCam[3], freeCam[4], 0); }
   else if (playing){
-    const fwd = (keys.f ? 1 : 0) - (keys.b ? 1 : 0) - stick.y, side = (keys.r ? 1 : 0) - (keys.l ? 1 : 0) + stick.x;
-    let mx = side, mz = fwd; const l = Math.hypot(mx, mz); if (l > 1){ mx /= l; mz /= l; }
-    const speed = (keys.run || runToggle) ? RUN : WALK, fx = -Math.sin(player.yaw), fz = -Math.cos(player.yaw), rx = Math.cos(player.yaw), rz = -Math.sin(player.yaw);
-    if (l > 0.01){
-      let nx = player.x + (fx * mz + rx * mx) * speed * dt, nz = player.z + (fz * mz + rz * mx) * speed * dt;
-      const wasIn = inside(player.x, player.z);
-      if (wasIn && !inside(nx, nz)){ if (inside(nx, player.z)) nz = player.z; else if (inside(player.x, nz)) nx = player.x; else { nx = player.x; nz = player.z; } }
-      [nx, nz] = collide(nx, nz);
-      if (inside(nx, nz) || !wasIn){ player.x = nx; player.z = nz; }
-      bobT += dt * speed * 2.1;
-    }
-    const gy = playerGround(player.x, player.z) + EYE + Math.sin(bobT) * 0.035 * Math.min(1, l);
-    player.y += (gy - player.y) * (1 - Math.exp(-dt * 11));
+    movePlayer(dt, (keys.f ? 1 : 0) - (keys.b ? 1 : 0) - stick.y, (keys.r ? 1 : 0) - (keys.l ? 1 : 0) + stick.x, keys.run || runToggle);
     camera.position.set(player.x, player.y, player.z); camera.rotation.set(player.pitch, player.yaw, 0);
     if (!grassAt || Math.hypot(player.x - grassAt[0], player.z - grassAt[1]) > 7) rebuildGrass(player.x, player.z);
     if (!sawRidge && Math.hypot(player.x - LMK.ridge[0], player.z - LMK.ridge[1]) < 45){ sawRidge = true; toast('<b>Syangboche ridge</b>, ' + Math.round(groundAt(player.x, player.z)).toLocaleString('en-US') + ' m. The Khumbu valley opens up ahead.', 7); }
@@ -1482,6 +1828,110 @@ function syncView(){
   toastT = 0; toastEl.classList.remove('on');
   return PEAKS.filter((p) => p.vis).map((p) => p.n);
 }
-window.__namche = { BLD, SPAWN, renderer, syncView, scene, farH, player, setNight, camera, PEAKS, start, groundAt, townGround, LMK, D, freeCam: (a) => { freeCam = a; }, rebuildGrass };
+// ?test only: stair measurements and an automated walk over every flight with the real controller.
+const TEST = !TESTMODE ? null : (() => {
+  const treadSamples = (F, i, fn) => { const q = treadQuad(F, i); for (let a = 0; a <= 8; a++) for (let b = 0; b <= 4; b++){ const u = a / 8, v = b / 4; fn(lerp(lerp(q[0][0], q[1][0], u), lerp(q[3][0], q[2][0], u), v), lerp(lerp(q[0][1], q[1][1], u), lerp(q[3][1], q[2][1], u), v)); } };
+  let GAPMAX = 0.23; { let rm = 0; for (const F of FLIGHTS) if (F.N >= 1) rm = Math.max(rm, F.r); GAPMAX = rm + 0.03; }
+  // walk a whole path (the main street) with the real controller: stuck, walls and steps taller than GAPMAX
+  function walkPath(pi, rev){
+    const P = D.paths[pi].p, wp = [];
+    for (let i = 0; i < P.length - 1; i++){ const a = P[i], b = P[i + 1], L = Math.hypot(b[0] - a[0], b[1] - a[1]), n = Math.max(1, Math.ceil(L / 0.4)); for (let k = 0; k < n; k++) wp.push([a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n]); }
+    wp.push(P[P.length - 1]); if (rev) wp.reverse();
+    const W = wp.filter((q) => inside(q[0], q[1]) && inTown(q[0], q[1], 20));
+    const save = { x: player.x, z: player.z, y: player.y, yaw: player.yaw, pitch: player.pitch, bobT };
+    player.x = W[0][0]; player.z = W[0][1]; player.y = playerGround(player.x, player.z) + EYE;
+    let idx = 0, t = 0, lastIdx = 0, lastT = 0, lastG = playerGround(player.x, player.z), maxJump = 0, inWall = 0, reason = 'ok', where = null, dist = 0, stairM = 0;
+    const dt = 1 / 60;
+    while (true){
+      for (let j = idx; j < Math.min(W.length, idx + 8); j++) if (Math.hypot(W[j][0] - player.x, W[j][1] - player.z) < Math.hypot(W[idx][0] - player.x, W[idx][1] - player.z)) idx = j;
+      if (idx >= W.length - 1 && Math.hypot(W[W.length - 1][0] - player.x, W[W.length - 1][1] - player.z) < 0.6) break;
+      const tg = W[Math.min(W.length - 1, idx + 3)]; player.yaw = Math.atan2(-(tg[0] - player.x), -(tg[1] - player.z));
+      const bx = player.x, bz = player.z; movePlayer(dt, 1, 0, false); t += dt; const st = Math.hypot(player.x - bx, player.z - bz); dist += st;
+      if (stairAt(player.x, player.z)) stairM += st;
+      if (idx > lastIdx){ lastIdx = idx; lastT = t; }
+      if (t - lastT > 2){ reason = 'stuck'; where = [+player.x.toFixed(1), +player.z.toFixed(1)]; break; }
+      if (t > 2000){ reason = 'timeout'; break; }
+      const g = playerGround(player.x, player.z); if (Math.abs(g - lastG) > maxJump){ maxJump = Math.abs(g - lastG); if (maxJump > GAPMAX) where = [+player.x.toFixed(1), +player.z.toFixed(1)]; } lastG = g;
+      if (nearBuilding(player.x, player.z, 0.05)) inWall++;
+    }
+    Object.assign(player, { x: save.x, z: save.z, y: save.y, yaw: save.yaw, pitch: save.pitch }); bobT = save.bobT;
+    let ok = reason === 'ok'; if (ok && inWall){ ok = false; reason = 'inside a wall'; } if (ok && maxJump > GAPMAX){ ok = false; reason = 'gap or ledge (' + maxJump.toFixed(2) + ' m step)'; }
+    return { path: pi, ok, reason, walkedM: +dist.toFixed(0), onStairsM: +stairM.toFixed(0), maxStep: +maxJump.toFixed(3), s: +t.toFixed(0), at: where };
+  }
+  function mainStreet(){ let best = -1, bn = -1; for (let i = 0; i < D.paths.length; i++){ const p = D.paths[i]; if (!p.c) continue; let n = 0; for (const b of BLD){ let d = 1e9; for (const q of p.p) d = Math.min(d, Math.hypot(q[0] - b.cx, q[1] - b.cz)); if (d < 15) n++; } if (n > bn){ bn = n; best = i; } } return best; }
+  function stairStats(){
+    let inSpec = 0, landings = 0, odd = 0, rMin = 1, rMax = 0, sink = -1e9, sinkPts = 0, gapViol = 0, fills = [], widths = {};
+    for (const F of FLIGHTS){
+      if (F.N >= 1){ rMin = Math.min(rMin, F.r); rMax = Math.max(rMax, F.r); } widths[(F.hw * 2).toFixed(2)] = (widths[(F.hw * 2).toFixed(2)] || 0) + 1;
+      for (let i = 0; i <= F.N; i++){
+        const T = F.sr[i + 1] - F.sr[i];
+        if (i > 0 && i < F.N){ if (T >= STAIR.RUN[0] - 1e-3 && T <= STAIR.RUN[1] + 1e-3) inSpec++; else if (T >= STAIR.LAND - 1e-3) landings++; else odd++; }
+        const y = F.ys[i]; let gmin = 1e9;
+        treadSamples(F, i, (x, z) => { const g = townGround(x, z); sink = Math.max(sink, g - y); sinkPts++; gmin = Math.min(gmin, g); });
+        const yb = Math.min(gmin, y) - 0.3; treadSamples(F, i, (x, z) => { if (townGround(x, z) < yb) gapViol++; });
+        const e = F.edges[i], e1 = F.edges[i + 1]; fills.push(y - townGround((e.x + e1.x) / 2, (e.z + e1.z) / 2));
+      }
+    }
+    fills.sort((a, b) => a - b); const fq = (p) => +(fills[Math.floor(p * (fills.length - 1))] || 0).toFixed(3);
+    let outRiser = 0; for (const F of FLIGHTS) if (F.N >= 1 && (F.r < STAIR.RISE[0] - 1e-3 || F.r > STAIR.RISE[1] + 1e-3)) outRiser++;
+    return { ...STAIRLOG, flights: FLIGHTS.length, connectors: FLIGHTS.filter((F) => F.connector).length, flightsRiserOutOfSpec: outRiser, interiorTreadsInSpec: inSpec, interiorLandings: landings, interiorOutOfSpec: odd, riserMin: +rMin.toFixed(3), riserMax: +rMax.toFixed(3),
+      maxSinkM: +sink.toFixed(3), sinkSamples: sinkPts, gapUnderStoneSamples: gapViol, fillAboveGroundM: { p50: fq(0.5), p90: fq(0.9), max: fq(1) }, widthsM: widths, carveMax: +STAIRLOG.carveMax.toFixed(3) };
+  }
+  function flightInfo(F, k){ const b = F.edges[0], t = F.edges[F.edges.length - 1]; return { k, kind: F.kind, main: F.main, path: F.path, x: +b.x.toFixed(1), z: +b.z.toFixed(1), lenM: +F.L.toFixed(1), riseM: +F.dH.toFixed(2), riser: +F.r.toFixed(3), steps: F.N, widthM: +(F.hw * 2).toFixed(2), top: [+t.x.toFixed(1), +t.z.toFixed(1)] }; }
+  function walkFlight(k, up, trace){
+    const F = FLIGHTS[k], wp = [];
+    // centre-line from 3 m before to 3 m after the flight, cut where it leaves the walkable town area
+    for (let d = -3; d <= F.L + 3 + 1e-6; d += 0.4){ const q = F.at(F.A + F.dir * d); if (d >= 0 && d <= F.L) wp.push(q); else if (inside(q[0], q[1])) wp.push(q); else if (d < 0) wp.length = 0; else break; }
+    for (let i = wp.length - 1; i > 0; i--) if (Math.hypot(wp[i][0] - wp[i - 1][0], wp[i][1] - wp[i - 1][1]) < 0.05) wp.splice(i, 1);
+    if (!up) wp.reverse();
+    const save = { x: player.x, z: player.z, y: player.y, yaw: player.yaw, pitch: player.pitch, bobT };
+    player.x = wp[0][0]; player.z = wp[0][1]; player.y = playerGround(player.x, player.z) + EYE;
+    let idx = 0, t = 0, lastIdx = 0, lastT = 0, minE = 1e9, maxE = -1e9, onSteps = 0, offSteps = 0, inWall = 0, reason = 'ok', lastG = playerGround(player.x, player.z), maxJump = 0, maxLag = 0, where = null;
+    const dt = 1 / 60, Tmax = (F.L + 6) / WALK * 2.5 + 4;
+    while (true){
+      for (let j = idx; j < Math.min(wp.length, idx + 8); j++) if (Math.hypot(wp[j][0] - player.x, wp[j][1] - player.z) < Math.hypot(wp[idx][0] - player.x, wp[idx][1] - player.z)) idx = j;
+      if (idx >= wp.length - 1 && Math.hypot(wp[wp.length - 1][0] - player.x, wp[wp.length - 1][1] - player.z) < 0.6) break;
+      const tg = wp[Math.min(wp.length - 1, idx + 3)]; player.yaw = Math.atan2(-(tg[0] - player.x), -(tg[1] - player.z));
+      const bx = player.x, bz = player.z; movePlayer(dt, 1, 0, false); t += dt;
+      if (trace && trace.length < 4000) trace.push([+bx.toFixed(2), +bz.toFixed(2), +player.x.toFixed(2), +player.z.toFixed(2), idx, +playerGround(player.x, player.z).toFixed(3), (() => { const q = stairAt(player.x, player.z); return q ? (q.land ? 'L' : FLIGHTS.indexOf(q.F) + ':' + q.i) : '-'; })()]);
+      if (idx > lastIdx){ lastIdx = idx; lastT = t; }
+      if (t - lastT > 2){ reason = 'stuck'; break; }
+      if (t > Tmax){ reason = 'timeout'; break; }
+      const sa = stairAt(player.x, player.z), g = playerGround(player.x, player.z);
+      if (Math.abs(g - lastG) > maxJump){ maxJump = Math.abs(g - lastG); where = [+player.x.toFixed(1), +player.z.toFixed(1)]; } lastG = g;
+      maxLag = Math.max(maxLag, Math.abs(player.y - (g + EYE)));
+      if (sa && sa.F === F){ const e = g - sa.top; minE = Math.min(minE, e); maxE = Math.max(maxE, e); onSteps++; }
+      else { const along = (player.x - F.edges[0].x) * F.edges[0].fx + (player.z - F.edges[0].z) * F.edges[0].fz; if (along > 0.5 && along < F.L - 0.5) offSteps++; }
+      if (nearBuilding(player.x, player.z, 0.05)) inWall++;
+    }
+    let ok = reason === 'ok';
+    if (reason !== 'ok') where = [+player.x.toFixed(1), +player.z.toFixed(1)];
+    // the ground the controller stands on must match the stone under it (within half a riser), and never jump
+    // by more than one riser between frames (a jump means a gap, a pit or a ledge at the ends of the flight)
+    if (ok && minE < -(F.r / 2 + 0.02)){ ok = false; reason = 'below the treads (' + minE.toFixed(2) + ' m)'; }
+    if (ok && maxE > F.r / 2 + 0.02){ ok = false; reason = 'above the treads (' + maxE.toFixed(2) + ' m)'; }
+    if (ok && maxJump > GAPMAX){ ok = false; reason = 'gap or ledge (' + maxJump.toFixed(2) + ' m step)'; }
+    if (ok && inWall > 0){ ok = false; reason = 'inside a wall'; }
+    if (ok && onSteps === 0){ ok = false; reason = 'never on the steps'; }
+    Object.assign(player, { x: save.x, z: save.z, y: save.y, yaw: save.yaw, pitch: save.pitch }); bobT = save.bobT;
+    return { ok, reason, s: +t.toFixed(1), groundVsTread: [+minE.toFixed(3), +maxE.toFixed(3)], maxStep: +maxJump.toFixed(3), eyeLag: +maxLag.toFixed(3), offStepFrames: offSteps, at: where };
+  }
+  function mainFlight(){
+    let best = -1, bs = -1e9;
+    for (let k = 0; k < FLIGHTS.length; k++){ const F = FLIGHTS[k]; if (!F.main) continue; const b = F.edges[0], d = Math.hypot(b.x - LMK.stupa[0], b.z - LMK.stupa[1]); const sc = Math.min(F.dH, 6) - d / 40; if (sc > bs){ bs = sc; best = k; } }
+    return best;
+  }
+  function walkAll(){
+    const out = []; for (let k = 0; k < FLIGHTS.length; k++){ const u = walkFlight(k, true), d = walkFlight(k, false); out.push({ ...flightInfo(FLIGHTS[k], k), up: u, down: d }); }
+    return { main: mainFlight(), flights: out, passed: out.filter((f) => f.up.ok && f.down.ok).length, total: out.length };
+  }
+  function stairsPose(k){
+    if (k === undefined) k = mainFlight(); const F = FLIGHTS[k]; if (!F) return null;
+    const b = F.edges[0], x = b.x - b.fx * 4, z = b.z - b.fz * 4, y = playerGround(x, z) + 1.7;
+    return [x, y, z, Math.atan2(F.dH, F.L + 4) * 0.75, Math.atan2(b.fx, b.fz) + Math.PI];
+  }
+  return { gapMax: () => GAPMAX, walkPath, mainStreet, stairStats, walkFlight, walkAll, mainFlight, stairsPose, flightInfo: (k) => flightInfo(FLIGHTS[k], k), nFlights: () => FLIGHTS.length };
+})();
+window.__namche = { BLD, SPAWN, renderer, syncView, test: TEST, dbg: TESTMODE ? { inside, nearBuilding, stairAt, playerGround, coarseGround, solidAt: (x, z) => SOLIDS.some((o) => x > o.bb[0] && x < o.bb[1] && z > o.bb[2] && z < o.bb[3] && pip(o.poly, x, z)), SOLIDS, LANDINGS, FLIGHTS } : null, scene, farH, player, setNight, camera, PEAKS, start, groundAt, townGround, LMK, D, freeCam: (a) => { freeCam = a; }, rebuildGrass };
 requestAnimationFrame(frame);
 })().catch((e) => { const s = document.querySelector('#status'); if (s){ s.textContent = 'Something broke while building the town: ' + (e && e.message ? e.message : e); s.style.color = '#ffb4a8'; } console.error(e); });
