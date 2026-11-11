@@ -1945,6 +1945,6 @@ const TEST = !TESTMODE ? null : (() => {
   return { gapMax: () => GAPMAX, walkPath, mainStreet, stairStats, walkFlight, walkAll, mainFlight, stairsPose, flightInfo: (k) => flightInfo(FLIGHTS[k], k), nFlights: () => FLIGHTS.length };
 })();
 $('#mapLegend').textContent = SHOWINV ? 'Invented' : 'Invented hidden'; $('#mapLegend').classList.toggle('off', !SHOWINV);
-window.__namche = { INV, SHOWINV, BLD, SPAWN, renderer, syncView, test: TEST, dbg: TESTMODE ? { inside, nearBuilding, stairAt, playerGround, coarseGround, solidAt: (x, z) => SOLIDS.some((o) => x > o.bb[0] && x < o.bb[1] && z > o.bb[2] && z < o.bb[3] && pip(o.poly, x, z)), SOLIDS, LANDINGS, FLIGHTS } : null, scene, farH, player, setNight, camera, PEAKS, start, groundAt, townGround, LMK, D, freeCam: (a) => { freeCam = a; }, rebuildGrass };
+window.__namche = { INV, SHOWINV, BLD, SPAWN, renderer, syncView, test: TEST, dbg: TESTMODE ? { inside, nearBuilding, stairAt, playerGround, coarseGround, bicubic, inTown, mWater, pathDist, solidAt: (x, z) => SOLIDS.some((o) => x > o.bb[0] && x < o.bb[1] && z > o.bb[2] && z < o.bb[3] && pip(o.poly, x, z)), SOLIDS, LANDINGS, FLIGHTS } : null, scene, farH, player, setNight, camera, PEAKS, start, groundAt, townGround, LMK, D, freeCam: (a) => { freeCam = a; }, rebuildGrass };
 requestAnimationFrame(frame);
 })().catch((e) => { const s = document.querySelector('#status'); if (s){ s.textContent = 'Something broke while building the town: ' + (e && e.message ? e.message : e); s.style.color = '#ffb4a8'; } console.error(e); });
