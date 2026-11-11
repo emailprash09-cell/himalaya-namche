@@ -34,10 +34,16 @@ print('town box', round(BX0),round(BX1),round(BZ0),round(BZ1),'cells',tc1-tc0,tr
 # ---------- mask raster ----------
 PX=2.0
 MW=int((BX1-BX0)/PX); MH=int((BZ1-BZ0)/PX)
-def toPx(x,z): return ((np.asarray(x)-BX0)/PX, (np.asarray(z)-BZ0)/PX)
+# T1b: pixel i is centred at BX0+(i+0.5)*PX, which is how game.js samples the masks (ms(), inside()).
+# The old code drew pixel i centred at BX0+i*PX, so every mask landed 1 m off in x and z.
+# Drawing now uses OpenCV sub-pixel coordinates (SH fractional bits) in the game's convention.
+SH=4
+def toPx(x,z): return ((np.asarray(x)-BX0)/PX-0.5, (np.asarray(z)-BZ0)/PX-0.5)
 def ipts(ring):
-    a=np.array([toPx(p[0],p[1]) for p in ring],np.float32)
-    return a.round().astype(np.int32)
+    a=np.array([toPx(p[0],p[1]) for p in ring],np.float64)
+    return (a*(1<<SH)).round().astype(np.int32)
+def FILL(img,ring,v=255): cv2.fillPoly(img,[ipts(ring)],v,cv2.LINE_8,SH)
+def LINE(img,pts,thick,v=255): cv2.polylines(img,[ipts(pts)],False,v,max(1,int(thick)),cv2.LINE_8,SH)
 print('mask',MW,MH)
 
 paved=np.zeros((MH,MW),np.uint8); dirt=np.zeros((MH,MW),np.uint8)
@@ -61,14 +67,14 @@ for f in feats:
         BLD.append((ring,p))
     elif p.get('highway') in ('path','steps','footway','track','pedestrian') and t=='LineString':
         pts=[xz(c) for c in g['coordinates']]
-        PATHS.append((pts,p.get('highway')))
+        PATHS.append((pts,p.get('highway'),p.get('width')))
     elif ('waterway' in p) and t=='LineString':
         STREAM.append(([xz(c) for c in g['coordinates']], p.get('waterway')))
     elif p.get('natural')=='water' and t=='Polygon':
-        cv2.fillPoly(water,[ipts([xz(c) for c in g['coordinates'][0]])],255)
+        FILL(water,[xz(c) for c in g['coordinates'][0]])
     elif p.get('natural') and t=='Polygon':
         tgt={'wood':wood,'scrub':scrub,'rock':rockm,'grassland':grass}.get(p['natural'])
-        if tgt is not None: cv2.fillPoly(tgt,[ipts([xz(c) for c in g['coordinates'][0]])],255)
+        if tgt is not None: FILL(tgt,[xz(c) for c in g['coordinates'][0]])
     elif p.get('barrier')=='wall' and t in ('LineString','Polygon'):
         cs=g['coordinates'] if t=='LineString' else g['coordinates'][0]
         WALLS.append([xz(c) for c in cs])
@@ -77,37 +83,6 @@ for f in feats:
         HELI.append((ring,p))
     elif t=='Point':
         POI.append((xz(g['coordinates']), p))
-
-# rasterize paths
-for pts,kind in PATHS:
-    a=ipts(pts)
-    core=incore(pts)
-    w=int(round((3.2 if core else 1.9)/PX))
-    cv2.polylines(paved if core else dirt, [a], False, 255, max(1,w))
-    cv2.polylines(walkseed,[a],False,255,max(1,int(round(9/PX))))
-for pts,kind in STREAM:
-    cv2.polylines(water,[ipts(pts)],False,255,max(1,int(round(2.4/PX))))
-
-bmask=np.zeros((MH,MW),np.uint8)
-for ring,p in BLD:
-    cv2.fillPoly(bmask,[ipts(ring)],255)
-walkseed=cv2.max(walkseed, cv2.dilate(bmask,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(int(16/PX)|1,int(16/PX)|1))))
-
-walk=cv2.morphologyEx(walkseed,cv2.MORPH_CLOSE,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(int(34/PX)|1,int(34/PX)|1)))
-walk=ndimage.binary_fill_holes(walk>0).astype(np.uint8)*255
-n,lab,st,_=cv2.connectedComponentsWithStats(walk,8)
-walk=((lab==(1+np.argmax(st[1:,4])))*255).astype(np.uint8)
-walk=cv2.GaussianBlur(walk,(0,0),2.0); walk=((walk>110)*255).astype(np.uint8)
-print('walk area km2', round(walk.sum()/255*PX*PX/1e6,3))
-
-def pack(chs):
-    img=np.dstack(chs).astype(np.uint8)
-    buf=io.BytesIO(); Image.fromarray(img,'RGBA').save(buf,'PNG',optimize=True)
-    return base64.b64encode(buf.getvalue()).decode(), len(buf.getvalue())
-m1,s1=pack([cv2.GaussianBlur(paved,(0,0),0.8),cv2.GaussianBlur(dirt,(0,0),0.8),cv2.GaussianBlur(water,(0,0),0.6),np.full((MH,MW),255,np.uint8)])
-bufw=io.BytesIO(); Image.fromarray(walk,'L').save(bufw,'PNG',optimize=True); m3=base64.b64encode(bufw.getvalue()).decode()
-m2,s2=pack([cv2.GaussianBlur(wood,(0,0),2.0),cv2.GaussianBlur(scrub,(0,0),2.0),cv2.GaussianBlur(cv2.max(rockm,grass),(0,0),2.0),np.full((MH,MW),255,np.uint8)])
-print('mask png',s1,s2)
 
 # attach POI point tags to the building polygon that contains them
 BPOLY=[np.array(r,np.float32).reshape(-1,1,2) for r,_ in BLD]
@@ -232,14 +207,158 @@ _od=[ovl_depth(_O[i],_O[j]) for i in range(len(_O)) for j in _t.query(_O[i]) if 
 print('T1a check on written footprints: pairs overlapping',sum(1 for d in _od if d>0),'max depth m',round(max(_od+[0]),3))
 print('buildings out',len(out),'kinds',{k:sum(1 for b in out if b['k']==k) for k in set(b['k'] for b in out)})
 
+# ---------- T1b: keep path centre-lines 1.6 m clear of walls ----------
+# OSM traces often clip a building corner. Each vertex nearer than 1.6 m to a footprint is moved
+# straight away from the nearest wall. Segments that pass a wall get extra vertices first, so a
+# segment cannot cut a corner between two clear vertices. Where two walls are closer than 3.2 m
+# (a narrow alley) the vertex goes to the midpoint between them; those are counted as "tight".
+from shapely.geometry import Point as SPt, LineString as SLine
+from shapely.ops import nearest_points
+CLEAR=1.6
+BPS=[poly for poly,_ in FINAL]; BTREE=STRtree(BPS)
+def near_polys(geom,r): return [BPS[k] for k in BTREE.query(geom.buffer(r))]
+def densify(pts):
+    out=[pts[0]]
+    for a,b in zip(pts,pts[1:]):
+        L=math.hypot(b[0]-a[0],b[1]-a[1]); seg=SLine([a,b])
+        if L>1.0 and any(q.distance(seg)<CLEAR for q in near_polys(seg,CLEAR)):
+            n=int(math.ceil(L/1.0))
+            out+= [(a[0]+(b[0]-a[0])*k/n, a[1]+(b[1]-a[1])*k/n) for k in range(1,n)]
+        out.append(b)
+    return out
+def push(q):
+    x,z=q; moved=False
+    for it in range(8):
+        pt=SPt(x,z); cl=[(P.exterior.distance(pt),P) for P in near_polys(pt,CLEAR)]
+        cl=[c for c in cl if c[0]<CLEAR-1e-3 or c[1].contains(pt)]
+        if not cl: return (x,z),moved,False
+        moved=True
+        if it>=2:   # still not clear after two pushes, squeezed between walls: take the nearby spot with the most clearance
+            q0=SPt(q); best=None
+            for gx in np.arange(-2.0,2.01,0.1):
+                for gz in np.arange(-2.0,2.01,0.1):
+                    c=SPt(q[0]+gx,q[1]+gz)
+                    if any(P.contains(c) for P in near_polys(c,CLEAR)): continue
+                    m=min([min(P.exterior.distance(c),CLEAR) for P in near_polys(c,CLEAR)]+[CLEAR])
+                    key=(round(m,2),-c.distance(q0))
+                    if best is None or key>best[0]: best=(key,c)
+            if best: return (best[1].x,best[1].y),True,best[0][0]<CLEAR-1e-3
+            return (x,z),True,True
+        d,P=min(cl,key=lambda c:c[0]); w=nearest_points(P.exterior,pt)[0]
+        dx,dz=x-w.x,z-w.y; L=math.hypot(dx,dz) or 1e-6
+        if P.contains(pt): dx,dz=-dx,-dz
+        x,z=w.x+dx/L*(CLEAR+0.02),w.y+dz/L*(CLEAR+0.02)
+    return (x,z),moved,True
+_mv=0; _tight=0; _maxmv=0.0; _added=0
+for i,(pts,kind,wtag) in enumerate(PATHS):
+    xs=[q[0] for q in pts]; zs=[q[1] for q in pts]
+    if max(xs)<BX0-50 or min(xs)>BX1+50 or max(zs)<BZ0-50 or min(zs)>BZ1+50: continue
+    new=list(pts)
+    for _pass in range(4):   # pushing neighbours apart can make the segment between them cut a corner: repeat
+        dp=densify(new); _added+=len(dp)-len(new); new=[]; tg=0
+        for q in dp:
+            r,mv,tight=push(q)
+            if mv: _mv+=1; _maxmv=max(_maxmv,math.hypot(r[0]-q[0],r[1]-q[1]))
+            if tight: tg+=1
+            new.append(r)
+        if not any(P.distance(SLine([a,b]))==0 for a,b in zip(new,new[1:]) for P in near_polys(SLine([a,b]),0.1)): break
+    _tight+=tg
+    # final fix-up for a segment that still wraps a convex corner: add a vertex off that corner, on its outward bisector
+    for _fix in range(3):
+        out_pts=[new[0]]; fixed=False
+        for a,b in zip(new,new[1:]):
+            seg=SLine([a,b]); ins=[]
+            for P in near_polys(seg,0.1):
+                if P.distance(seg)>0: continue
+                cs=list(P.exterior.coords)[:-1]; n=len(cs); ccw=P.exterior.is_ccw
+                for k,v in enumerate(cs):
+                    if seg.distance(SPt(v))>CLEAR: continue
+                    pv,nv=cs[k-1],cs[(k+1)%n]
+                    def onrm(u,w):
+                        ex,ez=w[0]-u[0],w[1]-u[1]; L=math.hypot(ex,ez) or 1
+                        return (ez/L,-ex/L) if ccw else (-ez/L,ex/L)
+                    n1=onrm(pv,v); n2=onrm(v,nv); bx,bz=n1[0]+n2[0],n1[1]+n2[1]; L=math.hypot(bx,bz)
+                    if L<1e-6: continue
+                    best=None
+                    for t in np.arange(0.1,CLEAR*1.05+1e-6,0.05):   # most clearance along the bisector (alleys can be narrow)
+                        c=(v[0]+bx/L*t, v[1]+bz/L*t); cp=SPt(c); nb=near_polys(cp,CLEAR)
+                        if any(Q.contains(cp) for Q in nb): continue
+                        m=min([Q.exterior.distance(cp) for Q in nb]+[CLEAR])
+                        if best is None or m>=best[0]-1e-9: best=(m,c)
+                    if best: ins.append((seg.project(SPt(best[1])),best[1]))
+            for _,c in sorted(ins): out_pts.append(c); fixed=True
+            out_pts.append(b)
+        new=out_pts
+        if not fixed: break
+    PATHS[i]=(new,kind,wtag)   # keep the inserted vertices: dropping them lets a segment cut a corner again
+_left=0; _minc=99.0
+for pts,kind,wtag in PATHS:
+    for q in pts:
+        pt=SPt(q); ds=[P.exterior.distance(pt) if not P.contains(pt) else -1 for P in near_polys(pt,CLEAR)]
+        if ds: _minc=min(_minc,min(ds))
+        if ds and min(ds)<CLEAR-0.05: _left+=1
+print('T1b paths: vertices moved',_mv,'max move m',round(_maxmv,2),'tight alleys',_tight,'| still <1.6 m from a wall',_left,'min clearance m',round(_minc,2))
+# rasterize paths
+for pts,kind,wtag in PATHS:
+    core=incore(pts)
+    LINE(paved if core else dirt, pts, round((3.2 if core else 1.9)/PX))
+    LINE(walkseed, pts, round(9/PX))
+for pts,kind in STREAM:
+    LINE(water, pts, round(2.4/PX))
+
+bmask=np.zeros((MH,MW),np.uint8)
+for poly,_ in FINAL:
+    FILL(bmask,list(poly.exterior.coords))
+walkseed=cv2.max(walkseed, cv2.dilate(bmask,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(int(16/PX)|1,int(16/PX)|1))))
+
+walk=cv2.morphologyEx(walkseed,cv2.MORPH_CLOSE,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(int(34/PX)|1,int(34/PX)|1)))
+walk=ndimage.binary_fill_holes(walk>0).astype(np.uint8)*255
+n,lab,st,_=cv2.connectedComponentsWithStats(walk,8)
+walk=((lab==(1+np.argmax(st[1:,4])))*255).astype(np.uint8)
+walk=cv2.GaussianBlur(walk,(0,0),2.0); walk=((walk>110)*255).astype(np.uint8)
+print('walk area km2', round(walk.sum()/255*PX*PX/1e6,3))
+
+def pack(chs):
+    img=np.dstack(chs).astype(np.uint8)
+    buf=io.BytesIO(); Image.fromarray(img,'RGBA').save(buf,'PNG',optimize=True)
+    return base64.b64encode(buf.getvalue()).decode(), len(buf.getvalue())
+# T1b: clip the blurred paved and dirt masks against every footprint grown by 0.4 m.
+pavedB=cv2.GaussianBlur(paved,(0,0),0.8); dirtB=cv2.GaussianBlur(dirt,(0,0),0.8)
+import shapely
+_bad=0; _clipped=0
+for poly,_ in FINAL:
+    g=poly.buffer(0.4,join_style=2); x0,z0,x1,z1=g.bounds
+    i0=max(0,int((x0-BX0)/PX)-1); i1=min(MW-1,int((x1-BX0)/PX)+1); j0=max(0,int((z0-BZ0)/PX)-1); j1=min(MH-1,int((z1-BZ0)/PX)+1)
+    I,J=np.meshgrid(np.arange(i0,i1+1),np.arange(j0,j1+1))
+    inn=shapely.contains_xy(g,BX0+(I+0.5)*PX,BZ0+(J+0.5)*PX)
+    _clipped+=int(((pavedB[J,I]>0)|(dirtB[J,I]>0))[inn].sum())
+    pavedB[J[inn],I[inn]]=0; dirtB[J[inn],I[inn]]=0
+# independent re-check: every pixel centre inside any footprint (+0.4 m) must be zero in both masks
+for poly,_ in FINAL:
+    g=poly.buffer(0.4,join_style=2); x0,z0,x1,z1=g.bounds
+    i0=max(0,int((x0-BX0)/PX)-1); i1=min(MW-1,int((x1-BX0)/PX)+1); j0=max(0,int((z0-BZ0)/PX)-1); j1=min(MH-1,int((z1-BZ0)/PX)+1)
+    I,J=np.meshgrid(np.arange(i0,i1+1),np.arange(j0,j1+1))
+    inn=shapely.contains_xy(g,BX0+(I+0.5)*PX,BZ0+(J+0.5)*PX)
+    _bad+=int(((pavedB[J,I]>0)|(dirtB[J,I]>0))[inn].sum())
+print('T1b mask clip: pixels cleared',_clipped,'| path-mask pixels left inside a footprint+0.4 m:',_bad)
+m1,s1=pack([pavedB,dirtB,cv2.GaussianBlur(water,(0,0),0.6),np.full((MH,MW),255,np.uint8)])
+bufw=io.BytesIO(); Image.fromarray(walk,'L').save(bufw,'PNG',optimize=True); m3=base64.b64encode(bufw.getvalue()).decode()
+m2,s2=pack([cv2.GaussianBlur(wood,(0,0),2.0),cv2.GaussianBlur(scrub,(0,0),2.0),cv2.GaussianBlur(cv2.max(rockm,grass),(0,0),2.0),np.full((MH,MW),255,np.uint8)])
+print('mask png',s1,s2)
+
+
 # ---------- paths as polylines for geometry (stairs, edging) ----------
 PP=[]
-for pts,kind in PATHS:
-    a=[[round(q[0],1),round(q[1],1)] for q in pts]
+for pts,kind,wtag in PATHS:
+    a=[[round(q[0],2),round(q[1],2)] for q in pts]
     if len(a)<2: continue
     xs=[q[0] for q in a]; zs=[q[1] for q in a]
     if max(xs)<BX0-50 or min(xs)>BX1+50 or max(zs)<BZ0-50 or min(zs)>BZ1+50: continue
-    PP.append({'p':a,'s':1 if kind=='steps' else 0,'c':1 if incore(pts) else 0})
+    rec={'p':a,'s':1 if kind=='steps' else 0,'c':1 if incore(pts) else 0}
+    try:
+        if wtag: rec['w']=round(float(str(wtag).replace('m','').strip()),2)
+    except ValueError: pass
+    PP.append(rec)
 WW=[[[round(q[0],1),round(q[1],1)] for q in w] for w in WALLS]
 SS=[[[round(q[0],1),round(q[1],1)] for q in pts] for pts,_ in STREAM]
 print('paths',len(PP),'walls',len(WW),'streams',len(SS))
@@ -272,11 +391,11 @@ for n,h,la,lo in peaks:
 
 # spawn: on the main trail at the south-east entrance to town, facing up the street
 def walk_at(x,z):
-    px,pz=toPx(x,z); 
+    px,pz=int(np.floor((x-BX0)/PX)),int(np.floor((z-BZ0)/PX))
     if px<0 or pz<0 or px>=MW or pz>=MH: return 0
-    return walk[int(pz),int(px)]
+    return walk[pz,px]
 cands=[]
-for pts,kind in PATHS:
+for pts,kind,wtag in PATHS:
     for q in pts:
         if 120<q[0]<620 and 180<q[1]<520 and walk_at(*q)>0: cands.append(q)
 sp=min(cands,key=lambda q:-(q[1]))if cands else (300.0,300.0)
