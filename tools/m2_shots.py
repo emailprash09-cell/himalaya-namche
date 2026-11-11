@@ -9,6 +9,8 @@ import argparse, json, math, pathlib, time
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 ap = argparse.ArgumentParser()
 ap.add_argument('--outdir', default=str(ROOT / 'docs' / 'screenshots' / 'm2'))
+ap.add_argument('--quick', action='store_true', help='only spawn FPP/TPP, a town lane and the full-town overview, with uncapped fps')
+ap.add_argument('--suffix', default='')
 A = ap.parse_args()
 OUT = pathlib.Path(A.outdir); OUT.mkdir(parents=True, exist_ok=True)
 
@@ -34,6 +36,8 @@ def start_server():
 
 
 GPU = ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--force_high_performance_gpu']
+if A.quick:
+    GPU += ['--disable-gpu-vsync', '--disable-frame-rate-limit']
 server, port = start_server()
 log = {'shots': {}}
 errors = []
@@ -53,6 +57,10 @@ try:
 
         def shot(name, settle=900):
             pg.wait_for_timeout(settle)
+            if A.quick:
+                pg.wait_for_timeout(1500)
+                log.setdefault('fps', {})[name] = pg.evaluate('__NAMCHE__.frameStats(240)')
+            name = name + A.suffix
             pg.screenshot(path=str(OUT / f'{name}.png'))
             log['shots'][name] = pg.evaluate('__NAMCHE__.state()')
             print('wrote', name)
@@ -67,6 +75,28 @@ try:
             pitch = math.degrees(math.atan2(ty - fy, math.hypot(tx - fx, tz - fz)))
             fly(name, fx, fy, fz, yaw, pitch)
 
+        if A.quick:
+            pg.evaluate('__NAMCHE__.setMode("fpp")'); shot('spawn_fpp', 1200)
+            pg.evaluate('__NAMCHE__.setMode("tpp")'); shot('spawn_tpp', 1200)
+            pg.evaluate('__NAMCHE__.setMode("fpp")')
+            T = json.loads((ROOT / 'data' / 'namche_layout.json').read_text(encoding='utf-8'))
+            bx = sorted(b['x'] for b in T['buildings'])[len(T['buildings']) // 2]
+            bz = sorted(b['z'] for b in T['buildings'])[len(T['buildings']) // 2]
+            best = None
+            for path in T['paths']:
+                pts = path['p']
+                for i in range(len(pts) - 1):
+                    d = math.hypot(pts[i][0] - bx, pts[i][1] - bz)
+                    if best is None or d < best[0]:
+                        best = (d, pts[i], pts[i + 1])
+            _, a, b2 = best
+            gy = pg.evaluate(f'__NAMCHE__.ground({a[0]},{a[1]})') or 0
+            yaw = math.degrees(math.atan2(-(b2[0] - a[0]), -(b2[1] - a[1])))
+            fly('lane', a[0], gy + 1.62, a[1], yaw, 3)
+            look_at('overview_town', bx + 120, 420, bz + 700, bx, 0, bz)
+            log['stats'] = pg.evaluate('__NAMCHE__.stats()')
+            b.close()
+            raise SystemExit
         # Spawn: M1's camera, untouched.
         pg.evaluate('__NAMCHE__.setMode("fpp")'); shot('spawn_fpp', 1200)
         pg.evaluate('__NAMCHE__.setMode("tpp")'); shot('spawn_tpp', 1200)
@@ -84,6 +114,8 @@ try:
         look_at('overview', sp['x'] + 6, sp['y'] + 55, sp['z'] + 45, (gt['x'] + st['x']) / 2, st['y'], (gt['z'] + st['z']) / 2)
         log['stats'] = pg.evaluate('__NAMCHE__.stats()')
         b.close()
+except SystemExit:
+    pass
 finally:
     subprocess.run(['taskkill', '/PID', str(server.pid), '/T', '/F'], capture_output=True)
 log['pageErrors'] = errors

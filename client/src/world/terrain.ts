@@ -2,15 +2,19 @@
 import * as THREE from 'three/webgpu';
 import { fbm2 } from '../core/rng';
 import { detailNoise } from '../render/textures';
+import { attribute, mix, positionWorld, texture, vec3 } from 'three/tsl';
 import type { Grid, Layout } from './layout';
 
 type ColourFn = (x: number, z: number, y: number, slope: number, i: number) => [number, number, number];
+/** Splat weights per vertex: dirt, rock, scree, forest floor (grass is what is left). */
+type SplatFn = (x: number, z: number, y: number, slope: number, i: number) => [number, number, number, number];
 
-function gridGeometry(g: Grid, uvScale: number, colour: ColourFn, skip?: (x: number, z: number) => boolean): THREE.BufferGeometry {
+function gridGeometry(g: Grid, uvScale: number, colour: ColourFn, skip?: (x: number, z: number) => boolean, splat?: SplatFn): THREE.BufferGeometry {
   const { nx, nz, x0, z0, step, h } = g;
   const pos = new Float32Array(nx * nz * 3);
   const col = new Float32Array(nx * nz * 3);
   const uv = new Float32Array(nx * nz * 2);
+  const sp = splat ? new Float32Array(nx * nz * 4) : null;
   for (let iz = 0; iz < nz; iz++) for (let ix = 0; ix < nx; ix++) {
     const i = iz * nx + ix;
     const x = x0 + ix * step, z = z0 + iz * step, y = h[i];
@@ -21,6 +25,7 @@ function gridGeometry(g: Grid, uvScale: number, colour: ColourFn, skip?: (x: num
     const slope = Math.hypot(hx, hz) / (2 * step);
     const c = colour(x, z, y, slope, i);
     col[i * 3] = c[0]; col[i * 3 + 1] = c[1]; col[i * 3 + 2] = c[2];
+    if (sp && splat) sp.set(splat(x, z, y, slope, i), i * 4);
   }
   const idx: number[] = [];
   for (let iz = 0; iz < nz - 1; iz++) for (let ix = 0; ix < nx - 1; ix++) {
@@ -32,6 +37,7 @@ function gridGeometry(g: Grid, uvScale: number, colour: ColourFn, skip?: (x: num
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
   geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+  if (sp) geo.setAttribute('splat', new THREE.BufferAttribute(sp, 4));
   geo.setIndex(nx * nz > 65535 ? new THREE.BufferAttribute(new Uint32Array(idx), 1) : idx);
   geo.computeVertexNormals();
   geo.computeBoundingSphere();
@@ -63,8 +69,15 @@ export function buildTerrain(layout: Layout, near: Grid, mid: Grid, far: Grid, g
     if (t === 3) return BED;
     if (t === 4 || slope > 0.9) return mix3(ROCK, DIRT2, n * 0.5);
     return mix3(GRASS, GRASS2, n);
+  }, undefined, (x, z, _y, slope, i) => {
+    const t = ground[i];
+    const n = fbm2(x * 0.08, z * 0.08, 3);
+    const dirt = t === 1 || t === 2 ? 1 : Math.max(0, (n - 0.62) * 2.2);
+    const rock = t === 4 ? 1 : Math.min(1, Math.max(0, (slope - 0.7) * 2.5));
+    const scree = t === 3 ? 1 : Math.min(1, Math.max(0, (slope - 0.5) * 1.5)) * 0.5 * (1 - rock);
+    return [Math.min(1, dirt), rock, scree, 0];
   });
-  const nearMat = new THREE.MeshStandardMaterial({ vertexColors: true, map: detail, roughness: 0.97, metalness: 0 });
+  const nearMat = splatMaterial(detail, 1);
   const nearMesh = new THREE.Mesh(nearGeo, nearMat);
   nearMesh.name = 'terrain-near';
   nearMesh.receiveShadow = true;
@@ -79,8 +92,15 @@ export function buildTerrain(layout: Layout, near: Grid, mid: Grid, far: Grid, g
     let c = mix3(mix3(GRASS, GRASS2, n), FOREST, forest);
     if (slope > 1.1) c = mix3(c, ROCK, Math.min(1, (slope - 1.1) * 2));
     return c;
-  }, (x, z) => x > near.x0 + 2 && x < nearX1 - 2 && z > near.z0 + 2 && z < nearZ1 - 2);
-  const midMat = new THREE.MeshStandardMaterial({ vertexColors: true, map: detail, roughness: 1, metalness: 0 });
+  }, (x, z) => x > near.x0 + 2 && x < nearX1 - 2 && z > near.z0 + 2 && z < nearZ1 - 2, (x, z, y, slope) => {
+    const real = toReal(y);
+    const n = fbm2(x * 0.02, z * 0.02, 4);
+    const forest = Math.min(1, Math.max(0, (real - 3470) / 120)) * (0.6 + 0.4 * n);
+    const rock = Math.min(1, Math.max(0, (slope - 0.9) * 2));
+    const scree = Math.min(1, Math.max(0, (real - 4000) / 400));
+    return [0, rock, scree, forest];
+  });
+  const midMat = splatMaterial(detail, 0.35);
   const midMesh = new THREE.Mesh(midGeo, midMat);
   midMesh.name = 'terrain-mid';
   midMesh.receiveShadow = true;
@@ -103,4 +123,31 @@ export function buildTerrain(layout: Layout, near: Grid, mid: Grid, far: Grid, g
   farMesh.name = 'terrain-far';
   group.add(farMesh);
   return group;
+}
+
+const tl = new THREE.TextureLoader();
+function tex(name: string): THREE.Texture {
+  const t = tl.load(`assets/tex/${name}.webp`);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  return t;
+}
+let texCache: Record<string, THREE.Texture> | null = null;
+
+/** Terrain splatting (CC0 textures): grass, packed dirt, rock and scree by slope and ground type, forest floor
+ *  darkening on the upper slopes, two scales mixed to hide tiling and a large noise for patchiness. */
+function splatMaterial(detail: THREE.Texture, detailAmount: number): THREE.MeshStandardNodeMaterial {
+  texCache ??= { grass: tex('grass_col'), mud: tex('mud_col'), rock: tex('rock_col') };
+  const T = texCache;
+  const w = attribute('splat', 'vec4');
+  const uvA = positionWorld.xz.mul(1 / 3.5), uvB = positionWorld.xz.mul(1 / 13);
+  const two = (t: THREE.Texture) => mix(texture(t, uvA).rgb, texture(t, uvB).rgb, 0.45);
+  const grass = two(T.grass).mul(vec3(0.95, 1.0, 0.82));
+  let col = mix(grass, two(T.mud), w.x);
+  col = mix(col, grass.mul(vec3(0.55, 0.62, 0.5)), w.w);
+  col = mix(col, two(T.rock).mul(1.05), w.z);
+  col = mix(col, two(T.rock), w.y);
+  const macro = texture(detail, positionWorld.xz.mul(1 / 60)).r;
+  const m = new THREE.MeshStandardNodeMaterial({ roughness: 0.97, metalness: 0 });
+  m.colorNode = col.mul(mix(1, macro.mul(0.5).add(0.75), detailAmount));
+  return m;
 }

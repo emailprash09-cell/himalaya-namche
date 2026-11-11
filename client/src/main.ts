@@ -9,8 +9,9 @@ import { loadEntrance } from './world/layout';
 import { buildTerrain } from './world/terrain';
 import { Physics } from './world/physics';
 import { buildEntrance } from './world/entrance';
-import { buildLodges } from './world/lodges';
-import { buildVegetation } from './world/vegetation';
+import { buildBuildings } from './world/buildings';
+import { buildNature } from './world/nature';
+import { buildLanes, loadTown } from './world/lanes';
 import { PlayerController } from './player/controller';
 import { CameraRig } from './player/camera';
 import { Avatar } from './player/avatar';
@@ -46,10 +47,14 @@ async function boot(): Promise<void> {
   phys.addHeightfield(near);
   const entrance = buildEntrance(layout, near, phys);
   scene.add(entrance.group);
-  const lodges = buildLodges(layout, phys, worldCfg.lodges.storey);
+  const lodges = await buildBuildings(layout, phys, near, mid);
   scene.add(lodges.group);
-  const veg = buildVegetation(layout, near, mid, ground);
+  const lanes = await buildLanes(layout, near, await loadTown());
+  scene.add(lanes.group);
+  const veg = await buildNature(layout, near, mid, lodges, lanes.polylines);
   scene.add(veg.group);
+  (window as unknown as { __TOWN__: unknown }).__TOWN__ = { buildings: lodges.count, lanes: lanes.polylines.length,
+    steps: lanes.stepsCount, nature: veg.counts, chimneys: lodges.chimneys.length };
 
   // Invisible walls round the playable entrance area.
   const P = worldCfg.play;
@@ -85,7 +90,7 @@ async function boot(): Promise<void> {
   const frameTimes: number[] = [];
 
   const debug = installDebug({ renderer, scene, layout, player, rig, input, hud, phys, backend, frameTimes,
-    tris: () => entrance.triangles + lodges.triangles + veg.triangles });
+    tris: () => entrance.triangles + lodges.triangles + lanes.triangles + veg.triangles });
 
   const frame = () => {
     const now = performance.now();
