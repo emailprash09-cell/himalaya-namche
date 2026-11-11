@@ -1,0 +1,13 @@
+{
+  "_comment": "World tuning shared by the bake (tools/geo/bake_entrance.py) and the client. Distances in world metres unless named *_real.",
+  "geo": { "lat0": 27.805, "lon0": 86.71, "mlat": 110816.0, "mlon": 98541.0 },
+  "worldScale": 0.65,
+  "near": { "x0": -112, "z0": 36, "size": 168, "step": 0.5 },
+  "mid": { "x0": -640, "z0": -700, "sizeX": 1180, "sizeZ": 1340, "step": 5 },
+  "far": { "lat": [27.62, 27.999], "lon": [86.45, 86.99], "step": 110 },
+  "play": { "x0": -92, "z0": 64, "x1": 30, "z1": 182 },
+  "spawn": { "downTrail": 15.5, "bridgeBehind": 3.2, "lookPitchDeg": 4.0 },
+  "lodges": { "max": 24, "footprintScale": 0.82, "minSide": 6.5, "maxSide": 15.0, "storey": 2.55 },
+  "market": { "w": 36, "d": 18 },
+  "plaza": { "w": 19, "d": 16 }
+}

@@ -55,3 +55,20 @@ These belong to mapped features but their look is chosen by rule, not taken from
 - **Stairs and landings**: derived from OSM ways (`highway=steps`, or path stretches steeper than 25° on SRTM); tread and riser layout is computed.
 - **Bridges**: placed where an OSM path crosses an OSM stream; the deck and rails are generic.
 - **Peaks**: names, heights and summit positions are typed from published survey values in `scripts/prep_osm.py`, not from this OSM export; their ground is SRTM.
+
+## M1 entrance (client/, 2026-11-12)
+
+Hand-written for the new client; positions are in the compressed world frame (`client/src/config/world.json`,
+scale 0.65) and come from `client/public/assets/entrance/layout.json`.
+
+| Item | Where | Why it is invented | What would replace it |
+| --- | --- | --- | --- |
+| Footbridge below the gate, and the rill under it | On the trail about 18 m (world) below the gate | OSM has no bridge and the trail crosses no mapped stream here; the brief opens on a bridge. The rill drains west into the mapped stream way/312775993. | Ask the owner which bridge he means; an OSM `bridge=yes` way or a photo. |
+| Tents, tarps, tin shed, red-roofed hut, boulder | On and beside the open ground west of the trail | Placed to match the entrance photo; none are mapped. | Photos with positions. |
+| Open ground (size and flat level) | 36 x 18 m round the audit's market-ground point | The market ground has no OSM polygon. | An OSM `landuse`/`amenity=marketplace` polygon. |
+| Plaza round the stupa | 19 x 16 m of flagstones | Size from the measured top view, not OSM. | An OSM `area:highway` or `place=square` polygon. |
+| Low dry-stone wall left of the path | Along the trail below the gate | Seen in photos; not mapped. | OSM `barrier=wall` ways. |
+| Six risers inside the gate | Just past the gate's north face | Measured from photos (about 1 m in six risers). | An OSM `highway=steps` way. |
+| Prayer-flag strings and their eight poles | Stupa spire to the plaza corners and edges | Flags are never mapped. | Photos of the stupa flags. |
+| Lodge heights, colours, windows, roofs | 24 OSM footprints north of the stupa | OSM gives the outline only; storeys, colours and roofs are seeded by the footprint id; the blue-roofed and pink lodges follow the photo. | OSM `building:levels`, `roof:colour`, `building:colour`. |
+| Forest and shrubs | Ridge above the town, verges | Scattered by noise and altitude rules. | OSM `natural=wood`/`scrub` polygons. |
