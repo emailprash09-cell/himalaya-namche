@@ -10,6 +10,12 @@ const D = window.NAMCHE;
 const coarse = matchMedia('(pointer: coarse)').matches;
 if (coarse) document.documentElement.classList.add('coarse');
 const TESTMODE = /[?&]test/.test(location.search);
+// Invented items: anything not backed by the OSM export or SRTM (listed in D.invented and docs/INVENTED.md).
+// SHOW_INVENTED = false, or ?real in the address, hides all of them. Spawn, line of sight and the map keep working.
+const SHOW_INVENTED = true;
+const SHOWINV = SHOW_INVENTED && !/[?&]real(&|$|=)/.test(location.search);
+const INV = [];   // every invented placement: { id, x, z } (the map marks them; the docs list them)
+const invMark = (id, x, z) => { INV.push({ id, x: +x.toFixed(1), z: +z.toFixed(1) }); };
 
 /* ================= maths ================= */
 const clamp = (v, a, b) => v < a ? a : (v > b ? b : v);
@@ -136,27 +142,28 @@ const POI = D.poi, LMK = {}, PADS = [];
   for (const p of POI){ if (p.k !== 'shrine') continue; const d = Math.hypot(p.x - 44, p.z - 160); if (d < 150 && (!best || d < best.d)) best = { d, p }; }
   let s = best ? [best.p.x, best.p.z] : [44, 160]; if (best) best.p.used = true;
   s = findFree(s[0], s[1], 9.5, 90) || s;
-  LMK.stupa = s; addSolid(rectPoly(s[0], s[1], 8.6, 8.6, 0), bicubic(s[0], s[1]) + 17);
-  PADS.push({ x: s[0], z: s[1], hw: 10.5, hd: 10.5, ux: 1, uz: 0 });
+  LMK.stupa = s;
+  if (SHOWINV){ addSolid(rectPoly(s[0], s[1], 8.6, 8.6, 0), bicubic(s[0], s[1]) + 17); PADS.push({ x: s[0], z: s[1], hw: 10.5, hd: 10.5, ux: 1, uz: 0 }); invMark('stupa', s[0], s[1]); }
 }
 LMK.pav = [];
-for (const off of [[16, 4], [-15, 6], [4, -16], [-6, 17], [14, -12]]){
+for (const off of SHOWINV ? [[16, 4], [-15, 6], [4, -16], [-6, 17], [14, -12]] : []){
   if (LMK.pav.length >= 2) break;
   const q = findFree(LMK.stupa[0] + off[0], LMK.stupa[1] + off[1], 4.4, 16, true);
   if (q){ const ang = Math.atan2(LMK.stupa[1] - q[1], LMK.stupa[0] - q[0]); LMK.pav.push([q[0], q[1], ang, LMK.pav.length === 0]); addSolid(rectPoly(q[0], q[1], 3.1, 3.1, ang), bicubic(q[0], q[1]) + 6); PADS.push({ x: q[0], z: q[1], hw: 3.6, hd: 3.6, ux: Math.cos(ang), uz: Math.sin(ang) }); }
 }
-{ let best = null; for (const p of corePts){ const d = Math.hypot(p[0] - 30, p[1] - 40); if (!best || d < best.d) best = { d, p }; }
+if (SHOWINV){ let best = null; for (const p of corePts){ const d = Math.hypot(p[0] - 30, p[1] - 40); if (!best || d < best.d) best = { d, p }; }
   if (best){ const p = best.p, nx = -Math.sin(p[2]), nz = Math.cos(p[2]); const q = findFree(p[0] + nx * 4.5, p[1] + nz * 4.5, 3.4, 30, true); if (q){ LMK.pav.push([q[0], q[1], p[2], false]); addSolid(rectPoly(q[0], q[1], 2.6, 2.6, p[2]), bicubic(q[0], q[1]) + 6); PADS.push({ x: q[0], z: q[1], hw: 3.0, hd: 3.0, ux: Math.cos(p[2]), uz: Math.sin(p[2]) }); } } }
 LMK.mani = [];
-{ const q = findFree(LMK.stupa[0], LMK.stupa[1] + 15, 3.2, 26, true); if (q){ const ang = Math.atan2(q[1] - LMK.stupa[1], q[0] - LMK.stupa[0]) + Math.PI / 2; LMK.mani.push([q[0], q[1], ang, 9]); } }
-{ const Rm = mulberry(5150); for (let t = 0; t < 400 && LMK.mani.length < 4; t++){ const p = corePts[Math.floor(Rm() * corePts.length)]; if (!p) break; const nx = -Math.sin(p[2]), nz = Math.cos(p[2]); const x = p[0] + nx * 2.9, z = p[1] + nz * 2.9; if (LMK.mani.some((m) => Math.hypot(m[0] - x, m[1] - z) < 60)) continue; let ok = true; for (const u of [-4, 0, 4]) if (!freeAt(x + Math.cos(p[2]) * u, z + Math.sin(p[2]) * u, 1.4) || !clearOfPaths(x + Math.cos(p[2]) * u, z + Math.sin(p[2]) * u, 0.7)) ok = false; if (ok) LMK.mani.push([x, z, p[2], 8]); } }
-for (const m of LMK.mani){ addSolid(rectPoly(m[0], m[1], m[3] / 2 + 0.2, 0.7, m[2]), bicubic(m[0], m[1]) + 1.6); PADS.push({ x: m[0], z: m[1], hw: m[3] / 2 + 0.6, hd: 1.1, ux: Math.cos(m[2]), uz: Math.sin(m[2]) }); }
+if (SHOWINV){ const q = findFree(LMK.stupa[0], LMK.stupa[1] + 15, 3.2, 26, true); if (q){ const ang = Math.atan2(q[1] - LMK.stupa[1], q[0] - LMK.stupa[0]) + Math.PI / 2; LMK.mani.push([q[0], q[1], ang, 9]); } }
+if (SHOWINV){ const Rm = mulberry(5150); for (let t = 0; t < 400 && LMK.mani.length < 4; t++){ const p = corePts[Math.floor(Rm() * corePts.length)]; if (!p) break; const nx = -Math.sin(p[2]), nz = Math.cos(p[2]); const x = p[0] + nx * 2.9, z = p[1] + nz * 2.9; if (LMK.mani.some((m) => Math.hypot(m[0] - x, m[1] - z) < 60)) continue; let ok = true; for (const u of [-4, 0, 4]) if (!freeAt(x + Math.cos(p[2]) * u, z + Math.sin(p[2]) * u, 1.4) || !clearOfPaths(x + Math.cos(p[2]) * u, z + Math.sin(p[2]) * u, 0.7)) ok = false; if (ok) LMK.mani.push([x, z, p[2], 8]); } }
+for (const p of LMK.pav) invMark('stupa_pavilions', p[0], p[1]);
+for (const m of LMK.mani){ invMark('mani_walls', m[0], m[1]); addSolid(rectPoly(m[0], m[1], m[3] / 2 + 0.2, 0.7, m[2]), bicubic(m[0], m[1]) + 1.6); PADS.push({ x: m[0], z: m[1], hw: m[3] / 2 + 0.6, hd: 1.1, ux: Math.cos(m[2]), uz: Math.sin(m[2]) }); }
 LMK.chortens = [];
 for (const p of POI){ if ((p.k === 'shrine' && !p.used) || p.k === 'memorial'){ const q = findFree(p.x, p.z, 2.2, 14, true); if (q){ LMK.chortens.push([q[0], q[1], p.k === 'memorial' ? 1.15 : 0.9]); addSolid(rectPoly(q[0], q[1], 2.0, 2.0, 0), bicubic(q[0], q[1]) + 6); PADS.push({ x: q[0], z: q[1], hw: 2.6, hd: 2.6, ux: 1, uz: 0 }); } } }
 LMK.heli = POI.filter((p) => p.k === 'helipad').map((p) => [p.x, p.z, clamp(p.r || 8, 6, 14)]);
 for (const h of LMK.heli) PADS.push({ x: h[0], z: h[1], hw: h[2] + 1.5, hd: h[2] + 1.5, ux: 1, uz: 0 });
-{ const ev = POI.find((p) => p.k === 'viewpoint' && /everest/i.test(p.n)) || { x: 523.2, z: 270.2 }; const q = findFree(ev.x, ev.z, 3, 40) || [ev.x, ev.z]; LMK.view = q; PADS.push({ x: q[0] + 3, z: q[1] + 3, hw: 8, hd: 8, ux: 1, uz: 0 }); }
-{ const r = D.lm.ridge; let best = null; for (let rad = 0; rad <= 260 && !best; rad += 4){ const n = Math.max(1, Math.floor(rad * 1.2)); for (let k = 0; k < n; k++){ const a = k / n * Math.PI * 2, x = r[0] + Math.cos(a) * rad, z = r[1] + Math.sin(a) * rad; if (inside(x, z)){ best = [x, z]; break; } } } LMK.ridge = best || r; PADS.push({ x: LMK.ridge[0], z: LMK.ridge[1], hw: 7, hd: 7, ux: 1, uz: 0 }); }
+{ const ev = POI.find((p) => p.k === 'viewpoint' && /everest/i.test(p.n)) || { x: 523.2, z: 270.2 }; const q = findFree(ev.x, ev.z, 3, 40) || [ev.x, ev.z]; LMK.view = q; if (SHOWINV){ PADS.push({ x: q[0] + 3, z: q[1] + 3, hw: 8, hd: 8, ux: 1, uz: 0 }); invMark('view_dressing', q[0] + 5.5, q[1] + 5.5); } }
+{ const r = D.lm.ridge; let best = null; for (let rad = 0; rad <= 260 && !best; rad += 4){ const n = Math.max(1, Math.floor(rad * 1.2)); for (let k = 0; k < n; k++){ const a = k / n * Math.PI * 2, x = r[0] + Math.cos(a) * rad, z = r[1] + Math.sin(a) * rad; if (inside(x, z)){ best = [x, z]; break; } } } LMK.ridge = best || r; if (SHOWINV){ PADS.push({ x: LMK.ridge[0], z: LMK.ridge[1], hw: 7, hd: 7, ux: 1, uz: 0 }); invMark('ridge_lookout', LMK.ridge[0], LMK.ridge[1]); } }
 LMK.views = POI.filter((p) => p.k === 'viewpoint' && !/everest/i.test(p.n) && inside(p.x, p.z)).map((p) => [p.x, p.z]);
 for (const p of PADS) p.pad = bicubic(p.x, p.z);
 
@@ -186,7 +193,7 @@ for (let iz = 0; iz < TZ; iz++){
     const grad = Math.hypot(gxv, gzv);
     const pv = mPaved(x, z), dt = mDirt(x, z), w = mWater(x, z), wd = mWood(x, z), sc = mScrub(x, z), rk = mRock(x, z);
     PATHW[k] = Math.max(pv, dt * 0.9); WATERW[k] = w; WOODW[k] = wd; SCRUBW[k] = sc; ROCKW[k] = rk;
-    const fs = (1 - PATHW[k]) * (1 - w) * (1 - NEARB[k]) * (1 - wd * 0.85) * (1 - ss(0.55, 0.9, grad)) * (1 - ss(3640, 3780, hb + (fbm(x / 90, z / 90) - 0.5) * 70));
+    const fs = (SHOWINV ? 1 : 0) * (1 - PATHW[k]) * (1 - w) * (1 - NEARB[k]) * (1 - wd * 0.85) * (1 - ss(0.55, 0.9, grad)) * (1 - ss(3640, 3780, hb + (fbm(x / 90, z / 90) - 0.5) * 70));
     const q = hb / TER, fl = Math.floor(q), fr = q - fl, hq = TER * (fl + ss(0.68, 1.0, fr)) + 0.55;
     FIELD[k] = fs;
     H[k] = hb + (hq - hb) * fs - 1.5 * w;
@@ -1036,6 +1043,7 @@ const G = { walls: new GeoB(), roofs: new GeoB(), det: new GeoB(), stones: new G
 const FLAGC = [C('#2a5caa'), C('#f4f1ea'), C('#c23a30'), C('#2f8a57'), C('#e8b53a')];
 const flagB = { p: [], c: [], s: [] };
 function flagString(A, Bp, sag){
+  if (!SHOWINV) return;
   const len = Math.hypot(Bp[0] - A[0], Bp[1] - A[1], Bp[2] - A[2]), n = Math.max(4, Math.floor(len / 0.55));
   for (let i = 1; i < n; i++){
     const t = i / n, t2 = (i + 0.7) / n;
@@ -1045,7 +1053,7 @@ function flagString(A, Bp, sag){
     for (const k of [0, 1, 2, 0, 2, 3]){ flagB.p.push(v[k][0], v[k][1], v[k][2]); flagB.c.push(col.r, col.g, col.b); flagB.s.push(sw[k]); }
   }
 }
-function pole(px, pz, h){ const y = groundAt(px, pz); box(G.poles, px, y, pz, 0.14, h, 0.14, C('#5b4330')); return [px, y + h, pz]; }
+function pole(px, pz, h){ const y = groundAt(px, pz); if (!SHOWINV) return [px, y + h, pz]; box(G.poles, px, y, pz, 0.14, h, 0.14, C('#5b4330')); return [px, y + h, pz]; }
 
 /* ================= buildings ================= */
 setStatus('Raising ' + BLD.length + ' lodges, homes and shops from the map…'); await nextFrame();
@@ -1213,7 +1221,7 @@ function stupaBuild(sx, sz){
   }
   return [sx, sy + 15.2, sz];
 }
-const stupaTop = stupaBuild(LMK.stupa[0], LMK.stupa[1]);
+const stupaTop = SHOWINV ? stupaBuild(LMK.stupa[0], LMK.stupa[1]) : null;
 for (let i = 0; i < 8; i++){ const a = i / 8 * Math.PI * 2 + Math.PI / 8, t = pole(LMK.stupa[0] + Math.cos(a) * 17, LMK.stupa[1] + Math.sin(a) * 17, 3.0); flagString(stupaTop, t, 1.3); }
 function pavilion(px, pz, ang, big){
   const y = groundAt(px, pz), c = Math.cos(ang), s = Math.sin(ang), P = (u, v) => [px + u * c - v * s, pz + u * s + v * c];
@@ -1267,11 +1275,11 @@ const maniRocks = [];
 {
   const R = mulberry(9090), allPts = [];
   for (const p of D.paths) for (let k = 0; k < p.p.length - 1; k++){ const a = p.p[k], b = p.p[k + 1]; allPts.push([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, Math.atan2(b[1] - a[1], b[0] - a[0])]); }
-  for (let t = 0; t < 600 && maniRocks.length < 16; t++){
+  for (let t = 0; t < 600 && maniRocks.length < 16 && SHOWINV; t++){
     const p = allPts[Math.floor(R() * allPts.length)]; if (!p) break;
     const side = R() < 0.5 ? -1 : 1, nx = -Math.sin(p[2]) * side, nz = Math.cos(p[2]) * side, x = p[0] + nx * 3.0, z = p[1] + nz * 3.0;
     if (!inTown(x, z, 40) || !freeAt(x, z, 1.6) || !clearOfPaths(x, z, 1.2) || maniRocks.some((m) => Math.hypot(m[0] - x, m[1] - z) < 30)) continue;
-    const y = groundAt(x, z), face = Math.atan2(-nz, -nx); maniRocks.push([x, y, z, face]);
+    const y = groundAt(x, z), face = Math.atan2(-nz, -nx); maniRocks.push([x, y, z, face]); invMark('mani_boulders', x, z);
     const fx = x - nx * 0.9, fz = z - nz * 0.9, tx = -nz * 0.6, tz = nx * 0.6;
     G.mani.quad([fx - tx, y + 0.12, fz - tz], [fx + tx, y + 0.12, fz + tz], [fx + tx, y + 1.0, fz + tz], [fx - tx, y + 1.0, fz - tz], WHITE, [0, 0], [1, 0], [1, 1], [0, 1]);
     addSolid(rectPoly(x, z, 1.2, 1.2, face), y + 1.6);
@@ -1280,20 +1288,20 @@ const maniRocks = [];
 // helipads
 for (const h of LMK.heli){ const y = groundAt(h[0], h[1]) + 0.06, g = new THREE.CircleGeometry(h[2], 40); g.rotateX(-Math.PI / 2); g.translate(h[0], y, h[1]); const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ map: heliTex })); m.receiveShadow = true; scene.add(m); }
 function bench(x, z, ang){ const y = groundAt(x, z), wood = C('#7a4f2e'); box(G.det, x, y + 0.42, z, 1.8, 0.08, 0.45, wood, ang); for (const u of [-0.75, 0.75]){ const cx = x + Math.cos(ang) * u, cz = z + Math.sin(ang) * u; box(G.det, cx, y, cz, 0.08, 0.42, 0.4, wood, ang); } }
-{ // Everest viewpoint: chorten off the sightline, flags, benches
+if (SHOWINV){ // Everest viewpoint: chorten off the sightline, flags, benches (the viewpoint node is real; this is not)
   const v = LMK.view, top = chorten(v[0] + 5.5, v[1] + 5.5, 1.0);
   const vt = pole(v[0] + 9, v[1] + 9, 7.5);
   for (let i = 0; i < 6; i++){ const a = Math.PI * 0.25 + (i / 5 - 0.5) * 2.4, t = pole(v[0] + 9 + Math.cos(a) * 12, v[1] + 9 + Math.sin(a) * 12, 1.8); flagString(vt, t, 0.8); }
   flagString(top, vt, 0.4); bench(v[0] - 2, v[1] + 2, -Math.PI / 4); bench(v[0] + 2, v[1] - 2.5, -Math.PI / 4);
   addSolid(rectPoly(v[0] + 5.5, v[1] + 5.5, 1.9, 1.9, 0), groundAt(v[0], v[1]) + 5.5);
 }
-{ // Syangboche ridge lookout
+if (SHOWINV){ // Syangboche ridge lookout (invented: see D.invented)
   const r = LMK.ridge, top = chorten(r[0] + 4, r[1] - 3, 1.1), vt = pole(r[0] - 4, r[1] - 4, 8);
   for (let i = 0; i < 7; i++){ const a = i / 7 * Math.PI * 2, t = pole(r[0] - 4 + Math.cos(a) * 13, r[1] - 4 + Math.sin(a) * 13, 1.9); flagString(vt, t, 0.9); }
   flagString(top, vt, 0.5); bench(r[0], r[1] + 3, 0); bench(r[0] + 3, r[1] + 1, Math.PI / 2);
   addSolid(rectPoly(r[0] + 4, r[1] - 3, 2.1, 2.1, 0), groundAt(r[0], r[1]) + 6);
 }
-for (const v of LMK.views){ if (freeAt(v[0], v[1], 1.5)){ bench(v[0], v[1], 0); const t = pole(v[0] + 2, v[1] + 1.5, 4.5), t2 = pole(v[0] - 4, v[1] + 3, 1.6); flagString(t, t2, 0.4); } }
+for (const v of SHOWINV ? LMK.views : []){ if (freeAt(v[0], v[1], 1.5)){ bench(v[0], v[1], 0); invMark('benches', v[0], v[1]); const t = pole(v[0] + 2, v[1] + 1.5, 4.5), t2 = pole(v[0] - 4, v[1] + 3, 1.6); flagString(t, t2, 0.4); } }
 
 /* ================= stairs, bridges, lamps, signposts ================= */
 setStatus('Cutting stone stairs and building bridges…'); await nextFrame();
@@ -1343,20 +1351,20 @@ for (const [x, z, dir, core] of BRIDGES){
 const lampHeads = [];
 {
   let last = null;
-  for (let i = 0; i < corePts.length; i += 7){
+  for (let i = 0; i < (SHOWINV ? corePts.length : 0); i += 7){
     const p = corePts[i]; if (last && Math.hypot(p[0] - last[0], p[1] - last[1]) < 22) continue;
     const nx = -Math.sin(p[2]), nz = Math.cos(p[2]), x = p[0] + nx * 1.9, z = p[1] + nz * 1.9;
     if (!freeAt(x, z, 0.8) || !clearOfPaths(x, z, 0.25)) continue; last = p;
     const y = groundAt(x, z), dark = C('#3a3f44'), a = Math.atan2(-nz, -nx), c = Math.cos(a), s = Math.sin(a);
     box(G.det, x, y, z, 0.12, 4.6, 0.12, dark); box(G.det, x + c * 0.45, y + 4.45, z + s * 0.45, 0.9, 0.08, 0.1, dark, a);
     box(G.det, x + c * 0.85, y + 4.3, z + s * 0.85, 0.42, 0.14, 0.26, C('#d9dde0'), a); box(G.det, x, y + 4.75, z, 0.7, 0.05, 0.45, C('#1f2f4a'), a);
-    lampHeads.push(x + c * 0.85, y + 4.22, z + s * 0.85);
+    lampHeads.push(x + c * 0.85, y + 4.22, z + s * 0.85); invMark('street_lamps', x, z);
     addSolid(rectPoly(x, z, 0.25, 0.25, 0), y + 4.8);
   }
 }
-{ // signpost by the stupa, like the yellow lodge boards in town
+if (SHOWINV){ // signpost by the stupa, like the yellow lodge boards in town
   let best = null; for (const p of corePts){ const d = Math.hypot(p[0] - LMK.stupa[0], p[1] - LMK.stupa[1]); if (d > 11 && (!best || d < best.d)) best = { d, p }; }
-  if (best){ const p = best.p, nx = -Math.sin(p[2]), nz = Math.cos(p[2]), q = findFree(p[0] + nx * 2.2, p[1] + nz * 2.2, 0.6, 8, true); if (q){ const y = groundAt(q[0], q[1]); box(G.det, q[0], y, q[1], 0.12, 3.6, 0.12, C('#3a3f44')); const pg = new THREE.PlaneGeometry(1.2, 2.4); const pm = new THREE.Mesh(pg, new THREE.MeshLambertMaterial({ map: postTex, side: THREE.DoubleSide })); pm.position.set(q[0], y + 2.3, q[1]); pm.rotation.y = -p[2]; scene.add(pm); addSolid(rectPoly(q[0], q[1], 0.3, 0.3, 0), y + 3.6); } }
+  if (best){ const p = best.p, nx = -Math.sin(p[2]), nz = Math.cos(p[2]), q = findFree(p[0] + nx * 2.2, p[1] + nz * 2.2, 0.6, 8, true); if (q){ const y = groundAt(q[0], q[1]); box(G.det, q[0], y, q[1], 0.12, 3.6, 0.12, C('#3a3f44')); const pg = new THREE.PlaneGeometry(1.2, 2.4); const pm = new THREE.Mesh(pg, new THREE.MeshLambertMaterial({ map: postTex, side: THREE.DoubleSide })); pm.position.set(q[0], y + 2.3, q[1]); pm.rotation.y = -p[2]; scene.add(pm); invMark('signpost', q[0], q[1]); addSolid(rectPoly(q[0], q[1], 0.3, 0.3, 0), y + 3.6); } }
 }
 
 /* ================= running water ================= */
@@ -1448,18 +1456,18 @@ function instanced(geo, list, tintFn, cast){
     if (inTown(x, z)){
       const k = gridK(x, z);
       if (PATHW[k] > 0.2 || WATERW[k] > 0.15 || NEARB[k] > 0.25 || PADW[k] > 0.05) continue;
-      dens = Math.max(WOODW[k] * 0.95, SCRUBW[k] * 0.25, 0.05 + 0.35 * ss(0.5, 0.7, fbm(x / 120, z / 120))) * (1 - FIELD[k] * 0.85);
+      dens = SHOWINV ? Math.max(WOODW[k] * 0.95, SCRUBW[k] * 0.25, 0.05 + 0.35 * ss(0.5, 0.7, fbm(x / 120, z / 120))) * (1 - FIELD[k] * 0.85) : Math.max(WOODW[k] * 0.95, SCRUBW[k] * 0.25) * (WOODW[k] > 0.3 || SCRUBW[k] > 0.3 ? 1 : 0);
       if (inside(x, z)) dens *= 0.5;
       if (R() > dens || nearBuilding(x, z, 2.2)) continue;
     } else {
       const e = 3, gx = (farH(x + e, z) - farH(x - e, z)) / (2 * e), gz = (farH(x, z + e) - farH(x, z - e)) / (2 * e), grad = Math.hypot(gx, gz);
-      dens = ss(0.3, 0.55, grad) * (1 - ss(1.4, 1.8, grad)) * ss(0.42, 0.55, fbm(x / 160, z / 160));
+      dens = SHOWINV ? ss(0.3, 0.55, grad) * (1 - ss(1.4, 1.8, grad)) * ss(0.42, 0.55, fbm(x / 160, z / 160)) : 0;
       if (R() > dens) continue;
     }
     const t = [x, h - 0.3, z, 0.75 + R() * 0.6, R(), 0.85 + R() * 0.35], pick = R();
     if (h > 3800 || pick < 0.18) juns.push(t); else if (pick < 0.62) pines.push(t); else firs.push(t);
   }
-  for (let i = 0; i < corePts.length && rhos.length < 70; i += 8){
+  for (let i = 0; i < corePts.length && rhos.length < (SHOWINV ? 70 : 0); i += 8){
     const p = corePts[i], nx = -Math.sin(p[2]), nz = Math.cos(p[2]);
     for (const side of [-1, 1]){ const x = p[0] + nx * 3.4 * side, z = p[1] + nz * 3.4 * side; if (R() < 0.45 && inside(x, z) && !nearBuilding(x, z, 1.8) && mPaved(x, z) < 0.2) rhos.push([x, groundAt(x, z) - 0.2, z, 0.7 + R() * 0.4, R(), 1]); }
   }
@@ -1468,6 +1476,7 @@ function instanced(geo, list, tintFn, cast){
     const x = TXmin + 40 + R() * (TXmax - TXmin - 80), z = TZmin + 40 + R() * (TZmax - TZmin - 80), k = gridK(x, z);
     if (PADW[k] > 0.05 || NEARB[k] > 0.35 || PATHW[k] > 0.12 || WATERW[k] > 0.08) continue;
     const h = townGround(x, z); if (h > 4100) continue;
+    if (!SHOWINV && ROCKW[k] < 0.3 && SCRUBW[k] < 0.3 && WOODW[k] < 0.3) continue;
     if (R() < 0.25){ if (rocks.length < nr && (FIELD[k] < 0.5 || R() < 0.15)) rocks.push([x, h - 0.15, z, 0.4 + Math.pow(R(), 2) * 1.9 * (1 + ROCKW[k]), R(), 0.55]); }
     else { if (FIELD[k] > 0.55 && R() < 0.9) continue; if (R() > Math.max(SCRUBW[k], WOODW[k] * 0.7, 0.18 + 0.5 * ss(0.4, 0.7, fbm(x / 38, z / 38)))) continue; if (bushes.length < nb) bushes.push([x, h - 0.1, z, 0.5 + R() * 0.9, R(), 1]); }
   }
@@ -1492,7 +1501,7 @@ function rebuildGrass(cx, cz){
   for (let gz = Math.floor((cz - RAD) / step); gz <= Math.floor((cz + RAD) / step) && n < GRASSN; gz++) for (let gx = Math.floor((cx - RAD) / step); gx <= Math.floor((cx + RAD) / step) && n < GRASSN; gx++){
     const hx = hash2(gx, gz), hz = hash2(gz * 1.7, gx * 0.3), x = gx * step + (hx - 0.5) * step, z = gz * step + (hz - 0.5) * step;
     const dx = x - cx, dz = z - cz; if (dx * dx + dz * dz > RAD * RAD || !inTown(x, z, 2)) continue;
-    const k = gridK(x, z); if (NEARB[k] > 0.55 || PADW[k] > 0.4) continue;
+    const k = gridK(x, z); if (!SHOWINV || NEARB[k] > 0.55 || PADW[k] > 0.4) continue;
     if (mPaved(x, z) > 0.2 || mDirt(x, z) > 0.4 || mWater(x, z) > 0.12) continue;
     const dens = 0.35 + 0.55 * fbm(x / 18, z / 18) - FIELD[k] * 0.35 + WOODW[k] * 0.1;
     if (hash2(gx * 0.71, gz * 1.31) > dens) continue;
@@ -1651,11 +1660,14 @@ const mapBase = document.createElement('canvas'); mapBase.width = MAPW; mapBase.
   const c = mapBase.getContext('2d'); c.imageSmoothingEnabled = true; c.drawImage(lc, 0, 0, MAPW, MAPH);
   for (const b of BLD){ c.fillStyle = b.kind === 'gompa' ? '#d9a63a' : b.kind === 'lodge' ? '#f1ebdc' : b.kind === 'shop' ? '#e9b98a' : '#c9c6c0'; c.beginPath(); b.poly.forEach((p, i) => { const q = toMap(p[0], p[1]); if (i) c.lineTo(q[0], q[1]); else c.moveTo(q[0], q[1]); }); c.closePath(); c.fill(); }
   const dot = (x, z, col, r) => { const q = toMap(x, z); c.fillStyle = col; c.beginPath(); c.arc(q[0], q[1], r || 4.5, 0, Math.PI * 2); c.fill(); };
-  dot(LMK.stupa[0], LMK.stupa[1], '#ffffff', 5); for (const h of LMK.heli) dot(h[0], h[1], '#9a968e', 4);
-  dot(LMK.view[0], LMK.view[1], '#e8b53a', 5); dot(LMK.ridge[0], LMK.ridge[1], '#e8b53a', 5);
+  const INVC = getComputedStyle(document.documentElement).getPropertyValue('--invented').trim() || '#f08cb4';
+  const diamond = (x, z, r, w) => { const q = toMap(x, z); c.strokeStyle = 'rgba(0,0,0,.55)'; c.lineWidth = w + 2; c.beginPath(); c.moveTo(q[0], q[1] - r); c.lineTo(q[0] + r, q[1]); c.lineTo(q[0], q[1] + r); c.lineTo(q[0] - r, q[1]); c.closePath(); c.stroke(); c.strokeStyle = INVC; c.lineWidth = w; c.stroke(); };
+  for (const h of LMK.heli) dot(h[0], h[1], '#9a968e', 4);
+  dot(LMK.view[0], LMK.view[1], '#e8b53a', 5);
+  for (const it of INV){ const big = it.id === 'stupa' || it.id === 'ridge_lookout', lamp = it.id === 'street_lamps'; c.globalAlpha = lamp ? 0.4 : 1; diamond(it.x, it.z, big ? 7 : lamp ? 1.8 : 4, big ? 2.4 : lamp ? 1 : 1.6); } c.globalAlpha = 1;
   c.font = '600 17px Hind, sans-serif'; c.fillStyle = '#f6f4ef'; c.textAlign = 'center'; c.shadowColor = 'rgba(0,0,0,.7)'; c.shadowBlur = 4;
   const lab = (x, z, t, dy) => { const q = toMap(x, z); c.fillText(t, q[0], q[1] + dy); };
-  lab(LMK.view[0], LMK.view[1], 'Everest view', 22); lab(LMK.ridge[0], LMK.ridge[1], 'Syangboche ridge', -12); lab(LMK.stupa[0], LMK.stupa[1], 'Stupa', 22);
+  lab(LMK.view[0], LMK.view[1], 'Everest view', 22); if (SHOWINV){ lab(LMK.ridge[0], LMK.ridge[1], 'Syangboche ridge', -12); lab(LMK.stupa[0], LMK.stupa[1], 'Stupa', 22); }
   c.shadowBlur = 0;
 }
 function drawMap(){
@@ -1720,7 +1732,7 @@ function showHud(on){ for (const id of ['#loc', '#compass', '#map', '#dot']) $(i
 function start(){
   if (!started){
     started = true; player.x = SPAWN.x; player.z = SPAWN.z; player.y = playerGround(player.x, player.z) + EYE; player.yaw = spawnYaw; player.pitch = 0.05;
-    setTimeout(() => toast('You’re by the stupa at the foot of the bazaar. The stone stairs climb into town; the trail north leads to the <b>Syangboche ridge</b>.', 9), 600);
+    setTimeout(() => toast(SHOWINV ? 'You’re by the stupa at the foot of the bazaar. The stone stairs climb into town; the trail north leads to the <b>Syangboche ridge</b>.' : 'You’re at the foot of the bazaar. This is the <b>mapped-only</b> view: everything not in OpenStreetMap or the elevation data is hidden.', 9), 600);
   }
   playing = true; losT = 0; for (const p of PEAKS){ p.vis = false; p.el.style.display = 'none'; }
   card.classList.add('hidden'); showHud(true);
@@ -1769,7 +1781,7 @@ function frame(){
     movePlayer(dt, (keys.f ? 1 : 0) - (keys.b ? 1 : 0) - stick.y, (keys.r ? 1 : 0) - (keys.l ? 1 : 0) + stick.x, keys.run || runToggle);
     camera.position.set(player.x, player.y, player.z); camera.rotation.set(player.pitch, player.yaw, 0);
     if (!grassAt || Math.hypot(player.x - grassAt[0], player.z - grassAt[1]) > 7) rebuildGrass(player.x, player.z);
-    if (!sawRidge && Math.hypot(player.x - LMK.ridge[0], player.z - LMK.ridge[1]) < 45){ sawRidge = true; toast('<b>Syangboche ridge</b>, ' + Math.round(groundAt(player.x, player.z)).toLocaleString('en-US') + ' m. The Khumbu valley opens up ahead.', 7); }
+    if (SHOWINV && !sawRidge && Math.hypot(player.x - LMK.ridge[0], player.z - LMK.ridge[1]) < 45){ sawRidge = true; toast('<b>Syangboche ridge</b>, ' + Math.round(groundAt(player.x, player.z)).toLocaleString('en-US') + ' m. The Khumbu valley opens up ahead.', 7); }
   } else if (!started){
     camera.position.set(intro.x, intro.y, intro.z); camera.rotation.set(intro.pitch, intro.yaw + 0.3 + Math.sin(t0 * 0.06) * 0.12, 0);
   }
@@ -1932,6 +1944,7 @@ const TEST = !TESTMODE ? null : (() => {
   }
   return { gapMax: () => GAPMAX, walkPath, mainStreet, stairStats, walkFlight, walkAll, mainFlight, stairsPose, flightInfo: (k) => flightInfo(FLIGHTS[k], k), nFlights: () => FLIGHTS.length };
 })();
-window.__namche = { BLD, SPAWN, renderer, syncView, test: TEST, dbg: TESTMODE ? { inside, nearBuilding, stairAt, playerGround, coarseGround, solidAt: (x, z) => SOLIDS.some((o) => x > o.bb[0] && x < o.bb[1] && z > o.bb[2] && z < o.bb[3] && pip(o.poly, x, z)), SOLIDS, LANDINGS, FLIGHTS } : null, scene, farH, player, setNight, camera, PEAKS, start, groundAt, townGround, LMK, D, freeCam: (a) => { freeCam = a; }, rebuildGrass };
+$('#mapLegend').textContent = SHOWINV ? 'Invented' : 'Invented hidden'; $('#mapLegend').classList.toggle('off', !SHOWINV);
+window.__namche = { INV, SHOWINV, BLD, SPAWN, renderer, syncView, test: TEST, dbg: TESTMODE ? { inside, nearBuilding, stairAt, playerGround, coarseGround, solidAt: (x, z) => SOLIDS.some((o) => x > o.bb[0] && x < o.bb[1] && z > o.bb[2] && z < o.bb[3] && pip(o.poly, x, z)), SOLIDS, LANDINGS, FLIGHTS } : null, scene, farH, player, setNight, camera, PEAKS, start, groundAt, townGround, LMK, D, freeCam: (a) => { freeCam = a; }, rebuildGrass };
 requestAnimationFrame(frame);
 })().catch((e) => { const s = document.querySelector('#status'); if (s){ s.textContent = 'Something broke while building the town: ' + (e && e.message ? e.message : e); s.style.color = '#ffb4a8'; } console.error(e); });

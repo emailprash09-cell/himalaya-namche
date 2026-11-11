@@ -403,10 +403,53 @@ lm={'spawn':[round(sp[0],1),round(sp[1],1)],'face':[60.0,-40.0],
     'view':[523.2,270.2],'ridge':[58.7,-880.5],'gompa':None}
 for b in out:
     if b['k']=='gompa': lm['gompa']=b['c']; break
+# ---------- invented items ----------
+# Everything the game shows that is not backed by this OSM export or by SRTM. The game hides all of these
+# with ?real (or SHOW_INVENTED = false in game.js); docs/INVENTED.md lists them with their positions.
+VIEWPT=next(([q['x'],q['z']] for q in PO if q['k']=='viewpoint' and 'everest' in q['n'].lower()),[523.2,270.2])
+INVENTED=[
+ dict(id='stupa',name='Main stupa (position)',x=44.0,z=160.0,
+      reason='No OSM node for the entrance stupa in this export (no shrine within 150 m of the south entrance); the position is a hand-placed seed, moved to the nearest clear spot.',
+      replace='An OSM node or outline for the stupa at the bazaar entrance (historic=wayside_shrine, building=stupa), or a GPS fix.'),
+ dict(id='stupa_pavilions',name='Prayer-wheel pavilions',
+      reason='Placed by judgement around the stupa and beside the main street for character.',
+      replace='Photos plus OSM nodes for the real prayer-wheel houses (man_made=prayer_wheel or building=shrine).'),
+ dict(id='mani_walls',name='Mani walls',
+      reason='Placed by judgement beside the stupa and along the main street.',
+      replace='OSM barrier=wall / historic=mani_wall ways traced from imagery.'),
+ dict(id='mani_boulders',name='Carved mani boulders',
+      reason='Scattered beside trails by a seeded random rule.',
+      replace='Photos with positions, or OSM natural=stone + inscription tags.'),
+ dict(id='prayer_flags',name='Prayer-flag strings and their poles',
+      reason='Strung by rule between roofs, stupa, chortens, gompa, bridges and viewpoints; none are mapped.',
+      replace='Photos of the main flag lines (stupa, gompa, bridges); flags are rarely mapped in OSM.'),
+ dict(id='street_lamps',name='Street lamps',
+      reason='One every 22 m or so beside the main streets, by rule.',
+      replace='OSM highway=street_lamp nodes or a photo survey.'),
+ dict(id='signpost',name='Signpost by the stupa',
+      reason='Placed by judgement, styled on the yellow lodge boards.',
+      replace='OSM information=guidepost / board nodes.'),
+ dict(id='benches',name='Benches at viewpoints',
+      reason='The viewpoints are OSM nodes; the benches beside them are not.',
+      replace='OSM amenity=bench nodes.'),
+ dict(id='view_dressing',name='Everest View Point chorten, flag mast and benches',x=VIEWPT[0],z=VIEWPT[1],
+      reason='The viewpoint is in OSM; the chorten, the 7.5 m flag mast and the benches around it are not.',
+      replace='Photos of the viewpoint and OSM nodes for any chorten there.'),
+ dict(id='ridge_lookout',name='Syangboche ridge lookout',x=lm['ridge'][0],z=lm['ridge'][1],
+      reason='The ridge point is a hand-typed coordinate, not an OSM feature; the chorten, 8 m mast, flags, benches and flattened pad there are invented.',
+      replace='An OSM tourism=viewpoint node on the ridge, or the Syangboche airstrip outline (way/312895324) as the anchor.'),
+ dict(id='terraces',name='Field terraces',
+      reason='Every open slope gentler than about 30 degrees and below about 3,700 m is stepped into 2.4 m terraces; this export has no landuse=farmland.',
+      replace='OSM landuse=farmland polygons traced from imagery, or a field survey of the terraces.'),
+ dict(id='vegetation',name='Trees, shrubs, rocks and grass outside OSM wood and scrub',
+      reason='Scattered by noise rules over the town and the valley sides; only the OSM natural=wood/scrub/rock polygons are mapped.',
+      replace='More OSM natural=wood/scrub/heath polygons, or tree lines traced from imagery.'),
+]
+for it in INVENTED: it['invented']=True
 data=dict(dem=dict(nx=int(nx),nz=int(nz),x0=X0,z0=Z0,dx=DX,dz=DZ,b64=dem_b64),
           town=dict(c0=tc0,c1=tc1,r0=tr0,r1=tr1),
           mask=dict(w=MW,h=MH,px=PX,x0=BX0,z0=BZ0,a=m1,b=m2,c=m3),
-          buildings=out, paths=PP, walls=WW, streams=SS, poi=PO, peaks=P, lm=lm,
+          buildings=out, paths=PP, walls=WW, streams=SS, poi=PO, peaks=P, lm=lm, invented=INVENTED,
           geo=dict(lat0=LAT0,lon0=LON0,mlat=MLAT,mlon=MLON))
 js='window.NAMCHE='+json.dumps(data,separators=(',',':'))+';'
 open(ROOT/'data'/'data.js','w',encoding='utf-8').write(js)
